@@ -19,25 +19,25 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\libgraphics\exceptio.c" />
-    <ClCompile Include="..\libgraphics\genlib.c" />
-    <ClCompile Include="..\libgraphics\graphics.c" />
-    <ClCompile Include="..\libgraphics\random.c" />
-    <ClCompile Include="..\libgraphics\simpio.c" />
-    <ClCompile Include="..\libgraphics\strlib.c" />
+    <ClCompile Include="..\myExternalLibraries\libgraphics\exceptio.c" />
+    <ClCompile Include="..\myExternalLibraries\libgraphics\genlib.c" />
+    <ClCompile Include="..\myExternalLibraries\libgraphics\graphics.c" />
+    <ClCompile Include="..\myExternalLibraries\libgraphics\random.c" />
+    <ClCompile Include="..\myExternalLibraries\libgraphics\simpio.c" />
+    <ClCompile Include="..\myExternalLibraries\libgraphics\strlib.c" />
+    <ClCompile Include="..\myExternalLibraries\simpleGUI\imgui.c" />
     <ClCompile Include="..\mySourceFiles\main.c" />
-    <ClCompile Include="..\simpleGUI\imgui.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\libgraphics\exception.h" />
-    <ClInclude Include="..\libgraphics\extgraph.h" />
-    <ClInclude Include="..\libgraphics\gcalloc.h" />
-    <ClInclude Include="..\libgraphics\genlib.h" />
-    <ClInclude Include="..\libgraphics\graphics.h" />
-    <ClInclude Include="..\libgraphics\random.h" />
-    <ClInclude Include="..\libgraphics\simpio.h" />
-    <ClInclude Include="..\libgraphics\strlib.h" />
-    <ClInclude Include="..\simpleGUI\imgui.h" />
+    <ClInclude Include="..\myExternalLibraries\libgraphics\exception.h" />
+    <ClInclude Include="..\myExternalLibraries\libgraphics\extgraph.h" />
+    <ClInclude Include="..\myExternalLibraries\libgraphics\gcalloc.h" />
+    <ClInclude Include="..\myExternalLibraries\libgraphics\genlib.h" />
+    <ClInclude Include="..\myExternalLibraries\libgraphics\graphics.h" />
+    <ClInclude Include="..\myExternalLibraries\libgraphics\random.h" />
+    <ClInclude Include="..\myExternalLibraries\libgraphics\simpio.h" />
+    <ClInclude Include="..\myExternalLibraries\libgraphics\strlib.h" />
+    <ClInclude Include="..\myExternalLibraries\simpleGUI\imgui.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -111,7 +111,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions); _CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../libgraphics; ../simpleGUI</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../myExternalLibraries/libgraphics; ../myExternalLibraries/simpleGUI</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -126,7 +126,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions); _CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../libgraphics; ../simpleGUI</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../myExternalLibraries/libgraphics; ../myExternalLibraries/simpleGUI</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -143,7 +143,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions); _CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../libgraphics; ../simpleGUI</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../myExternalLibraries/libgraphics; ../myExternalLibraries/simpleGUI</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -162,7 +162,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions); _CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../libgraphics; ../simpleGUI</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../myExternalLibraries/libgraphics; ../myExternalLibraries/simpleGUI</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

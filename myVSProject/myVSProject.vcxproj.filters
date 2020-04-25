@@ -21,57 +21,57 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\libgraphics\exceptio.c">
-      <Filter>Resource Files\libgraphics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\libgraphics\genlib.c">
-      <Filter>Resource Files\libgraphics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\libgraphics\graphics.c">
-      <Filter>Resource Files\libgraphics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\libgraphics\random.c">
-      <Filter>Resource Files\libgraphics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\libgraphics\simpio.c">
-      <Filter>Resource Files\libgraphics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\libgraphics\strlib.c">
-      <Filter>Resource Files\libgraphics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\simpleGUI\imgui.c">
-      <Filter>Resource Files\simpleGUI</Filter>
-    </ClCompile>
     <ClCompile Include="..\mySourceFiles\main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\myExternalLibraries\libgraphics\exceptio.c">
+      <Filter>Resource Files\libgraphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\myExternalLibraries\libgraphics\genlib.c">
+      <Filter>Resource Files\libgraphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\myExternalLibraries\libgraphics\graphics.c">
+      <Filter>Resource Files\libgraphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\myExternalLibraries\libgraphics\random.c">
+      <Filter>Resource Files\libgraphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\myExternalLibraries\libgraphics\simpio.c">
+      <Filter>Resource Files\libgraphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\myExternalLibraries\libgraphics\strlib.c">
+      <Filter>Resource Files\libgraphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\myExternalLibraries\simpleGUI\imgui.c">
+      <Filter>Resource Files\simpleGUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\libgraphics\exception.h">
+    <ClInclude Include="..\myExternalLibraries\libgraphics\exception.h">
       <Filter>Resource Files\libgraphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\libgraphics\extgraph.h">
+    <ClInclude Include="..\myExternalLibraries\libgraphics\extgraph.h">
       <Filter>Resource Files\libgraphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\libgraphics\gcalloc.h">
+    <ClInclude Include="..\myExternalLibraries\libgraphics\gcalloc.h">
       <Filter>Resource Files\libgraphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\libgraphics\genlib.h">
+    <ClInclude Include="..\myExternalLibraries\libgraphics\genlib.h">
       <Filter>Resource Files\libgraphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\libgraphics\graphics.h">
+    <ClInclude Include="..\myExternalLibraries\libgraphics\graphics.h">
       <Filter>Resource Files\libgraphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\libgraphics\random.h">
+    <ClInclude Include="..\myExternalLibraries\libgraphics\random.h">
       <Filter>Resource Files\libgraphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\libgraphics\simpio.h">
+    <ClInclude Include="..\myExternalLibraries\libgraphics\simpio.h">
       <Filter>Resource Files\libgraphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\libgraphics\strlib.h">
+    <ClInclude Include="..\myExternalLibraries\libgraphics\strlib.h">
       <Filter>Resource Files\libgraphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\simpleGUI\imgui.h">
+    <ClInclude Include="..\myExternalLibraries\simpleGUI\imgui.h">
       <Filter>Resource Files\simpleGUI</Filter>
     </ClInclude>
   </ItemGroup>
