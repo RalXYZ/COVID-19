@@ -14,6 +14,7 @@ void Main() {
 	SetWindowTitle("一个程序");
 	InitGraphics();
 
-	MovePen(GetWindowWidth() / 2, GetWindowHeight() / 2);
-	DrawTextString("Hello World!");
+	ExitGraphics();
+
+
 }
