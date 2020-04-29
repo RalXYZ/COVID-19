@@ -45,6 +45,12 @@
     <ClCompile Include="..\myExternalLibraries\simpleGUI\imgui.c">
       <Filter>Resource Files\simpleGUI</Filter>
     </ClCompile>
+    <ClCompile Include="..\mySourceFiles\my_callback.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\mySourceFiles\my_display.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\myExternalLibraries\libgraphics\exception.h">
@@ -73,6 +79,15 @@
     </ClInclude>
     <ClInclude Include="..\myExternalLibraries\simpleGUI\imgui.h">
       <Filter>Resource Files\simpleGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mySourceFiles\my_callback.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mySourceFiles\my_display.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mySourceFiles\my_macro.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
