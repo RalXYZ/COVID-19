@@ -13,7 +13,7 @@ void Main() {
 	SetWindowSize(4, 2);
 	SetWindowTitle("一个程序");
 	InitGraphics();
-
+	DrawLine();
 
 	ExitGraphics();
 }
