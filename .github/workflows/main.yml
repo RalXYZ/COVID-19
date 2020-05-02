@@ -4,54 +4,24 @@ name: CI
  
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the master branch
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+on: [push, pull_request]
  
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  build:
-    name: release
+  compile:
+    name: Compiler
     runs-on: windows-latest
-    strategy:
-      fail-fast: false
+    if: "! contains(toJSON(github.event.commits.*.message), '[skip-ci]')"
     steps:
+      - name: Check out source code
+        uses: actions/checkout@v2
       - name: Setup Developer Command Prompt
         uses: ilammy/msvc-dev-cmd@v1
-      - name: Check out source code
-        uses: actions/checkout@v1
-      - name: Compile and run some C code
-        shell: cmd
-        env:
-          VSLANG: 2052
+      - name: Compile Project
         run: |
-          chcp 936
-          msbuild COVID-19_Statistics.sln /property:Configuration=Debug /property:Platform=x64
-      - name: Create Tar File
-        run: |
-          cd x64/Debug
-          tar cvfz COVID-19_Statistics.tar.gz *
-          mv COVID-19_Statistics.tar.gz ../../
-        shell: bash
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: action-tag-${{ github.run_id }}
-          release_name: Release Action-${{ github.run_id }}
-          draft: false
-          prerelease: false
-      - name: Upload Release Asset
-        id: upload-release-asset 
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: ./COVID-19_Statistics.tar.gz
-          asset_name: COVID-19_Statistics-${{ github.run_id }}.tar.gz
-          asset_content_type: application/tar+gzip
+          msbuild COVID-19_Statistics.sln /property:Configuration=Debug /property:Platform=x64  
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v2
+        with: 
+          name: COVID-19_Statistics-x64-debug-${{ github.run_id }}
+          path: ./x64/Debug/
