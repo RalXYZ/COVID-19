@@ -18,7 +18,7 @@
 #include "my_display.h"
 
  /*哨兵节点*/
-struct epidemic* SentinelNode;
+struct epidemic SentinelNode;
 
 void Main()
 {
@@ -40,12 +40,6 @@ void Main()
 
 	/*链表初始化*/
 	InitEpidemicList(&SentinelNode);
-	FileOpen(0, 1);
-
-	for (struct epidemic* i = SentinelNode->next; i != nullptr; i = i->next)
-	{
-		printf("%s %d ", i->region, i->cured);
-	}
 
 	//ExitGraphics();
 }
