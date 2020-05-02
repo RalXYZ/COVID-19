@@ -12,4 +12,6 @@
  // 时间间隔1
 #define TIME_ELAPSE_1 2000
 
+enum error { Null, ExceedDate, UnformattedData };
+
 #endif

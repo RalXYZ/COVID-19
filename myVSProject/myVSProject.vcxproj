@@ -29,6 +29,7 @@
     <ClCompile Include="..\mySourceFiles\main.c" />
     <ClCompile Include="..\mySourceFiles\my_callback.c" />
     <ClCompile Include="..\mySourceFiles\my_display.c" />
+    <ClCompile Include="..\mySourceFiles\my_resource.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\myExternalLibraries\libgraphics\exception.h" />
@@ -42,7 +43,11 @@
     <ClInclude Include="..\myExternalLibraries\simpleGUI\imgui.h" />
     <ClInclude Include="..\mySourceFiles\my_callback.h" />
     <ClInclude Include="..\mySourceFiles\my_display.h" />
+    <ClInclude Include="..\mySourceFiles\my_resource.h" />
     <ClInclude Include="..\mySourceFiles\my_macro.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\myResourceFiles\test.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -132,7 +137,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions); _CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>../myExternalLibraries/libgraphics; ../myExternalLibraries/simpleGUI</AdditionalIncludeDirectories>
-	  <AdditionalOptions>/source-charset:.936 /execution-charset:.936 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/source-charset:.936 /execution-charset:.936 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
