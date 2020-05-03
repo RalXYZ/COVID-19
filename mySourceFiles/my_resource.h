@@ -12,12 +12,12 @@
 #define nullptr ((void *)0)
 #endif
 
-#define REGION_ARRAY_LENGTH 10
+
 
  /*
   * 结构名: confirmed
-  * 参数1: current  当前确诊人数
-  * 参数2: total  总确诊人数
+  * 成员1: current  当前确诊人数
+  * 成员2: total  总确诊人数
   * ------------------------------------
   * 这个结构需要与epidemic搭配使用。
   */
@@ -27,21 +27,35 @@ struct confirmed
 	int total;
 };
 
-#define EPIDEMIC_ELEMENT_NUM 5
+
+/*
+ * 结构名: time
+ * 成员1: mm  月份
+ * 成员2: dd  日期
+ * ------------------------------------
+ * 这个结构需要与epidemic搭配使用。
+ */
+struct time
+{
+	int mm;
+	int dd;
+};
+
+#define EPIDEMIC_ELEMENT_NUM 6
 /*
  * 结构名: epidemic
- * 参数1: region  地区
- * 参数2: confirmed  确诊人数
- * 参数3: cured  治愈人数
- * 参数4: dead  死亡人数
- * 参数5: prev  指向上一个节点的指针
- * 参数6: next  指向下一个节点的指针
+ * 成员1: time  时间
+ * 成员2: confirmed  确诊人数
+ * 成员3: cured  治愈人数
+ * 成员4: dead  死亡人数
+ * 成员5: prev  指向上一个节点的指针
+ * 成员6: next  指向下一个节点的指针
  * ------------------------------------
  * 这个结构是存储疫情数据用的双向链表的一个节点。
  */
 struct epidemic
 {
-	char region[REGION_ARRAY_LENGTH];
+	struct time time;
 	struct confirmed confirmed;
 	int cured;
 	int dead;

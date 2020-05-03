@@ -100,7 +100,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\myResourceFiles\test.txt">
+    <Text Include="..\myResourceFiles\statistics.bin">
       <Filter>Resource Files</Filter>
     </Text>
   </ItemGroup>

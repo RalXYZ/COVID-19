@@ -104,7 +104,8 @@ enum error FileInputList(char* FileName, int begin, int end)
 
 	for (int i = 0; ; i++)
 	{
-		const int SuccessInput = fscanf(fp, "%s%d%d%d%d", CurrentNode->region, &CurrentNode->confirmed.current,
+		const int SuccessInput = fscanf(fp, "%d-%d%d%d%d%d", &CurrentNode->time.mm,
+			&CurrentNode->time.dd, &CurrentNode->confirmed.current,
 			&CurrentNode->confirmed.total, &CurrentNode->cured, &CurrentNode->dead);
 		CurrentNode->next = nullptr;  // 讲当前节点的指向后一个节点的指针默认设为空
 
@@ -136,12 +137,12 @@ enum error FileInputList(char* FileName, int begin, int end)
 	return Null;  // 无异常
 
 	/*
-	 如果你想对这个函数进行测试，请在主函数中加入如下代码：
+	如果你想对这个函数进行测试，请在主函数中加入如下代码：
 	InitConsole();
-	if (!FileInputList("../myResourceFiles/test.txt", 1, 3))
+	if (!FileInputList("../myResourceFiles/statistics.bin", 1, 3))
 	{
 		for (struct epidemic* i = SentinelNode.next; i != nullptr; i = i->next)
-			printf("%s %d ", i->region, i->cured);
+			printf("%d-%d %d ", i->time.mm, i->time.dd, i->cured);
 	}
-	 */
+	*/
 }

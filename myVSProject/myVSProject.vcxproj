@@ -47,7 +47,7 @@
     <ClInclude Include="..\mySourceFiles\my_macro.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\myResourceFiles\test.txt" />
+    <Text Include="..\myResourceFiles\statistics.bin" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
