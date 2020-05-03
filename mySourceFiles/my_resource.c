@@ -7,7 +7,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
+#include <Windows.h>
 
 #include "graphics.h"
 
@@ -73,15 +73,14 @@ void SafeFOpen(FILE** fpp, char* FileName, char* mode)
  * 参数3: fp  文件指针
  * ------------------------------------
  * 这个函数当且仅当FileInputList函数出现异常
- * 的时候被调用，主要用于做报错、清理和文件读取
- * 收尾工作。
+ * 的时候被调用，主要用于做清理未输入完成的链表、
+ * 关闭文件 和 用对话框输出错误信息。
  */
 void EndFileInputTask(char* reason, struct epidemic* FirstNode, FILE* fp)
 {
-	InitConsole();
-	printf("资源文件格式可能有误，请校对格式。");
 	FreeEpidemicList(FirstNode);
 	fclose(fp);
+	MessageBox(NULL, TEXT(reason), TEXT("错误"), MB_OK | MB_ICONERROR);
 }
 
 /*
@@ -138,8 +137,7 @@ enum error FileInputList(char* FileName, int begin, int end)
 
 	/*
 	如果你想对这个函数进行测试，请在主函数中加入如下代码：
-	InitConsole();
-	if (!FileInputList("../myResourceFiles/statistics.bin", 1, 3))
+	if (!FileInputList("../myResourceFiles/statistics.bin", 1, 4))
 	{
 		for (struct epidemic* i = SentinelNode.next; i != nullptr; i = i->next)
 			printf("%d-%d %d ", i->time.mm, i->time.dd, i->cured);

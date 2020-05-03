@@ -5,9 +5,6 @@
  *
  */
 
-#include <Windows.h>
-#include <stdio.h>
-
 #include "graphics.h"
 #include "extgraph.h"
 #include "imgui.h"
@@ -41,5 +38,4 @@ void Main()
 	/*链表初始化*/
 	InitEpidemicList(&SentinelNode);
 
-	//ExitGraphics();
 }
