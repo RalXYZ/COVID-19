@@ -57,6 +57,9 @@
     <ClCompile Include="..\mySourceFiles\my_resource.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\myResourceFiles\prediction_model.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\myExternalLibraries\libgraphics\exception.h">

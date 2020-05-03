@@ -26,6 +26,7 @@
     <ClCompile Include="..\myExternalLibraries\libgraphics\simpio.c" />
     <ClCompile Include="..\myExternalLibraries\libgraphics\strlib.c" />
     <ClCompile Include="..\myExternalLibraries\simpleGUI\imgui.c" />
+    <ClCompile Include="..\myResourceFiles\prediction_model.c" />
     <ClCompile Include="..\mySourceFiles\main.c" />
     <ClCompile Include="..\mySourceFiles\my_callback.c" />
     <ClCompile Include="..\mySourceFiles\my_display.c" />
