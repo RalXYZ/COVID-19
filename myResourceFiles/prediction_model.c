@@ -19,3 +19,21 @@ static double e_turnto_i;
 static double i_touch;
 static double e_touch;
 static double mul_1, mul_2;
+
+/*
+ * 函数名: SEIR
+ * 参数1:
+ * 参数2:
+ * 参数3:
+ * 参数4:
+ * 参数5:
+ * 参数6:
+ * 参数7:
+ * 参数8:
+ * 参数9:
+ * 参数10:
+ * 参数11:
+ * 参数12:
+ * 参数13:
+ * 参数14:
+ */
