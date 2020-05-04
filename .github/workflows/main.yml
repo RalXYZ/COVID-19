@@ -19,9 +19,15 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1
       - name: Compile Project
         run: |
-          msbuild COVID-19_Statistics.sln /property:Configuration=Debug /property:Platform=x64  
-      - name: Upload Build Artifacts
+          msbuild COVID-19_Statistics.sln /property:Configuration=Debug /property:Platform=x64
+          msbuild COVID-19_Statistics.sln /property:Configuration=Release /property:Platform=x64  
+      - name: Upload Debug Artifacts
         uses: actions/upload-artifact@v2
         with: 
           name: COVID-19_Statistics-x64-debug-${{ github.run_id }}
           path: ./x64/Debug/
+      - name: Upload Release Artifacts
+        uses: actions/upload-artifact@v2
+        with: 
+          name: COVID-19_Statistics-x64-release-${{ github.run_id }}
+          path: ./x64/Release/
