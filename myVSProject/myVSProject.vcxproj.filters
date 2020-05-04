@@ -57,7 +57,7 @@
     <ClCompile Include="..\mySourceFiles\my_resource.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\myResourceFiles\prediction_model.c">
+    <ClCompile Include="..\mySourceFiles\prediction_model.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
