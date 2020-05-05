@@ -16,11 +16,16 @@
 #include "my_callback.h"
 #include "my_display.h"
 
-extern bool EraseStatus;
+bool PauseAllProcedure = false;  // 记录是否要暂停所有回调函数的功能，用于弹出对话框时的阻塞
+
+extern bool EraseStatus;  // 定义在 my_display.c
 
 void KeyboardEventProcess(int key, int event)
 {
-	if (event == KEY_DOWN)
+	if (PauseAllProcedure)
+		return;
+
+	if (event == KEY_DOWN)  // 目前作调试用，检测后来加上的组件是否会对回调函数产生干扰
 		EraseStatus = !EraseStatus;
 
 	uiGetKeyboard(key, event);
@@ -29,8 +34,14 @@ void KeyboardEventProcess(int key, int event)
 
 void MouseEventProcess(int x, int y, int button, int event)
 {
-	if (event == BUTTON_DOWN)
-		EraseStatus = !EraseStatus;
+	if (PauseAllProcedure)
+		return;
+
+	if (event == BUTTON_DOWN)  // 目前作调试用，检测后来加上的组件是否会对回调函数产生干扰
+	{
+		if (button == RIGHT_BUTTON)
+			EraseStatus = !EraseStatus;
+	}
 
 	uiGetMouse(x, y, button, event);
 	display();
@@ -38,12 +49,16 @@ void MouseEventProcess(int x, int y, int button, int event)
 
 void CharEventProcess(char key)
 {
-
+	if (PauseAllProcedure)
+		return;
 }
 
 void TimerEventProcess(int timerID)
 {
-	if (timerID == TIME_ELAPSE_1)
+	if (PauseAllProcedure)
+		return;
+
+	if (timerID == TIME_ELAPSE_1)  // 目前作调试用，检测后来加上的组件是否会对回调函数产生干扰
 		EraseStatus = !EraseStatus;
 	display();
 }

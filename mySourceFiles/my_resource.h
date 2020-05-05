@@ -8,8 +8,8 @@
 #ifndef _MY_FILES_H_
 #define _MY_FILES_H_
 
-#ifndef __cplusplus  // nullptr 是一个C++关键字，此语句避免了宏定义与C++发生冲突
-#define nullptr ((void *)0)
+#ifndef __cplusplus  // 此语句避免了宏定义与C++发生冲突
+#define nullptr ((void *)0)  // nullptr 是一个C++关键字，表示一个特定的空指针
 #endif
 
 

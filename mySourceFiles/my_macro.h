@@ -14,4 +14,7 @@
 
 enum error { Null, ExceedDate, UnformattedData };
 
+// pass 是一个 Python 关键字，表示“空”，不执行任何功能
+#define pass 0
+
 #endif

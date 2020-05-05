@@ -19,8 +19,8 @@ struct epidemic SentinelNode;
 
 void Main()
 {
-	SetWindowSize(4, 2);
-	SetWindowTitle("一个程序");
+	SetWindowSize(8, 6);
+	SetWindowTitle("COVID-19 统计数据");
 	InitGraphics();
 
 	/*计时器消息注册*/
