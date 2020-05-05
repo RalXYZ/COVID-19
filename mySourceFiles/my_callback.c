@@ -7,25 +7,33 @@
 
 #include <Windows.h>
 #include <ctype.h>
+#include <stdbool.h>
 
 #include "graphics.h"
-#include "extgraph.h"
-#include "strlib.h"
+#include "imgui.h"
 
 #include "my_macro.h"
 #include "my_callback.h"
 #include "my_display.h"
 
+extern bool EraseStatus;
+
 void KeyboardEventProcess(int key, int event)
 {
 	if (event == KEY_DOWN)
-		display();
+		EraseStatus = !EraseStatus;
+
+	uiGetKeyboard(key, event);
+	display();
 }
 
 void MouseEventProcess(int x, int y, int button, int event)
 {
 	if (event == BUTTON_DOWN)
-		display();
+		EraseStatus = !EraseStatus;
+
+	uiGetMouse(x, y, button, event);
+	display();
 }
 
 void CharEventProcess(char key)
@@ -36,5 +44,6 @@ void CharEventProcess(char key)
 void TimerEventProcess(int timerID)
 {
 	if (timerID == TIME_ELAPSE_1)
-		display();
+		EraseStatus = !EraseStatus;
+	display();
 }

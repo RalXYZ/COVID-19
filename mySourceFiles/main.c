@@ -23,9 +23,6 @@ void Main()
 	SetWindowTitle("一个程序");
 	InitGraphics();
 
-	/*GUI初始化*/
-	MovePen(0, GetWindowHeight() / 2);
-
 	/*计时器消息注册*/
 	registerTimerEvent(TimerEventProcess);
 	startTimer(TIME_ELAPSE_1, TIME_ELAPSE_1);
