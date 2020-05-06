@@ -19,7 +19,7 @@ struct epidemic SentinelNode;
 
 void Main()
 {
-	SetWindowSize(8, 6);
+	SetWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 	SetWindowTitle("COVID-19 统计数据");
 	InitGraphics();
 

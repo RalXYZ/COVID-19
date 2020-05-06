@@ -23,6 +23,7 @@ void DisplayClear();  // 定义在 graphics.c
 bool EraseStatus = false;  // 记录文字擦除状态，目前作调试用，检测后来加上的组件是否会对回调函数产生干扰
 
 extern bool PauseAllProcedure;  // 定义在 my_callback.c
+extern bool DisplayLineChart;  // 定义在 draw_chart.c ，测试用，未来将移除
 
 /*
  * 函数名: PauseDisplay
@@ -42,6 +43,38 @@ void PauseDisplay() {
 void ContinueDisplay() {
 	startTimer(TIME_ELAPSE_1, TIME_ELAPSE_1);     // 重置计时器 
 	PauseAllProcedure = false;   // 取消禁止所有GUI行为 
+}
+
+/*
+ * 函数名: StretchDrawLine
+ * 参数1: StartX    有向线段的起始位置的横坐标
+ * 参数2: StartY    有向线段的起始位置的纵坐标
+ * 参数3: StretchX  有向线段的横向份量
+ * 参数4: StretchY  有向线段的纵向份量
+ * -------------------------------------
+ * 按有向线段的逻辑绘制线段，需要给出有向线段的
+ * 起始点坐标和两个方向上的分量
+ */
+void StretchDrawLine(double StartX, double StartY, double StretchX, double StretchY)
+{
+	MovePen(StartX, StartY);
+	DrawLine(StretchX, StretchY);
+}
+
+/*
+ * 函数名: PointDrawLine
+ * 参数1: StartX  线段的起始位置的横坐标
+ * 参数2: StartY  线段的起始位置的纵坐标
+ * 参数3: EndX    线段的终止位置的横坐标
+ * 参数4: EndY    线段的终止位置的纵坐标
+ * -------------------------------------
+ * 按有向线段的逻辑绘制线段，需要给出有向线段的
+ * 起始点坐标和两个方向上的分量
+ */
+void PointDrawLine(double StartX, double StartY, double EndX, double EndY)
+{
+	MovePen(StartX, StartY);
+	DrawLine(EndX - StartX, EndY - StartY);
 }
 
 /*
@@ -125,11 +158,19 @@ void display()
 {
 	DisplayClear();
 
+	/* 目前用于调试，检测后来加上的组件是否会对回调函数产生干扰 */
 	MovePen(0, 0.05);
-
 	SetEraseMode(EraseStatus);
-	DrawTextString("每隔2秒 或 鼠标右击 或 键盘输入时闪烁，用于测试回调函数的行为是否符合预期。目前不要删除这个功能。");  // 目前作调试用，检测后来加上的组件是否会对回调函数产生干扰
+	DrawTextString("每隔2秒 或 鼠标右击 或 键盘输入时闪烁，\
+		用于测试回调函数的行为是否符合预期。目前不要删除这个功能。");
 	SetEraseMode(false);
 
 	DrawMenu();  // 绘制菜单组件
+
+	/* 目前用于调试，后期将会删除 */
+	MovePen(6, WINDOW_HEIGHT - 0.2);
+	DrawTextString("F1键显示折线图");
+
+	if (DisplayLineChart)
+		LineChart();  // 折线图功能测试函数
 }

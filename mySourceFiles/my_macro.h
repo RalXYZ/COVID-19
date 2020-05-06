@@ -6,12 +6,12 @@
  * 这个头文件不应依赖其他文件
  */
 
-#ifndef _MY_MACRO_H_
-#define _MY_MACRO_H_
+#ifndef MY_MACRO_H_
+#define MY_MACRO_H_
 
  /* 窗口宽度和高度 */
-#define WINDOW_WIDTH
-#define WINDOW_HEIGHT
+#define WINDOW_WIDTH 8
+#define WINDOW_HEIGHT 6
 
 /* 时间间隔1 */
 #define TIME_ELAPSE_1 2000

@@ -5,8 +5,8 @@
  *
  */
 
-#ifndef _MY_CALLBACK_H_
-#define _MY_CALLBACK_H_
+#ifndef MY_CALLBACK_H_
+#define MY_CALLBACK_H_
 
 void KeyboardEventProcess(int key, int event);
 
