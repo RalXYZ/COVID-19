@@ -58,7 +58,7 @@ void FreeEpidemicList(struct epidemic* node)
  */
 void SafeFOpen(FILE** fpp, char* FileName, char* mode)
 {
-	if ((*fpp = fopen(FileName, mode)) == NULL)
+	if ((*fpp = fopen(FileName, mode)) == nullptr)
 	{
 		InitConsole();
 		printf("文件打开错误！ 位于 %s ，在\"%s\"模式下\n", FileName, mode);
