@@ -167,10 +167,12 @@ void display()
 
 	DrawMenu();  // 绘制菜单组件
 
-	/* 目前用于调试，后期将会删除 */
+	/* 目前用于测试折线图，后期将会删除 */
 	MovePen(6, WINDOW_HEIGHT - 0.2);
 	DrawTextString("F1键显示折线图");
-
-	if (DisplayLineChart)
-		LineChart();  // 折线图功能测试函数
+	if (DisplayLineChart)  // 折线图功能测试函数
+	{
+		DrawLineChartFrame();
+		DrawBrokenLine();
+	}
 }
