@@ -1,9 +1,18 @@
-/*
- * ÎÄ¼şÃû: DrawChart.c
+ï»¿/*
+ * æ–‡ä»¶å: draw_chart.h
  * -------------------------------------
- * Õâ¸öÎÄ¼şÊµÏÖÕÛÏßÍ¼¡¢±ı×´Í¼¡¢Öù×´Í¼µÄ»æÖÆ
- * ĞèÒª½èÖúÁ´±í£¬´Ë´¦ÓëÁ´±íµÄÁ¬½Ó²¿·ÖÔİÊ±Áô°×
+ *
  */
+
+#ifndef _DRAW_CHART_H_
+#define _DRAW_CHART_H_
+
+
 void LineChart(int x, int y, int day);
+
+
+
 void FanChart(int x, int y, int day);
 void BarChart(int x, int y, int day);
+
+#endif

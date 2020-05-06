@@ -16,6 +16,7 @@
 #include "my_macro.h"
 #include "my_callback.h"
 #include "my_display.h"
+#include "draw_chart.h"
 
 void DisplayClear();  // 定义在 graphics.c
 
@@ -124,10 +125,10 @@ void display()
 {
 	DisplayClear();
 
-	MovePen(0, GetWindowHeight() / 2);
+	MovePen(0, 0.05);
 
 	SetEraseMode(EraseStatus);
-	DrawTextString("Hello world");  // 目前作调试用，检测后来加上的组件是否会对回调函数产生干扰
+	DrawTextString("每隔2秒 或 鼠标右击 或 键盘输入时闪烁，用于测试回调函数的行为是否符合预期。目前不要删除这个功能。");  // 目前作调试用，检测后来加上的组件是否会对回调函数产生干扰
 	SetEraseMode(false);
 
 	DrawMenu();  // 绘制菜单组件

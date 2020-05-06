@@ -60,7 +60,7 @@
     <ClCompile Include="..\mySourceFiles\prediction_model.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="draw_chart.c">
+    <ClCompile Include="..\mySourceFiles\draw_chart.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -102,6 +102,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\mySourceFiles\my_resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mySourceFiles\draw_chart.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
