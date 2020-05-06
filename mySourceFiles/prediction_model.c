@@ -32,7 +32,7 @@ static double mul_1, mul_2;
  * 参数5: r 康复者
  * 参数6: day 疫情发生天数
  * 参数7: i_infection_rate 感染者传染率
- * 参数8: e_infection_rate 潜伏者传染率
+ * 参数8: e_infection_rate 潜伏者传染率                                                                                                                                                          
  * 参数9: e_turnto_i 潜伏者变为感染者的比率
  * 参数10: i_touch 感染者接触人数
  * 参数11: e_touch 潜伏者接触人数
