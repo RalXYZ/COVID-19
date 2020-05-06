@@ -42,10 +42,12 @@ static double mul_1, mul_2;
  * -------------------------------------
  * 本函数录入疫情模型的基本参数
  */
-void SEIR_ENTER_INT(int* variable, int value) {
+void SEIR_ENTER_INT(int* variable, int value) 
+{
 	*variable = value;
 }
-void SEIR_ENTER_DOUBLE(double* variable, double value) {
+void SEIR_ENTER_DOUBLE(double* variable, double value) 
+{
 	*variable = value;
 }
 
@@ -66,7 +68,7 @@ int SEIR(int(*function)(int), int day)
 
 /*
  * 函数名: S
- * 参数：day
+ * 参数: day
  * -------------------------------------
  * 截至今天易感人数 = 截至昨天易感人数 + 被感染者传染的易感者 + 被潜伏者传染的易感者
  */
@@ -77,7 +79,7 @@ int S(int day)
 
 /*
  * 函数名: E
- * 参数：day
+ * 参数: day
  * -------------------------------------
  * 截至今天潜伏人数 = 截至昨天潜伏人数 + 被感染者传染的潜伏者 + 被潜伏者传染的潜伏者
  */
@@ -88,7 +90,7 @@ int E(int day)
 
 /*
  * 函数名: I
- * 参数：day
+ * 参数: day
  * -------------------------------------
  * 截至今天感染人数 = 截至昨天感染人数 + 潜伏者转阳人数 - 昨天新康复人数
  */
@@ -99,7 +101,7 @@ int I(int day)
 
 /*
  * 函数名: R
- * 参数：day
+ * 参数: day
  * -------------------------------------
  * 截至今天康复人数 = 截至昨天康复人数 + 昨天新康复人数
  */

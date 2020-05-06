@@ -31,6 +31,7 @@
     <ClCompile Include="..\mySourceFiles\my_display.c" />
     <ClCompile Include="..\mySourceFiles\my_resource.c" />
     <ClCompile Include="..\mySourceFiles\prediction_model.c" />
+    <ClCompile Include="draw_chart.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\myExternalLibraries\libgraphics\exception.h" />
