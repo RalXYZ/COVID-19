@@ -17,6 +17,7 @@
 #include "my_callback.h"
 #include "my_display.h"
 #include "draw_chart.h"
+#include "my_resource.h"
 
 void DisplayClear();  // 定义在 graphics.c
 
@@ -173,6 +174,9 @@ void display()
 	if (DisplayLineChart)  // 折线图功能测试函数
 	{
 		DrawLineChartFrame();
-		DrawBrokenLine();
+		DrawBrokenLine(Current);
+		DrawBrokenLine(Total);
+		DrawBrokenLine(Cured);
+		DrawBrokenLine(Dead);
 	}
 }

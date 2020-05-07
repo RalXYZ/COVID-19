@@ -14,8 +14,7 @@
 #include "my_callback.h"
 #include "my_display.h"
 
- /*哨兵节点*/
-epidemic SentinelNode;
+extern epidemic SentinelNode;  // 哨兵节点，在 my_resource.c 中声明
 
 void Main()
 {
@@ -35,6 +34,6 @@ void Main()
 	/*链表初始化*/
 	InitEpidemicList(&SentinelNode);
 
-	FileInputList("../myResourceFiles/statistics.txt", 0, 29);  // 测试用，未来将删除
+	FileInputList("../myResourceFiles/statistics.txt", 0, 48);  // 测试用，未来将删除
 
 }

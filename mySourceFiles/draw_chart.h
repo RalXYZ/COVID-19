@@ -23,10 +23,11 @@ void DrawLineChartFrame();
 
 /*
  * 函数名: DrawBrokenLine
+ * 参数1: type  选择想要显示哪一个属性的折线图，建议使用EpidemicProperty枚举量
  * -------------------------------------
  * 绘制折线，目前处于测试状态，并未完全实现
  */
-void DrawBrokenLine();
+void DrawBrokenLine(int type);
 
 
 void FanChart(int x, int y, int day);

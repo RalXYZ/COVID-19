@@ -1,5 +1,5 @@
 ﻿/*
- * 文件名: my_files.c
+ * 文件名: my_resource.c
  * -------------------------------------
  * 这个文件实现了一些文件处理相关的函数
  *
@@ -14,7 +14,9 @@
 #include "my_macro.h"
 #include "my_resource.h"
 
-extern epidemic SentinelNode;
+int EpidemicListLength;  // 疫情链表长度，从1开始
+int EpidemicElementMax;  // 疫情链表属性数据中的最大值，用于决定折线图的缩放
+epidemic SentinelNode;  // 哨兵节点
 
 /*
  * 函数名: InitEpidemicList
@@ -103,10 +105,11 @@ enum error FileInputList(char* FileName, int begin, int end)
 
 	for (int i = 0; ; i++)
 	{
-		const int SuccessInput = fscanf(fp, "%d-%d%d%d%d%d", &CurrentNode->time.mm,
-			&CurrentNode->time.dd, &CurrentNode->confirmed.current,
-			&CurrentNode->confirmed.total, &CurrentNode->cured, &CurrentNode->dead);
-		CurrentNode->next = nullptr;  // 讲当前节点的指向后一个节点的指针默认设为空
+		const int SuccessInput = fscanf(fp, "%d-%d%d%d%d%d",
+			&CurrentNode->properties[Month], &CurrentNode->properties[Date],
+			&CurrentNode->properties[Current], &CurrentNode->properties[Total],
+			&CurrentNode->properties[Cured], &CurrentNode->properties[Dead]);
+		CurrentNode->next = nullptr;  // 将当前节点的指向后一个节点的指针默认设为空
 
 		if (SuccessInput >= 0 && SuccessInput < EPIDEMIC_ELEMENT_NUM)
 		{
@@ -132,6 +135,17 @@ enum error FileInputList(char* FileName, int begin, int end)
 	FreeEpidemicList(SentinelNode.next);  // 释放旧链表
 	SentinelNode.next = TempFirstNode;  // 哨兵节点与新链表连接
 	fclose(fp);
+
+	EpidemicListLength = 0;
+	for (epidemic* i = &SentinelNode; i->next != nullptr; i = i->next, ++EpidemicListLength)
+		pass;
+
+	EpidemicElementMax = -1;  // 由于统计数据一定非负，那么就把最大值初始化为负数
+	for (EpidemicProperty i = EPIDEMIC_PROPERTY_START; i < EPIDEMIC_ELEMENT_NUM; i++)
+	{
+		for (epidemic* j = SentinelNode.next; j != nullptr; j = j->next)
+			EpidemicElementMax < j->properties[i] ? EpidemicElementMax = j->properties[i] : pass;
+	}
 
 	return Null;  // 无异常
 
