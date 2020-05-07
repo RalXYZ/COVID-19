@@ -53,7 +53,7 @@ struct time
  * ------------------------------------
  * 这个结构是存储疫情数据用的双向链表的一个节点。
  */
-struct epidemic
+typedef struct epidemic
 {
 	struct time time;
 	struct confirmed confirmed;
@@ -62,7 +62,7 @@ struct epidemic
 
 	struct epidemic* prev;
 	struct epidemic* next;
-};
+} epidemic;
 
 /*
  * 函数名: InitEpidemicList
@@ -71,7 +71,7 @@ struct epidemic
  * 这个函数初始化了一个哨兵节点，把它的两个指针
  * 都赋成了空值，在功能上类似于构造函数。
  */
-void InitEpidemicList(struct epidemic* node);
+void InitEpidemicList(epidemic* node);
 
 /*
  * 函数名: FileInputList

@@ -17,8 +17,11 @@
 #include "my_callback.h"
 #include "draw_chart.h"
 #include "my_display.h"
+#include "my_resource.h"
 
 bool DisplayLineChart = false;
+
+extern epidemic SentinelNode;
 
 /*
  * 函数名: DrawLineChartFrame
@@ -44,23 +47,33 @@ void DrawLineChartFrame()
  */
 void DrawBrokenLine()
 {
-#define DEBUG_ARRAY_LENGTH 40  // 测试用，未来将删除
-	static int DebugArray[DEBUG_ARRAY_LENGTH] = { 134, 157, 178, 194, 204, 209, 208, 200,
-		187, 169, 148, 124, 99, 74, 52, 34, 20, 12, 10, 14, 24, 39, 59, 82, 106, 131, 155,
-		175, 192, 203, 209, 208, 202, 189, 172, 151, 127, 102, 78, 55, };  // 测试用，最终实现与此不同
-
 	int max = -1;  // 由于统计数据一定非负，那么就把最大值初始化为负数
-	for (int i = 0; i < DEBUG_ARRAY_LENGTH; i++)
-		max < DebugArray[i] ? max = DebugArray[i] : pass;
+	for (epidemic* i = SentinelNode.next; i != nullptr; i = i->next)
+		max < i->confirmed.total ? max = i->confirmed.total : pass;
 
-	int start = 0, end = DEBUG_ARRAY_LENGTH - 1;  //测试用，最终实现与此不同
+	int start = 0, end = 29;  //测试用，最终实现与此不同
 	const double step = (WINDOW_WIDTH - 2 * (SIDE_MARGIN + PADDING)) / (end - start);  // 步长，要求 start 大于 end
 	const double LineChatHeight = BORDER_HEIGHT - 2 * PADDING;  // 折线图高度
-	for (int i = start; i < end; i++)  // 循环画割线
-		PointDrawLine(SIDE_MARGIN + PADDING + step * i,
-			BOTTOM_MARGIN + PADDING + LineChatHeight * (1.0 * DebugArray[i] / max),
-			SIDE_MARGIN + PADDING + step * (i + 1),
-			BOTTOM_MARGIN + PADDING + LineChatHeight * (1.0 * DebugArray[i + 1] / max));
+	int count = 0;
+	for (epidemic* i = SentinelNode.next; i != nullptr && i->next != nullptr; i = i->next)  // 循环画割线
+	{
+		PointDrawLine(SIDE_MARGIN + PADDING + step * (count - start),
+			BOTTOM_MARGIN + PADDING + LineChatHeight * (1.0 * i->confirmed.total / max),
+			SIDE_MARGIN + PADDING + step * (count + 1 - start),
+			BOTTOM_MARGIN + PADDING + LineChatHeight * (1.0 * i->next->confirmed.total / max));
+		++count;
+	}
+
+
+	/*
+	用 Python 快速获得一组符合标准的数据：
+	for i in range(0, 30):
+		print("3-" + str(i + 1), end = ' ')
+		print(int(50 * (math.sin(0.1 * i) + 1)), end = ' ')
+		print(int(50 * (math.cos(0.3 * i) + 1)), end = ' ')
+		print(int(100 * math.log(0.1 * i + 1)), end = ' ' )
+		print(int(20 * math.sqrt(i)), end = '\n' )
+	 */
 }
 
 

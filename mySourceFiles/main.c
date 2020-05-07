@@ -15,7 +15,7 @@
 #include "my_display.h"
 
  /*哨兵节点*/
-struct epidemic SentinelNode;
+epidemic SentinelNode;
 
 void Main()
 {
@@ -34,5 +34,7 @@ void Main()
 
 	/*链表初始化*/
 	InitEpidemicList(&SentinelNode);
+
+	FileInputList("../myResourceFiles/statistics.txt", 0, 29);  // 测试用，未来将删除
 
 }

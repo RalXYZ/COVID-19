@@ -14,7 +14,7 @@
 #include "my_macro.h"
 #include "my_resource.h"
 
-extern struct epidemic SentinelNode;
+extern epidemic SentinelNode;
 
 /*
  * 函数名: InitEpidemicList
@@ -23,7 +23,7 @@ extern struct epidemic SentinelNode;
  * 这个函数初始化了一个哨兵节点，把它的两个指针
  * 都赋成了空值，在功能上类似于构造函数。
  */
-void InitEpidemicList(struct epidemic* node)
+void InitEpidemicList(epidemic* node)
 {
 	node->prev = nullptr;
 	node->next = nullptr;
@@ -36,12 +36,12 @@ void InitEpidemicList(struct epidemic* node)
  * 这个函数循环地释放当前节点到尾节点之间的所有
  * 节点，再功能上类似析构函数。
  */
-void FreeEpidemicList(struct epidemic* node)
+void FreeEpidemicList(epidemic* node)
 {
-	struct epidemic* CurrentNode = node;
+	epidemic* CurrentNode = node;
 	while (CurrentNode != nullptr)
 	{
-		struct epidemic* TempNode = CurrentNode->next;
+		epidemic* TempNode = CurrentNode->next;
 		free(CurrentNode);
 		CurrentNode = TempNode;
 	}
@@ -76,7 +76,7 @@ void SafeFOpen(FILE** fpp, char* FileName, char* mode)
  * 的时候被调用，主要用于做清理未输入完成的链表、
  * 关闭文件 和 用对话框输出错误信息。
  */
-void EndFileInputTask(char* reason, struct epidemic* FirstNode, FILE* fp)
+void EndFileInputTask(char* reason, epidemic* FirstNode, FILE* fp)
 {
 	FreeEpidemicList(FirstNode);
 	fclose(fp);
@@ -86,7 +86,7 @@ void EndFileInputTask(char* reason, struct epidemic* FirstNode, FILE* fp)
 /*
  * 函数名: FileInputList
  * 参数1: FileName  资源文件的文件名
- * 参数2: begin  从哪天开始（目前功能不完备）
+ * 参数2: begin  从哪天开始（目前从0开始）
  * 参数3: end  到哪天结束（目前功能不完备）
  * 返回值: 错误枚举量，定义见my_macro.h
  * ------------------------------------
@@ -98,8 +98,8 @@ enum error FileInputList(char* FileName, int begin, int end)
 	FILE* fp = nullptr;
 	SafeFOpen(&fp, FileName, "r");
 
-	struct epidemic* TempFirstNode = (struct epidemic*)malloc(sizeof(struct epidemic));
-	struct epidemic* CurrentNode = TempFirstNode;
+	epidemic* TempFirstNode = (epidemic*)malloc(sizeof(epidemic));
+	epidemic* CurrentNode = TempFirstNode;
 
 	for (int i = 0; ; i++)
 	{
@@ -122,7 +122,7 @@ enum error FileInputList(char* FileName, int begin, int end)
 			break;
 		if (i >= begin)
 		{
-			struct epidemic* TempNode = (struct epidemic*)malloc(sizeof(struct epidemic));
+			epidemic* TempNode = (epidemic*)malloc(sizeof(epidemic));
 			CurrentNode->next = TempNode;
 			TempNode->prev = CurrentNode;
 			CurrentNode = TempNode;
@@ -137,7 +137,7 @@ enum error FileInputList(char* FileName, int begin, int end)
 
 	/*
 	如果你想对这个函数进行测试，请在主函数中加入如下代码：
-	if (!FileInputList("../myResourceFiles/statistics.bin", 1, 4))
+	if (!FileInputList("../myResourceFiles/statistics.txt", 1, 4))
 	{
 		for (struct epidemic* i = SentinelNode.next; i != nullptr; i = i->next)
 			printf("%d-%d %d ", i->time.mm, i->time.dd, i->cured);
