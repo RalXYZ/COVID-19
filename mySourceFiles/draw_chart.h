@@ -29,8 +29,12 @@ void DrawLineChartFrame();
  */
 void DrawBrokenLine(int type);
 
-
-void FanChart(int x, int y, int day);
+/*
+ * 函数名: FanChart
+ * ------------------------------------
+ * 绘制饼状图，表示当天数据占比分布
+ */
+void FanChart();
 void BarChart(int x, int y, int day);
 
 #endif

@@ -67,10 +67,35 @@ void DrawBrokenLine(int type)
 	 */
 }
 
-
-void FanChart(int x, int y, int day)
+double DataProportion(double x)//计算占比函数，仅饼状图使用
 {
+	double sum = (double)ReadEpidemicList(3, 2, Total) + (double)ReadEpidemicList(3, 2, Cured) + (double)ReadEpidemicList(3, 2, Dead);
+	return x / sum * 360;
+}
 
+void FanChart()
+{
+	int radius = 2;//这个是半径，测试用预设为2
+	double now[3] = { ReadEpidemicList(3, 2, Total), ReadEpidemicList(3, 2, Cured), ReadEpidemicList(3, 2, Dead) };
+	double endX, endY;//这个记录每次画笔末尾坐标
+	double centerX = GetWindowWidth() / 2;//圆心坐标
+	double centerY = GetWindowHeight() / 2;
+	double AngleSum = 0;//记录转过角度
+
+	MovePen(centerX + 2, centerY);//绘图起点
+	endX = centerX + 2;//绘图终点
+	endY = centerY;
+	
+	int i;
+	for (i = 0; i < 3; i++)//循环次数即显示参数数，每次执行一次画弧和一次画线
+	{
+		MovePen(endX, endY);
+		DrawArc(radius, AngleSum, DataProportion(now[i]));
+		AngleSum = AngleSum + DataProportion(now[i]);
+		endX = GetCurrentX();
+		endY = GetCurrentY();
+		DrawLine(centerX - endX, centerY - endY);
+	}
 }
 
 void BarChart(int x, int y, int day)
