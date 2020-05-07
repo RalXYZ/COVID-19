@@ -5,6 +5,7 @@
  *
  */
 
+#include <conio.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <Windows.h>
@@ -18,13 +19,6 @@ int EpidemicListLength;  // 疫情链表长度，从1开始
 int EpidemicElementMax;  // 疫情链表属性数据中的最大值，用于决定折线图的缩放
 epidemic SentinelNode;  // 哨兵节点
 
-/*
- * 函数名: InitEpidemicList
- * 参数: node  一个指向你想初始化的哨兵节点的指针
- * ------------------------------------
- * 这个函数初始化了一个哨兵节点，把它的两个指针
- * 都赋成了空值，在功能上类似于构造函数。
- */
 void InitEpidemicList(epidemic* node)
 {
 	node->prev = nullptr;
@@ -49,11 +43,32 @@ void FreeEpidemicList(epidemic* node)
 	}
 }
 
+int ReadEpidemicList(int month, int date, EpidemicProperty type)
+{
+	if (0 <= type && type < EPIDEMIC_ELEMENT_NUM)
+	{
+		for (epidemic* i = SentinelNode.next; i != nullptr; i = i->next)
+		{
+			if (date == i->properties[Date] && month == i->properties[Month])
+				return i->properties[type];
+		}
+	}
+	else
+	{
+		InitConsole();
+		printf("在 ReadEpidemicList 函数中，错误参数 type: %d\n\
+它应该大于等于0，小于宏 EPIDEMIC_ELEMENT_NUM 。此错误与用户行为无关，只与开发者有关。", type);
+		_getch();  // 阻塞
+		// 这个分支的返回值未定义。如果程序进入了这个分支，一定是开发者的代码出了问题，请立即debug。
+	}
+	return -1;  // 如果找不到日期，则返回-1
+}
+
 /*
  * 函数名: SafeFOpen
- * 参数1: fpp  指向文件指针的指针
+ * 参数1: fpp       指向文件指针的指针
  * 参数2: FileName  文件名
- * 参数3: mode  打开文件的模式
+ * 参数3: mode      打开文件的模式
  * ------------------------------------
  * 这个函数给文件指针正确赋值；如果发生异常，在
  * 终端显示错误信息。
@@ -70,9 +85,9 @@ void SafeFOpen(FILE** fpp, char* FileName, char* mode)
 
 /*
  * 函数名: EndFileInputTask
- * 参数1: reason  错误原因
+ * 参数1: reason     错误原因
  * 参数2: FirstNode  想要释放的链表的首动态节点值
- * 参数3: fp  文件指针
+ * 参数3: fp         文件指针
  * ------------------------------------
  * 这个函数当且仅当FileInputList函数出现异常
  * 的时候被调用，主要用于做清理未输入完成的链表、
@@ -85,16 +100,6 @@ void EndFileInputTask(char* reason, epidemic* FirstNode, FILE* fp)
 	MessageBox(NULL, TEXT(reason), TEXT("错误"), MB_OK | MB_ICONERROR);
 }
 
-/*
- * 函数名: FileInputList
- * 参数1: FileName  资源文件的文件名
- * 参数2: begin  从哪天开始（目前从0开始）
- * 参数3: end  到哪天结束（目前功能不完备）
- * 返回值: 错误枚举量，定义见my_macro.h
- * ------------------------------------
- * 这个函数将资源文件里的数据输入到链表中，并自
- * 动处理输入时的一些常见异常。
- */
 enum error FileInputList(char* FileName, int begin, int end)
 {
 	FILE* fp = nullptr;
@@ -148,13 +153,4 @@ enum error FileInputList(char* FileName, int begin, int end)
 	}
 
 	return Null;  // 无异常
-
-	/*
-	如果你想对这个函数进行测试，请在主函数中加入如下代码：
-	if (!FileInputList("../myResourceFiles/statistics.txt", 1, 4))
-	{
-		for (struct epidemic* i = SentinelNode.next; i != nullptr; i = i->next)
-			printf("%d-%d %d ", i->time.mm, i->time.dd, i->cured);
-	}
-	*/
 }

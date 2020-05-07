@@ -19,17 +19,12 @@
 #include "my_display.h"
 #include "my_resource.h"
 
-bool DisplayLineChart = false;
+bool DisplayLineChart = false;  // 临时用作调试，在未来将会删除
 
 extern int EpidemicListLength;  // 疫情链表长度，从1开始
 extern int EpidemicElementMax;  // 疫情链表属性数据中的最大值，用于决定折线图的缩放
 extern epidemic SentinelNode;  // 哨兵节点，在 my_resource.c 中声明
 
-/*
- * 函数名: DrawLineChartFrame
- * -------------------------------------
- * 折线图绘制函数，绘制包括边框、坐标轴和折线
- */
 void DrawLineChartFrame()
 {
 	/* 画边框 */
@@ -42,16 +37,10 @@ void DrawLineChartFrame()
 		SIDE_MARGIN + PADDING, BOTTOM_MARGIN + BORDER_HEIGHT - PADDING);
 }
 
-/*
- * 函数名: DrawBrokenLine
- * 参数1: type  选择想要显示哪一个属性的折线图，建议使用EpidemicProperty枚举量
- * -------------------------------------
- * 绘制折线，目前处于测试状态，并未完全实现
- */
 void DrawBrokenLine(int type)
 {
-	int start = 0, end = EpidemicListLength - 1;  //测试用，最终实现与此不同
-	if (end - start <= 0)  //TODO 并未完全解决问题，应当妥善使用异常处理，而不是简单地退出函数
+	int start = 0, end = EpidemicListLength - 1;  // 测试用，最终实现与此不同
+	if (end - start <= 0)  // TODO 并未完全解决问题，应当妥善使用异常处理，而不是简单地退出函数
 		return;
 
 	const double step = (WINDOW_WIDTH - 2 * (SIDE_MARGIN + PADDING)) / (end - start);  // 步长，要求 start 大于 end
