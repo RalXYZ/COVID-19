@@ -124,7 +124,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions); _CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../myExternalLibraries/libgraphics; ../myExternalLibraries/simpleGUI</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../myExternalLibraries/libgraphics; ../myExternalLibraries/simpleGUI; ../mySourceFiles</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -139,7 +139,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions); _CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../myExternalLibraries/libgraphics; ../myExternalLibraries/simpleGUI</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../myExternalLibraries/libgraphics; ../myExternalLibraries/simpleGUI; ../mySourceFiles</AdditionalIncludeDirectories>
       <AdditionalOptions>/source-charset:.936 /execution-charset:.936 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -157,7 +157,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions); _CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../myExternalLibraries/libgraphics; ../myExternalLibraries/simpleGUI</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../myExternalLibraries/libgraphics; ../myExternalLibraries/simpleGUI; ../mySourceFiles</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -176,7 +176,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions); _CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../myExternalLibraries/libgraphics; ../myExternalLibraries/simpleGUI</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../myExternalLibraries/libgraphics; ../myExternalLibraries/simpleGUI; ../mySourceFiles</AdditionalIncludeDirectories>
       <AdditionalOptions>/source-charset:.936 /execution-charset:.936 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>

@@ -22,6 +22,12 @@ void Main()
 	SetWindowTitle("COVID-19 统计数据");
 	InitGraphics();
 
+	/*链表初始化*/
+	InitEpidemicList(&SentinelNode);
+
+	/*主题初始化*/
+	InitColor();
+
 	/*计时器消息注册*/
 	registerTimerEvent(TimerEventProcess);
 	startTimer(TIME_ELAPSE_1, TIME_ELAPSE_1);
@@ -30,9 +36,6 @@ void Main()
 	registerKeyboardEvent(KeyboardEventProcess);
 	registerMouseEvent(MouseEventProcess);
 	registerCharEvent(CharEventProcess);
-
-	/*链表初始化*/
-	InitEpidemicList(&SentinelNode);
 
 	FileInputList("../myResourceFiles/statistics.txt", 0, 48);  // 测试用，未来将删除
 

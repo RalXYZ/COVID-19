@@ -23,7 +23,9 @@ bool DisplayLineChart = false;  // 临时用作调试，在未来将会删除
 
 extern int EpidemicListLength;  // 疫情链表长度，从1开始
 extern int EpidemicElementMax;  // 疫情链表属性数据中的最大值，用于决定折线图的缩放
+extern int CurrentTheme;  // 当前主题序号，在 my_display.c 中定义
 extern epidemic SentinelNode;  // 哨兵节点，在 my_resource.c 中声明
+extern theme MyThemes[THEME_NUM];  // 存储主题的数组，在 my_display.c 中声明
 
 void DrawLineChartFrame()
 {
@@ -46,6 +48,8 @@ void DrawBrokenLine(int type)
 	const double step = (WINDOW_WIDTH - 2 * (SIDE_MARGIN + PADDING)) / (end - start);  // 步长，要求 start 大于 end
 	const double LineChatHeight = BORDER_HEIGHT - 2 * PADDING;  // 折线图高度
 	int count = 0;  // 计数器
+
+	SetPenColor(MyThemes[CurrentTheme].accent);  // 暂时设为强调色，以后可能引入更多颜色
 	for (epidemic* i = SentinelNode.next; i != nullptr && i->next != nullptr; i = i->next)  // 循环画割线
 	{
 		PointDrawLine(SIDE_MARGIN + PADDING + step * (count - start),
@@ -85,7 +89,7 @@ void FanChart()
 	MovePen(centerX + 2, centerY);//绘图起点
 	endX = centerX + 2;//绘图终点
 	endY = centerY;
-	
+
 	int i;
 	for (i = 0; i < 3; i++)//循环次数即显示参数数，每次执行一次画弧和一次画线
 	{
