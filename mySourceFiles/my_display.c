@@ -122,9 +122,11 @@ extern int MyMenuList(int id, double x, double y, double w, double wlist, double
  */
 static void DrawMenu()
 {
+	static char ChangeThemeLabel[40] = { 0 };
+
 	static char* MenuListFile[] = { "文件",
 		"新建 无功能 | Ctrl-N",
-		"打开 无功能 | Ctrl-O",
+		"打开 | Ctrl-O",
 		"保存 无功能 | Ctrl-S",
 		"关闭 无功能 | Ctrl-W",
 		"退出 | Ctrl-Q" };
@@ -138,7 +140,7 @@ static void DrawMenu()
 		"绘制图表 无功能" };
 
 	static char* MenuListDisplay[] = { "视图",
-		"切换主题" };
+		ChangeThemeLabel };
 
 	static char* MenuListHelp[] = { "帮助",
 		"使用帮助 无功能",
@@ -148,21 +150,41 @@ static void DrawMenu()
 	const double MenuSelectionWidth = TextStringWidth(MenuListFile[0]) * 2;  // 菜单栏选项都是两个中文字
 	const double MenuButtonHeight = GetFontHeight() * 1.5;  // 菜单栏每一个按钮的高度
 	const double MenuBarVertical = GetWindowHeight() - MenuButtonHeight;  // 菜单栏的竖直位置
-	static char temp[40] = { 0 };
 
+	sprintf(ChangeThemeLabel, "切换主题（当前：%s）", MyThemes[CurrentTheme].name);
 
 	{
 		const int MenuListFileSelection = MyMenuList(GenUIID(0), 0, MenuBarVertical,
 			MenuSelectionWidth, TextStringWidth(MenuListFile[1]) * 1.2,
 			MenuButtonHeight, MenuListFile, sizeof(MenuListFile) / sizeof(MenuListFile[0]));
-		if (MenuListFileSelection == 5)
+		extern HWND graphicsWindow;
+		if (MenuListFileSelection == 2)
 		{
-			PauseDisplay();  // 暂停图形界面所有功能 
-			const int selection = MessageBox(NULL, TEXT("您确定要退出吗？"),
-				TEXT("提示"), MB_OKCANCEL | MB_ICONINFORMATION);
+			/*以下代码的实现部分参考了 StackOverflow 论坛*/
+			OPENFILENAME ofn;
+			TCHAR szFile[260] = { 0 };
+
+			// 初始化 ofn
+			ZeroMemory(&ofn, sizeof(ofn));
+			ofn.lStructSize = sizeof(ofn);
+			ofn.hwndOwner = graphicsWindow;
+			ofn.lpstrFile = szFile;
+			ofn.nMaxFile = sizeof(szFile);
+			ofn.lpstrFilter = "COVID-19 FILES\0*.TXT\0";
+			ofn.nFilterIndex = 1;
+			ofn.lpstrFileTitle = NULL;
+			ofn.nMaxFileTitle = 0;
+			ofn.lpstrInitialDir = "..\\myResourceFiles";
+			ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+
+			if (GetOpenFileName(&ofn) == TRUE)  // ofn.lpstrFile 会被赋予文件的路径
+				FileInputList(ofn.lpstrFile, 0, 48);
+		}
+		else if (MenuListFileSelection == 5) {
+			const int selection = MessageBox(graphicsWindow, TEXT("您确定要退出吗？"),
+				TEXT("提示"), MB_OKCANCEL | MB_ICONINFORMATION | MB_DEFBUTTON2);
 			if (selection == IDOK)
 				exit(0);
-			ContinueDisplay();  // 继续图形界面所有功能 
 		}
 	}
 
@@ -185,8 +207,7 @@ static void DrawMenu()
 		if (MenuListDisplaySelection == 1)
 		{
 			CurrentTheme = (CurrentTheme + 1) % THEME_NUM;
-			sprintf(temp, "切换主题（当前：%s）", MyThemes[CurrentTheme].name);
-			MenuListDisplay[1] = temp;
+			//sprintf(ChangeThemeLabel, "切换主题（当前：%s）", MyThemes[CurrentTheme].name);
 			display();
 		}
 	}

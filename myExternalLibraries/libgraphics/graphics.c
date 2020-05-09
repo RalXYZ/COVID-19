@@ -213,7 +213,9 @@ static int penSize = 1;
 static bool initialized = FALSE;
 static bool pauseOnExit = TRUE;
 
-static HWND consoleWindow, graphicsWindow;
+/*******************************学生将以下句柄改为全局变量*************************/
+HWND consoleWindow, graphicsWindow;
+/********************************学生修改结束************************************/
 static HDC gdc, osdc;
 static HBITMAP osBits;
 static HPEN drawPen, erasePen, nullPen;
