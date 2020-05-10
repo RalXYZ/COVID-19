@@ -30,24 +30,26 @@ extern bool PauseAllProcedure;  // 定义在 my_callback.c
 extern bool DisplayLineChart;  // 定义在 draw_chart.c ，测试用，未来将移除
 
 /*
- * 函数名: PauseDisplay
+ * 函数名: PauseDisplay 目前停用
  * -------------------------------------
  * 封装了停止GUI行为时所需的一些步骤
- */
+
 static void PauseDisplay() {
-	display();                   // GUI刷新一次 
-	PauseAllProcedure = true;    // 停止所有GUI行为 
+	display();                   // GUI刷新一次
+	PauseAllProcedure = true;    // 停止所有GUI行为
 }
+*/
 
 /*
- * 函数名: ContinueDisplay
+ * 函数名: ContinueDisplay 目前停用
  * -------------------------------------
  * 封装了取消停止GUI行为时所需的一些步骤
- */
+ *
 static void ContinueDisplay() {
-	startTimer(TIME_ELAPSE_1, TIME_ELAPSE_1);     // 重置计时器 
-	PauseAllProcedure = false;   // 取消禁止所有GUI行为 
+	startTimer(TIME_ELAPSE_1, TIME_ELAPSE_1);     // 重置计时器
+	PauseAllProcedure = false;   // 取消禁止所有GUI行为
 }
+*/
 
 /*
  * HexDefineColor
@@ -114,7 +116,6 @@ void PointDrawLine(double StartX, double StartY, double EndX, double EndY)
 	DrawLine(EndX - StartX, EndY - StartY);
 }
 
-extern int MyMenuList(int id, double x, double y, double w, double wlist, double h, char* labels[], int n);
 /*
  * 函数名: DrawMenu
  * -------------------------------------
@@ -151,13 +152,17 @@ static void DrawMenu()
 	const double MenuButtonHeight = GetFontHeight() * 1.5;  // 菜单栏每一个按钮的高度
 	const double MenuBarVertical = GetWindowHeight() - MenuButtonHeight;  // 菜单栏的竖直位置
 
+	extern int MyMenuList(int id, double x, double y, double w, double wlist, double h, char* labels[], int n);  // 修改过的菜单绘制函数
+
 	sprintf(ChangeThemeLabel, "切换主题（当前：%s）", MyThemes[CurrentTheme].name);
 
 	{
 		const int MenuListFileSelection = MyMenuList(GenUIID(0), 0, MenuBarVertical,
 			MenuSelectionWidth, TextStringWidth(MenuListFile[1]) * 1.2,
 			MenuButtonHeight, MenuListFile, sizeof(MenuListFile) / sizeof(MenuListFile[0]));
-		extern HWND graphicsWindow;
+
+		extern HWND graphicsWindow;  // GUI窗口句柄，在 libgraphics 里声明
+
 		if (MenuListFileSelection == 2)
 		{
 			/*以下代码的实现部分参考了 StackOverflow 论坛*/
@@ -167,17 +172,19 @@ static void DrawMenu()
 			// 初始化 ofn
 			ZeroMemory(&ofn, sizeof(ofn));
 			ofn.lStructSize = sizeof(ofn);
-			ofn.hwndOwner = graphicsWindow;
+			ofn.hwndOwner = graphicsWindow;  // 传入窗口句柄
 			ofn.lpstrFile = szFile;
 			ofn.nMaxFile = sizeof(szFile);
-			ofn.lpstrFilter = "COVID-19 FILES\0*.TXT\0";
+			ofn.lpstrFilter = "COVID-19 FILES\0*.COVID19\0";  // 支持打开的文件类型
 			ofn.nFilterIndex = 1;
 			ofn.lpstrFileTitle = NULL;
 			ofn.nMaxFileTitle = 0;
-			ofn.lpstrInitialDir = "..\\myResourceFiles";
-			ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+			ofn.lpstrInitialDir = "..\\myResourceFiles";  // 默认目录
+			ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;  // 目录和文件必须存在，否则弹出警告对话框
 
-			if (GetOpenFileName(&ofn) == TRUE)  // ofn.lpstrFile 会被赋予文件的路径
+			display();  // 在弹出文件选择框之前刷新图形界面
+
+			if (GetOpenFileName(&ofn) == TRUE)  // ofn.lpstrFile 会被赋上文件的绝对路径，字符串形式
 				FileInputList(ofn.lpstrFile, 0, 48);
 		}
 		else if (MenuListFileSelection == 5) {

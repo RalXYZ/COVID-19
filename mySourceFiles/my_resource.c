@@ -95,9 +95,10 @@ void SafeFOpen(FILE** fpp, char* FileName, char* mode)
  */
 void EndFileInputTask(char* reason, epidemic* FirstNode, FILE* fp)
 {
+	extern HWND graphicsWindow;  // GUI窗口句柄，在 libgraphics 里声明
 	FreeEpidemicList(FirstNode);
 	fclose(fp);
-	MessageBox(NULL, TEXT(reason), TEXT("错误"), MB_OK | MB_ICONERROR);
+	MessageBox(graphicsWindow, TEXT(reason), TEXT("错误"), MB_OK | MB_ICONERROR);
 }
 
 enum error FileInputList(char* FileName, int begin, int end)

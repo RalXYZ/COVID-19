@@ -58,17 +58,6 @@ void DrawBrokenLine(int type)
 			BOTTOM_MARGIN + PADDING + LineChatHeight * (1.0 * i->next->properties[type] / EpidemicElementMax));
 		++count;
 	}
-
-	/*
-	# 用 Python 快速获得一组符合标准的数据（直接把这段注释复制过去）：
-	import math
-	for i in range(0, 30):
-		print("3-" + str(i + 1), end = ' ')
-		print(int(50 * (math.sin(0.1 * i) + 1)), end = ' ')
-		print(int(50 * (math.cos(0.3 * i) + 1)), end = ' ')
-		print(int(100 * math.log(0.1 * i + 1)), end = ' ' )
-		print(int(20 * math.sqrt(i)), end = '\n' )
-	 */
 }
 
 double DataProportion(double x)//计算占比函数，仅饼状图使用
