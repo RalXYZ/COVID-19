@@ -27,7 +27,8 @@ theme MyThemes[THEME_NUM];  // 建立存储数量为 THEME_NUM 个主题的字�
 bool EraseStatus = false;  // 记录文字擦除状态，目前作调试用，检测后来加上的组件是否会对回调函数产生干扰
 
 extern bool PauseAllProcedure;  // 定义在 my_callback.c
-extern bool DisplayLineChart;  // 定义在 draw_chart.c ，测试用，未来将移除
+extern bool DisplayLineChart;   // 定义在 draw_chart.c ，测试用，未来将移除
+extern HWND graphicsWindow;     // GUI窗口句柄，在 libgraphics 里声明
 
 /*
  * 函数名: PauseDisplay 目前停用
@@ -144,8 +145,8 @@ static void DrawMenu()
 		ChangeThemeLabel };
 
 	static char* MenuListHelp[] = { "帮助",
-		"使用帮助 无功能",
-		"关于本软件 无功能" };
+		"使用帮助",
+		"关于本软件" };
 
 
 	const double MenuSelectionWidth = TextStringWidth(MenuListFile[0]) * 2;  // 菜单栏选项都是两个中文字
@@ -161,9 +162,7 @@ static void DrawMenu()
 			MenuSelectionWidth, TextStringWidth(MenuListFile[1]) * 1.2,
 			MenuButtonHeight, MenuListFile, sizeof(MenuListFile) / sizeof(MenuListFile[0]));
 
-		extern HWND graphicsWindow;  // GUI窗口句柄，在 libgraphics 里声明
-
-		if (MenuListFileSelection == 2)
+		if (MenuListFileSelection == 2)  // 打开
 		{
 			/*以下代码的实现部分参考了 StackOverflow 论坛*/
 			OPENFILENAME ofn;
@@ -187,7 +186,8 @@ static void DrawMenu()
 			if (GetOpenFileName(&ofn) == TRUE)  // ofn.lpstrFile 会被赋上文件的绝对路径，字符串形式
 				FileInputList(ofn.lpstrFile, 0, 48);
 		}
-		else if (MenuListFileSelection == 5) {
+		else if (MenuListFileSelection == 5)  // 退出
+		{
 			const int selection = MessageBox(graphicsWindow, TEXT("您确定要退出吗？"),
 				TEXT("提示"), MB_OKCANCEL | MB_ICONINFORMATION | MB_DEFBUTTON2);
 			if (selection == IDOK)
@@ -214,15 +214,32 @@ static void DrawMenu()
 		if (MenuListDisplaySelection == 1)
 		{
 			CurrentTheme = (CurrentTheme + 1) % THEME_NUM;
-			//sprintf(ChangeThemeLabel, "切换主题（当前：%s）", MyThemes[CurrentTheme].name);
 			display();
 		}
 	}
 
 	{
 		const int MenuListHelpSelection = MyMenuList(GenUIID(0), MenuSelectionWidth * 4, MenuBarVertical,
-			TextStringWidth(MenuListHelp[0]) * 2, TextStringWidth(MenuListHelp[1]) * 1.4,
+			TextStringWidth(MenuListHelp[0]) * 2, TextStringWidth(MenuListHelp[2]) * 1.4,
 			MenuButtonHeight, MenuListHelp, sizeof(MenuListHelp) / sizeof(MenuListHelp[0]));
+		if (MenuListHelpSelection == 1)  // 使用帮助
+		{
+			// system("start ..\\xxx");  // 将指令传给shell；由于目前还没有帮助文档，这行代码被注释掉
+			MessageBox(graphicsWindow, TEXT("目前帮助文档还不存在，但用于打开帮助文档的代码已写好。"),
+				TEXT("提示"), MB_OK | MB_ICONINFORMATION);
+		}
+		if (MenuListHelpSelection == 2)  // 关于本软件
+		{
+			MessageBox(graphicsWindow, TEXT("本软件不是开源软件。\n\
+本软件是2019学年春夏学期“程序设计专题”大作业。\n\
+本软件之权利与使用范畴受到课程规则的约束。\n\
+本软件使用 libgraphics 和 simpleGUI 两个库。\n\
+以上两个库均无开源许可证。\n\
+为了避免法律纠纷，对库进行的修改，已在原处注明。\n\
+本软件的所有开发工作完全由组内成员完成。\n\
+凡借助外部资料完成的工作均已在原处注明资料来源。"),
+TEXT("关于本软件"), MB_OK | MB_ICONINFORMATION);
+		}
 	}
 
 }
