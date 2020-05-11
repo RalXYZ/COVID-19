@@ -17,6 +17,8 @@ static double mul_1, mul_2;
 
 static int InflectionDay;//拐点日期
 static int InflectionNumber;//拐点值
+static int NeedMonth;//需求月份
+static int NeedDay;//需求日期
 
 double S[102] = { 0 };//易感者
 double E[102] = { 0 };//潜伏者
@@ -104,4 +106,32 @@ int EpidemicInflectionPoint()
 		}
 	}
 	C[0] = InflectionNumber;
+}
+/*
+ * 函数名: DateCalculate
+ * -------------------------------------
+ * 本函数计算n天后的日期
+ * NeedMonth:月份 NeedDay:日期
+ */
+void DateCalculate(int month, int day, int n)
+{
+	int mon[12] = { 31,29,31,30,31,30,31,31,30,31,30,31 };//各月天数
+	int sum = 0, sum1 = 0;//计入本月总天数，本月前总天数
+	int k;
+	int t = 0;//记录上一个sum
+	for (k = 0; k < month - 1; k++)
+	{
+		sum1 += mon[k];
+	}
+	for (k = 0; k < 12; k++)
+	{
+		sum += mon[k];
+		if (sum >= day + sum1 + n)
+		{
+			NeedMonth = k + 1;
+			break;
+		}
+		t = sum;
+	}
+	NeedDay = sum1 + day + n - t;
 }
