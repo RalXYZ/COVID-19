@@ -80,16 +80,17 @@ void SEIR()
 }
 /*
  * 函数名: EpidemicInflectionPoint
+ * 参数1: Arr[] 输入数组 I 或 E
  * -------------------------------------
- * 本函数通过分别调用疫情数据，计算感染人数峰值
+ * 本函数通过分别调用疫情数据，计算各项数据人数峰值(仅限感染人数与潜伏人数)
  * 插入排序计算疫情拐点,拐点天数为InflectionDay，值为InflectionNumber
  */
-int EpidemicInflectionPoint()
+int EpidemicInflectionPoint(double Arr[])
 {
 	int t,k;
 	int C[102];
 	for (k = 0; k < 100; k++)
-		C[k] = I[k];
+		C[k] = Arr[k];
 	int i, j;
 	for (i = 1; i < 100; i++)
 	{
@@ -100,7 +101,7 @@ int EpidemicInflectionPoint()
 	}
 	for (k = 0; k < 100; k++)
 	{
-		if (C[0] == I[k])
+		if (C[0] == Arr[k])
 		{
 			InflectionDay = k + 1;
 		}

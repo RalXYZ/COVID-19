@@ -91,7 +91,16 @@ void FanChart()
 	}
 }
 
-void BarChart(int x, int y, int day)
+void BarChart(double x, double y, double w, double h, int month, int day, int n, int type, string color)
 {
+	drawRectangle(x, y, GetWindowWidth() - 1, GetWindowHeight() - 1, 0);//测试用矩形区域
+	SetPenColor(color);
+	int i;
 
+	for (i = 0; i < n; i++)
+	{
+		DateCalculate(month, day, i);
+		drawRectangle(x+ w / (2 * n + 2), y, w / (2 * n + 2), ReadEpidemicList(NeedMonth, NeedDay, type) / 2, 1);.
+		x = x + w / (2 * n + 2);
+	}
 }
