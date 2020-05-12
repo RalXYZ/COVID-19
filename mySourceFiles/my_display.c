@@ -29,6 +29,8 @@ bool EraseStatus = false;  // 记录文字擦除状态，目前作调试用，�
 extern bool PauseAllProcedure;  // 定义在 my_callback.c
 extern bool DisplayLineChart;   // 定义在 draw_chart.c ，测试用，未来将移除
 extern HWND graphicsWindow;     // GUI窗口句柄，在 libgraphics 里声明
+extern DataProperty data;  // 链表相关属性值，在 my_resource.c 中声明
+extern epidemic SentinelNode;  // 哨兵节点，在 my_resource.c 中声明
 
 /*
  * 函数名: PauseDisplay 目前停用
@@ -130,7 +132,7 @@ static void DrawMenu()
 		"新建 无功能 | Ctrl-N",
 		"打开 | Ctrl-O",
 		"保存 无功能 | Ctrl-S",
-		"关闭 无功能 | Ctrl-W",
+		"关闭 | Ctrl-W",
 		"退出 | Ctrl-Q" };
 
 	static char* MenuListTool[] = { "编辑",
@@ -185,6 +187,19 @@ static void DrawMenu()
 
 			if (GetOpenFileName(&ofn) == TRUE)  // ofn.lpstrFile 会被赋上文件的绝对路径，字符串形式
 				FileInputList(ofn.lpstrFile, 0, 48);
+		}
+		else if (MenuListFileSelection == 4)  // 关闭
+		{
+			if (data.HasModified)
+			{
+				//TODO: 这里应该弹出警告，问用户是否要保存
+				// 注意，data.HasModified 的值在这个分支里可能会变化，在未来可能有于其相关的bug
+			}
+			else
+			{
+				FreeEpidemicList(SentinelNode.next);
+				SentinelNode.next = nullptr;
+			}
 		}
 		else if (MenuListFileSelection == 5)  // 退出
 		{

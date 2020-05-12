@@ -12,19 +12,36 @@
 #define nullptr NULL  // nullptr 是一个C++关键字，表示一个特定的空指针
 #endif
 
+ /*
+  * 结构名: DataProperty
+  * 成员1: TotalDays    链表里所存储数据的总天数
+  * 成员2: MaxElement   链表里初日期外的最大数据，用于缩放统计图
+  * 成员3: BaseDir      原使文件的目录，用于保存
+  * 成员4: HasModified  相比于输入的文件，链表是否被修改过
+  * ------------------------------------
+  * 这个结构体里的变量是链表中数据的一些属性
+  */
+typedef struct DataProperty
+{
+	int TotalDays;
+	int MaxElement;
+	char* BaseDir;
+	_Bool HasModified;
+} DataProperty;
+
 #define EPIDEMIC_ELEMENT_NUM 6
 #define EPIDEMIC_PROPERTY_START 2
- /*
-  * 枚举名: EpidemicProperty
-  * 常量1: Month    月份
-  * 常量2: Date     日期
-  * 常量3: Current  当前感染人数
-  * 常量4: Total    总感染人数
-  * 常量5: Cured    治愈人数
-  * 常量6: Dead     死亡人数
-  * ------------------------------------
-  * 这个结构是存储疫情数据用的双向链表的一个节点。
-  */
+/*
+ * 枚举名: EpidemicProperty
+ * 常量1: Month    月份
+ * 常量2: Date     日期
+ * 常量3: Current  当前感染人数
+ * 常量4: Total    总感染人数
+ * 常量5: Cured    治愈人数
+ * 常量6: Dead     死亡人数
+ * ------------------------------------
+ * 这个结构是存储疫情数据用的双向链表的一个节点。
+ */
 typedef enum EpidemicProperty
 {
 	Month, Date,
@@ -56,6 +73,15 @@ typedef struct epidemic
  * 都赋成了空值，在功能上类似于构造函数。
  */
 void InitEpidemicList(epidemic* node);
+
+/*
+ * 函数名: FreeEpidemicList
+ * 参数: node  一个指向你想释放的链表的首节点的指针
+ * ------------------------------------
+ * 这个函数循环地释放当前节点到尾节点之间的所有
+ * 节点，在功能上类似析构函数。
+ */
+void FreeEpidemicList(epidemic* node);
 
 /*
  * 函数名: ReadEpidemicList
