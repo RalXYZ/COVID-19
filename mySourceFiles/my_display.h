@@ -56,6 +56,14 @@ void StretchDrawLine(double StartX, double StartY, double StretchX, double Stret
 void PointDrawLine(double StartX, double StartY, double EndX, double EndY);
 
 /*
+ * 函数名: GUIOutputMsg
+ * 参数: msg  想要显示的信息
+ * -------------------------------------
+ * 这个函数可在屏幕左下角显示状态信息
+ */
+void GUIOutputMsg(char* msg);
+
+/*
  * 函数名: display
  * -------------------------------------
  * 这个函数是可视化显示最核心的函数。

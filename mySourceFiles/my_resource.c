@@ -67,14 +67,16 @@ int ReadEpidemicList(int month, int date, EpidemicProperty type)
  * 这个函数给文件指针正确赋值；如果发生异常，在
  * 终端显示错误信息。
  */
-static void SafeFOpen(FILE** fpp, char* FileName, char* mode)
+static FILE* SafeFOpen(char* FileName, char* mode)
 {
-	if ((*fpp = fopen(FileName, mode)) == nullptr)
+	FILE* fp = nullptr;
+	if ((fp = fopen(FileName, mode)) == nullptr)
 	{
 		InitConsole();
 		printf("文件打开错误！ 位于 %s ，在\"%s\"模式下\n", FileName, mode);
-		//exit(0);
+		return nullptr;
 	}
+	return fp;
 }
 
 /*
@@ -122,10 +124,9 @@ static void GetMaxElement()
 	}
 }
 
-enum error FileInputList(char* FileName, int begin, int end)
+int FileInputList(char* FileName)
 {
-	FILE* fp = nullptr;
-	SafeFOpen(&fp, FileName, "r");
+	FILE* fp = SafeFOpen(FileName, "r");
 
 	epidemic* TempFirstNode = (epidemic*)malloc(sizeof(epidemic));
 	epidemic* CurrentNode = TempFirstNode;
@@ -141,22 +142,14 @@ enum error FileInputList(char* FileName, int begin, int end)
 		if (SuccessInput >= 0 && SuccessInput < EPIDEMIC_ELEMENT_NUM)
 		{
 			EndFileInputTask("资源文件格式可能有误，请校对格式。", TempFirstNode, fp);
-			return UnformattedData;
+			return 1;
 		}
-		if (i != end && feof(fp))
-		{
-			EndFileInputTask("请求的日期超出了资源文件的存储范围。", TempFirstNode, fp);
-			return ExceedDate;
-		}
-		if (i == end || feof(fp))  // 到了结束日期，或资源文件已经到达了末尾
+		if (feof(fp))  // 资源文件已经到达了末尾
 			break;
-		if (i >= begin)
-		{
-			epidemic* TempNode = (epidemic*)malloc(sizeof(epidemic));
-			CurrentNode->next = TempNode;
-			TempNode->prev = CurrentNode;
-			CurrentNode = TempNode;
-		}
+		epidemic* TempNode = (epidemic*)malloc(sizeof(epidemic));
+		CurrentNode->next = TempNode;
+		TempNode->prev = CurrentNode;
+		CurrentNode = TempNode;
 	}
 
 	FreeEpidemicList(SentinelNode.next);  // 释放旧链表
@@ -168,5 +161,19 @@ enum error FileInputList(char* FileName, int begin, int end)
 	GetDayNum();
 	GetMaxElement();
 
-	return Null;  // 无异常
+	return 0;  // 无异常
+}
+
+int FileSave(char* FileName)
+{
+	FILE* fp = SafeFOpen(FileName, "w");
+	for (epidemic* i = SentinelNode.next; i != nullptr; i = i->next)
+	{
+		fprintf(fp, "%d-%d %d %d %d %d\n",
+			i->properties[Month], i->properties[Date],
+			i->properties[Current], i->properties[Total],
+			i->properties[Cured], i->properties[Dead]);
+	}
+	fclose(fp);
+	return 0;
 }

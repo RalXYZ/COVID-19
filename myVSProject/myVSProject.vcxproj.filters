@@ -109,8 +109,15 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\myResourceFiles\statistics.txt">
+    <None Include="..\README.md" />
+    <None Include="..\myResourceFiles\statistic_error.covid19">
       <Filter>Resource Files</Filter>
-    </Text>
+    </None>
+    <None Include="..\myResourceFiles\statistic1.covid19">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\myResourceFiles\statistic2.covid19">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

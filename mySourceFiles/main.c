@@ -37,6 +37,5 @@ void Main()
 	registerMouseEvent(MouseEventProcess);
 	registerCharEvent(CharEventProcess);
 
-	//FileInputList("../myResourceFiles/statistics.txt", 0, 48);  // 测试用，未来将删除
-
+	GUIOutputMsg("准备就绪");
 }
