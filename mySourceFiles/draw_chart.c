@@ -19,6 +19,8 @@
 #include "my_display.h"
 #include "my_resource.h"
 
+extern int NeedMonth;//需求月份
+extern int NeedDay;//需求日期
 bool DisplayLineChart = false;  // 临时用作调试，在未来将会删除
 
 extern int EpidemicListLength;  // 疫情链表长度，从1开始
@@ -91,7 +93,7 @@ void FanChart()
 	}
 }
 
-void BarChart(double x, double y, double w, double h, int month, int day, int n, int type, string color)
+void BarChart(double x, double y, double w, double h, int month, int day, int n, int type, char* color)
 {
 	drawRectangle(x, y, GetWindowWidth() - 1, GetWindowHeight() - 1, 0);//测试用矩形区域
 	SetPenColor(color);
@@ -100,7 +102,7 @@ void BarChart(double x, double y, double w, double h, int month, int day, int n,
 	for (i = 0; i < n; i++)
 	{
 		DateCalculate(month, day, i);
-		drawRectangle(x+ w / (2 * n + 2), y, w / (2 * n + 2), ReadEpidemicList(NeedMonth, NeedDay, type) / 2, 1);.
+		drawRectangle(x+ w / (2 * n + 2), y, w / (2 * n + 2), ReadEpidemicList(NeedMonth, NeedDay, type) / 2, 1);
 		x = x + w / (2 * n + 2);
 	}
 }

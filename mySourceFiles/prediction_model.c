@@ -17,8 +17,8 @@ static double mul_1, mul_2;
 
 static int InflectionDay;//拐点日期
 static int InflectionNumber;//拐点值
-static int NeedMonth;//需求月份
-static int NeedDay;//需求日期
+int NeedMonth;//需求月份
+int NeedDay;//需求日期
 
 double S[102] = { 0 };//易感者
 double E[102] = { 0 };//潜伏者
