@@ -211,7 +211,7 @@ static void DrawMenu()
 				else
 				{
 					display();
-					MessageBox(graphicsWindow, TEXT("您目前没有新建或打开任何文件"),
+					MessageBox(graphicsWindow, TEXT("您目前没有新建或打开任何文件，无需保存"),
 						TEXT("提示"), MB_OK | MB_ICONINFORMATION);
 					GUIOutputMsg("目前未打开文件");
 				}
@@ -346,7 +346,7 @@ void display()
 
 	/* 目前用于测试折线图，后期将会删除 */
 	MovePen(6, WINDOW_HEIGHT - 0.2);
-	DrawTextString("F1键显示折线图");
+	DrawTextString("F1显示折线图");
 	if (DisplayLineChart)  // 折线图功能测试函数
 	{
 		DrawLineChartFrame();
@@ -355,4 +355,6 @@ void display()
 		DrawBrokenLine(Cured);
 		DrawBrokenLine(Dead);
 	}
+
+	drawRectangle(GZ_X, GZ_Y, GZ_W, GZ_H, 0); // 测试用，未来将删除
 }
