@@ -8,6 +8,7 @@
 #include <conio.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <Windows.h>
 
 #include "graphics.h"
@@ -15,8 +16,7 @@
 #include "my_macro.h"
 #include "my_resource.h"
 
-int EpidemicListLength;  // 疫情链表长度，从1开始
-int EpidemicElementMax;  // 疫情链表属性数据中的最大值，用于决定折线图的缩放
+DataProperty data;  // 链表相关属性值
 epidemic SentinelNode;  // 哨兵节点
 
 void InitEpidemicList(epidemic* node)
@@ -25,13 +25,6 @@ void InitEpidemicList(epidemic* node)
 	node->next = nullptr;
 }
 
-/*
- * 函数名: FreeEpidemicList
- * 参数: node  一个指向你想释放的链表的首节点的指针
- * ------------------------------------
- * 这个函数循环地释放当前节点到尾节点之间的所有
- * 节点，再功能上类似析构函数。
- */
 void FreeEpidemicList(epidemic* node)
 {
 	epidemic* CurrentNode = node;
@@ -41,6 +34,7 @@ void FreeEpidemicList(epidemic* node)
 		free(CurrentNode);
 		CurrentNode = TempNode;
 	}
+	SentinelNode.next = nullptr;  // 恢复为默认值
 }
 
 int ReadEpidemicList(int month, int date, EpidemicProperty type)
@@ -73,14 +67,16 @@ int ReadEpidemicList(int month, int date, EpidemicProperty type)
  * 这个函数给文件指针正确赋值；如果发生异常，在
  * 终端显示错误信息。
  */
-void SafeFOpen(FILE** fpp, char* FileName, char* mode)
+static FILE* SafeFOpen(char* FileName, char* mode)
 {
-	if ((*fpp = fopen(FileName, mode)) == nullptr)
+	FILE* fp = nullptr;
+	if ((fp = fopen(FileName, mode)) == nullptr)
 	{
 		InitConsole();
 		printf("文件打开错误！ 位于 %s ，在\"%s\"模式下\n", FileName, mode);
-		//exit(0);
+		return nullptr;
 	}
+	return fp;
 }
 
 /*
@@ -93,7 +89,7 @@ void SafeFOpen(FILE** fpp, char* FileName, char* mode)
  * 的时候被调用，主要用于做清理未输入完成的链表、
  * 关闭文件 和 用对话框输出错误信息。
  */
-void EndFileInputTask(char* reason, epidemic* FirstNode, FILE* fp)
+static void EndFileInputTask(char* reason, epidemic* FirstNode, FILE* fp)
 {
 	extern HWND graphicsWindow;  // GUI窗口句柄，在 libgraphics 里声明
 	FreeEpidemicList(FirstNode);
@@ -101,10 +97,36 @@ void EndFileInputTask(char* reason, epidemic* FirstNode, FILE* fp)
 	MessageBox(graphicsWindow, TEXT(reason), TEXT("错误"), MB_OK | MB_ICONERROR);
 }
 
-enum error FileInputList(char* FileName, int begin, int end)
+/*
+ * 函数名: GetDayNum
+ * ------------------------------------
+ * 取得疫情链表中的总天数
+ */
+static void GetDayNum()
 {
-	FILE* fp = nullptr;
-	SafeFOpen(&fp, FileName, "r");
+	data.TotalDays = 0;
+	for (epidemic* i = &SentinelNode; i->next != nullptr; i = i->next, ++data.TotalDays)
+		pass;
+}
+
+/*
+ * 函数名: GetMaxElement
+ * ------------------------------------
+ * 取得疫情链表中 除日期外的最大元素
+ */
+static void GetMaxElement()
+{
+	data.MaxElement = -1;  // 由于统计数据一定非负，那么就把最大值初始化为负数
+	for (EpidemicProperty i = EPIDEMIC_PROPERTY_START; i < EPIDEMIC_ELEMENT_NUM; i++)
+	{
+		for (epidemic* j = SentinelNode.next; j != nullptr; j = j->next)
+			data.MaxElement < j->properties[i] ? data.MaxElement = j->properties[i] : pass;
+	}
+}
+
+int FileInputList(char* FileName)
+{
+	FILE* fp = SafeFOpen(FileName, "r");
 
 	epidemic* TempFirstNode = (epidemic*)malloc(sizeof(epidemic));
 	epidemic* CurrentNode = TempFirstNode;
@@ -120,38 +142,38 @@ enum error FileInputList(char* FileName, int begin, int end)
 		if (SuccessInput >= 0 && SuccessInput < EPIDEMIC_ELEMENT_NUM)
 		{
 			EndFileInputTask("资源文件格式可能有误，请校对格式。", TempFirstNode, fp);
-			return UnformattedData;
+			return 1;
 		}
-		if (i != end && feof(fp))
-		{
-			EndFileInputTask("请求的日期超出了资源文件的存储范围。", TempFirstNode, fp);
-			return ExceedDate;
-		}
-		if (i == end || feof(fp))  // 到了结束日期，或资源文件已经到达了末尾
+		if (feof(fp))  // 资源文件已经到达了末尾
 			break;
-		if (i >= begin)
-		{
-			epidemic* TempNode = (epidemic*)malloc(sizeof(epidemic));
-			CurrentNode->next = TempNode;
-			TempNode->prev = CurrentNode;
-			CurrentNode = TempNode;
-		}
+		epidemic* TempNode = (epidemic*)malloc(sizeof(epidemic));
+		CurrentNode->next = TempNode;
+		TempNode->prev = CurrentNode;
+		CurrentNode = TempNode;
 	}
 
 	FreeEpidemicList(SentinelNode.next);  // 释放旧链表
 	SentinelNode.next = TempFirstNode;  // 哨兵节点与新链表连接
 	fclose(fp);
 
-	EpidemicListLength = 0;
-	for (epidemic* i = &SentinelNode; i->next != nullptr; i = i->next, ++EpidemicListLength)
-		pass;
+	data.BaseDir = FileName;
+	data.HasModified = false;
+	GetDayNum();
+	GetMaxElement();
 
-	EpidemicElementMax = -1;  // 由于统计数据一定非负，那么就把最大值初始化为负数
-	for (EpidemicProperty i = EPIDEMIC_PROPERTY_START; i < EPIDEMIC_ELEMENT_NUM; i++)
+	return 0;  // 无异常
+}
+
+int FileSave(char* FileName)
+{
+	FILE* fp = SafeFOpen(FileName, "w");
+	for (epidemic* i = SentinelNode.next; i != nullptr; i = i->next)
 	{
-		for (epidemic* j = SentinelNode.next; j != nullptr; j = j->next)
-			EpidemicElementMax < j->properties[i] ? EpidemicElementMax = j->properties[i] : pass;
+		fprintf(fp, "%d-%d %d %d %d %d\n",
+			i->properties[Month], i->properties[Date],
+			i->properties[Current], i->properties[Total],
+			i->properties[Cured], i->properties[Dead]);
 	}
-
-	return Null;  // 无异常
+	fclose(fp);
+	return 0;
 }

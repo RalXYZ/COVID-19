@@ -16,9 +16,6 @@
 /* 时间间隔1 */
 #define TIME_ELAPSE_1 2000
 
-/* 异常枚举 */
-enum error { Null, ExceedDate, UnformattedData };
-
 /* pass 是一个 Python 关键字，表示“空”，不执行任何功能 */
 #define pass 0
 

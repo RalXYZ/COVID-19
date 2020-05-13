@@ -12,19 +12,36 @@
 #define nullptr NULL  // nullptr 是一个C++关键字，表示一个特定的空指针
 #endif
 
+ /*
+  * 结构名: DataProperty
+  * 成员1: TotalDays    链表里所存储数据的总天数
+  * 成员2: MaxElement   链表里初日期外的最大数据，用于缩放统计图
+  * 成员3: BaseDir      当前文件的绝对路径
+  * 成员4: HasModified  相比于输入的文件，链表是否被修改过
+  * ------------------------------------
+  * 这个结构体里的变量是链表中数据的一些属性
+  */
+typedef struct DataProperty
+{
+	int TotalDays;
+	int MaxElement;
+	char* BaseDir;
+	_Bool HasModified;
+} DataProperty;
+
 #define EPIDEMIC_ELEMENT_NUM 6
 #define EPIDEMIC_PROPERTY_START 2
- /*
-  * 枚举名: EpidemicProperty
-  * 常量1: Month    月份
-  * 常量2: Date     日期
-  * 常量3: Current  当前感染人数
-  * 常量4: Total    总感染人数
-  * 常量5: Cured    治愈人数
-  * 常量6: Dead     死亡人数
-  * ------------------------------------
-  * 这个结构是存储疫情数据用的双向链表的一个节点。
-  */
+/*
+ * 枚举名: EpidemicProperty
+ * 常量1: Month    月份
+ * 常量2: Date     日期
+ * 常量3: Current  当前感染人数
+ * 常量4: Total    总感染人数
+ * 常量5: Cured    治愈人数
+ * 常量6: Dead     死亡人数
+ * ------------------------------------
+ * 这个结构是存储疫情数据用的双向链表的一个节点。
+ */
 typedef enum EpidemicProperty
 {
 	Month, Date,
@@ -58,6 +75,15 @@ typedef struct epidemic
 void InitEpidemicList(epidemic* node);
 
 /*
+ * 函数名: FreeEpidemicList
+ * 参数: node  一个指向你想释放的链表的首节点的指针
+ * ------------------------------------
+ * 这个函数循环地释放当前节点到尾节点之间的所有
+ * 节点，在功能上类似析构函数。
+ */
+void FreeEpidemicList(epidemic* node);
+
+/*
  * 函数名: ReadEpidemicList
  * 参数1: month  想获取的数据的月份
  * 参数2: date   想获得的数据的日期
@@ -70,14 +96,20 @@ int ReadEpidemicList(int month, int date, EpidemicProperty type);
 
 /*
  * 函数名: FileInputList
- * 参数1: FileName  资源文件的文件名
- * 参数2: begin  从哪天开始（目前功能不完备）
- * 参数3: end  到哪天结束（目前功能不完备）
- * 返回值: 错误枚举量，定义见my_macro.h
+ * 参数: FileName  资源文件的文件名
+ * 返回值: 0代表无异常，1代表有异常
  * ------------------------------------
- * 这个函数将资源文件里的数据输入到链表中，并自
- * 动处理输入时的一些常见异常。
+ * 这个函数将资源文件里的数据输入到链表中。
  */
-enum error FileInputList(char* FileName, int begin, int end);
+int FileInputList(char* FileName);
+
+/*
+ * 函数名: FileSave
+ * 参数: FileName  资源文件的文件名
+ * 返回值: 0代表无异常，1代表有异常
+ * ------------------------------------
+ * 这个函数将链表中的数据保存到硬盘中。
+ */
+int FileSave(char* FileName);
 
 #endif

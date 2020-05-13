@@ -7,12 +7,21 @@
 #ifndef DRAW_CHART_H_
 #define DRAW_CHART_H_
 
- /* 名命逻辑参考HTML，实现绘图区域大小可调 */
-
+ /* 折线图绘图区域的宏定义，将在未来删除 */
 #define SIDE_MARGIN 0.5
 #define BOTTOM_MARGIN 2.0
 #define PADDING 0.25
 #define BORDER_HEIGHT 3.0
+
+/* 统一图表区域的宏定义 */
+#include "my_macro.h"
+#define GZ_SIDE_MARGIN 0.5
+#define GZ_BOTTOM_MARGIN 2.0
+#define GZ_TOP_MARGIN 1.0
+#define GZ_X GZ_SIDE_MARGIN                                      // 起始的x坐标
+#define GZ_Y GZ_BOTTOM_MARGIN                                    // 起始的y坐标
+#define GZ_W (WINDOW_WIDTH - 2 * GZ_SIDE_MARGIN)                 // 宽度
+#define GZ_H (WINDOW_HEIGHT - GZ_BOTTOM_MARGIN - GZ_TOP_MARGIN)  // 高度
 
 /*
  * 函数名: DrawLineChartFrame

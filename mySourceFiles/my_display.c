@@ -23,12 +23,15 @@
 void DisplayClear();  // 定义在 graphics.c
 int CurrentTheme = 3;  // 当前主题序号
 theme MyThemes[THEME_NUM];  // 建立存储数量为 THEME_NUM 个主题的字符数组
+char* DisplayMessage = "";
 
 bool EraseStatus = false;  // 记录文字擦除状态，目前作调试用，检测后来加上的组件是否会对回调函数产生干扰
 
 extern bool PauseAllProcedure;  // 定义在 my_callback.c
 extern bool DisplayLineChart;   // 定义在 draw_chart.c ，测试用，未来将移除
 extern HWND graphicsWindow;     // GUI窗口句柄，在 libgraphics 里声明
+extern DataProperty data;  // 链表相关属性值，在 my_resource.c 中声明
+extern epidemic SentinelNode;  // 哨兵节点，在 my_resource.c 中声明
 
 /*
  * 函数名: PauseDisplay 目前停用
@@ -117,6 +120,12 @@ void PointDrawLine(double StartX, double StartY, double EndX, double EndY)
 	DrawLine(EndX - StartX, EndY - StartY);
 }
 
+void GUIOutputMsg(char* msg)
+{
+	DisplayMessage = msg;
+	display();
+}
+
 /*
  * 函数名: DrawMenu
  * -------------------------------------
@@ -129,8 +138,9 @@ static void DrawMenu()
 	static char* MenuListFile[] = { "文件",
 		"新建 无功能 | Ctrl-N",
 		"打开 | Ctrl-O",
-		"保存 无功能 | Ctrl-S",
-		"关闭 无功能 | Ctrl-W",
+		"保存 | Ctrl-S",
+		"另存为",
+		"关闭 | Ctrl-W",
 		"退出 | Ctrl-Q" };
 
 	static char* MenuListTool[] = { "编辑",
@@ -166,27 +176,100 @@ static void DrawMenu()
 		{
 			/*以下代码的实现部分参考了 StackOverflow 论坛*/
 			OPENFILENAME ofn;
-			TCHAR szFile[260] = { 0 };
+			TCHAR szFile[MAX_PATH] = { 0 };
 
-			// 初始化 ofn
-			ZeroMemory(&ofn, sizeof(ofn));
+			SecureZeroMemory(&ofn, sizeof(ofn));  // 将ofn所在内存区域清零
+
+			/*为 ofn 赋初始值*/
 			ofn.lStructSize = sizeof(ofn);
 			ofn.hwndOwner = graphicsWindow;  // 传入窗口句柄
 			ofn.lpstrFile = szFile;
 			ofn.nMaxFile = sizeof(szFile);
-			ofn.lpstrFilter = "COVID-19 FILES\0*.COVID19\0";  // 支持打开的文件类型
+			ofn.lpstrFilter = "COVID19 FILES\0*.COVID19\0";  // 支持打开的文件类型
 			ofn.nFilterIndex = 1;
 			ofn.lpstrFileTitle = NULL;
 			ofn.nMaxFileTitle = 0;
 			ofn.lpstrInitialDir = "..\\myResourceFiles";  // 默认目录
 			ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;  // 目录和文件必须存在，否则弹出警告对话框
 
-			display();  // 在弹出文件选择框之前刷新图形界面
+			GUIOutputMsg("正在打开");
 
 			if (GetOpenFileName(&ofn) == TRUE)  // ofn.lpstrFile 会被赋上文件的绝对路径，字符串形式
-				FileInputList(ofn.lpstrFile, 0, 48);
+				FileInputList(ofn.lpstrFile);
+
+			GUIOutputMsg("打开成功");
+
 		}
-		else if (MenuListFileSelection == 5)  // 退出
+		else if (MenuListFileSelection == 3)  // 保存
+		{
+			if (data.BaseDir == nullptr)
+			{
+				if (data.HasModified)
+				{
+					//TODO: goto(SaveAs)
+				}
+				else
+				{
+					display();
+					MessageBox(graphicsWindow, TEXT("您目前没有新建或打开任何文件，无需保存"),
+						TEXT("提示"), MB_OK | MB_ICONINFORMATION);
+					GUIOutputMsg("目前未打开文件");
+				}
+			}
+			else if (data.HasModified)  // 如果链表里的数据被修改过
+			{
+				FileSave(data.BaseDir);
+				GUIOutputMsg("保存成功");
+			}
+			else
+			{
+				display();
+				MessageBox(graphicsWindow, TEXT("您的文件已与GUI同步，无需保存"),
+					TEXT("提示"), MB_OK | MB_ICONINFORMATION);
+				GUIOutputMsg("无需保存");
+			}
+		}
+		else if (MenuListFileSelection == 4)  // 另存为
+		{
+
+			OPENFILENAME ofn;
+			char szFileName[MAX_PATH] = "";
+
+			SecureZeroMemory(&ofn, sizeof(ofn));  // 将ofn所在内存区域清零
+
+			/*为 ofn 赋初始值*/
+			ofn.lStructSize = sizeof(ofn);
+			ofn.hwndOwner = graphicsWindow;
+			ofn.lpstrFilter = "COVID19 FILES\0*.covid19\0";
+			ofn.lpstrFile = szFileName;
+			ofn.nMaxFile = MAX_PATH;
+			ofn.lpstrInitialDir = "%UserProfile%\\Documents";  // 默认目录
+			ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+			ofn.lpstrDefExt = "covid19";
+
+			if (GetSaveFileName(&ofn))
+			{
+				FileSave(ofn.lpstrFile);
+				data.BaseDir = ofn.lpstrFile;
+				GUIOutputMsg("另存成功");
+			}
+		}
+		else if (MenuListFileSelection == 5)  // 关闭
+		{
+			if (data.HasModified)
+			{
+				//TODO: 这里应该弹出警告，问用户是否要保存
+				// 注意，data.HasModified 的值在这个分支里可能会变化，在未来可能有于其相关的bug
+			}
+			else
+			{
+				FreeEpidemicList(SentinelNode.next);
+				SentinelNode.next = nullptr;
+				data.BaseDir = nullptr;  // 清空存储当前文件绝对路径的变量
+			}
+			GUIOutputMsg("关闭成功");
+		}
+		else if (MenuListFileSelection == 6)  // 退出
 		{
 			const int selection = MessageBox(graphicsWindow, TEXT("您确定要退出吗？"),
 				TEXT("提示"), MB_OKCANCEL | MB_ICONINFORMATION | MB_DEFBUTTON2);
@@ -256,15 +339,14 @@ void display()
 	MovePen(0, 0.05);
 	if (EraseStatus)
 		SetPenColor(MyThemes[CurrentTheme].accent);
-	DrawTextString("每隔2秒 或 鼠标右击 或 键盘输入时闪烁，\
-		用于测试回调函数的行为是否符合预期。目前不要删除这个功能。");
+	DrawTextString(DisplayMessage);
 	SetEraseMode(false);
 
 	DrawMenu();  // 绘制菜单组件
 
 	/* 目前用于测试折线图，后期将会删除 */
 	MovePen(6, WINDOW_HEIGHT - 0.2);
-	DrawTextString("F1键显示折线图");
+	DrawTextString("F1显示折线图");
 	if (DisplayLineChart)  // 折线图功能测试函数
 	{
 		DrawLineChartFrame();
@@ -273,4 +355,6 @@ void display()
 		DrawBrokenLine(Cured);
 		DrawBrokenLine(Dead);
 	}
+
+	drawRectangle(GZ_X, GZ_Y, GZ_W, GZ_H, 0); // 测试用，未来将删除
 }
