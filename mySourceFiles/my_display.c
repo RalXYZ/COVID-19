@@ -348,13 +348,5 @@ void display()
 	MovePen(6, WINDOW_HEIGHT - 0.2);
 	DrawTextString("F1显示折线图");
 	if (DisplayLineChart)  // 折线图功能测试函数
-	{
-		DrawLineChartFrame();
-		DrawBrokenLine(Current);
-		DrawBrokenLine(Total);
-		DrawBrokenLine(Cured);
-		DrawBrokenLine(Dead);
-	}
-
-	drawRectangle(GZ_X, GZ_Y, GZ_W, GZ_H, 0); // 测试用，未来将删除
+		LineChart(GZ_X, GZ_Y, GZ_W, GZ_H);
 }

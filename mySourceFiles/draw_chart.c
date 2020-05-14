@@ -28,37 +28,59 @@ extern epidemic SentinelNode;  // 哨兵节点，在 my_resource.c 中声明
 extern theme MyThemes[THEME_NUM];  // 存储主题的数组，在 my_display.c 中声明
 extern DataProperty data;  // 链表相关属性值，在 my_resource.c 中声明
 
-void DrawLineChartFrame()
+/*
+ * 函数名: DrawLineChartFrame
+ * -------------------------------------
+ * 折线图绘制函数，绘制包括边框、坐标轴和折线
+ */
+static void DrawLineChartFrame(double x, double y, double w, double h)
 {
+	SetPenColor(MyThemes[CurrentTheme].foreground);
+
 	/* 画边框 */
-	drawRectangle(SIDE_MARGIN, BOTTOM_MARGIN, WINDOW_WIDTH - SIDE_MARGIN * 2, BORDER_HEIGHT, 0);
+	drawRectangle(x, y, w, h, 0);
 
 	/* 画横轴、纵轴 */
-	PointDrawLine(SIDE_MARGIN + PADDING, BOTTOM_MARGIN + PADDING,
-		WINDOW_WIDTH - SIDE_MARGIN - PADDING, BOTTOM_MARGIN + PADDING);
-	PointDrawLine(SIDE_MARGIN + PADDING, BOTTOM_MARGIN + PADDING,
-		SIDE_MARGIN + PADDING, BOTTOM_MARGIN + BORDER_HEIGHT - PADDING);
+	PointDrawLine(x + PADDING, y + PADDING,
+		x + w - PADDING, y + PADDING);
+	PointDrawLine(x + PADDING, y + PADDING,
+		x + PADDING, y + h - PADDING);
 }
 
-void DrawBrokenLine(int type)
+/*
+ * 函数名: DrawBrokenLine
+ * 参数1: type  选择想要显示哪一个属性的折线图，建议使用EpidemicProperty枚举量
+ * -------------------------------------
+ * 绘制折线，目前处于测试状态，并未完全实现
+ */
+static void DrawBrokenLine(double x, double y, double w, double h, int type)
 {
 	int start = 0, end = data.TotalDays - 1;  // 测试用，最终实现与此不同
 	if (end - start <= 0)  // TODO 并未完全解决问题，应当妥善使用异常处理，而不是简单地退出函数
 		return;
 
-	const double step = (WINDOW_WIDTH - 2 * (SIDE_MARGIN + PADDING)) / (end - start);  // 步长，要求 start 大于 end
-	const double LineChatHeight = BORDER_HEIGHT - 2 * PADDING;  // 折线图高度
+	const double step = (w - 2 * PADDING) / (end - start);  // 步长，要求 start 大于 end
+	const double LineChatHeight = h - 2 * PADDING;  // 折线图高度
 	int count = 0;  // 计数器
 
 	SetPenColor(MyThemes[CurrentTheme].accent);  // 暂时设为强调色，以后可能引入更多颜色
 	for (epidemic* i = SentinelNode.next; i != nullptr && i->next != nullptr; i = i->next)  // 循环画割线
 	{
-		PointDrawLine(SIDE_MARGIN + PADDING + step * (count - start),
-			BOTTOM_MARGIN + PADDING + LineChatHeight * (1.0 * i->properties[type] / data.MaxElement),
-			SIDE_MARGIN + PADDING + step * (count + 1 - start),
-			BOTTOM_MARGIN + PADDING + LineChatHeight * (1.0 * i->next->properties[type] / data.MaxElement));
+		PointDrawLine(x + PADDING + step * (count - start),
+			y + PADDING + LineChatHeight * (1.0 * i->properties[type] / data.MaxElement),
+			x + PADDING + step * (count + 1 - start),
+			y + PADDING + LineChatHeight * (1.0 * i->next->properties[type] / data.MaxElement));
 		++count;
 	}
+}
+
+void LineChart(double x, double y, double w, double h)
+{
+	DrawBrokenLine(x, y, w, h, Current);
+	DrawBrokenLine(x, y, w, h, Total);
+	DrawBrokenLine(x, y, w, h, Cured);
+	DrawBrokenLine(x, y, w, h, Dead);
+	DrawLineChartFrame(x, y, w, h);
 }
 
 double DataProportion(double x)//计算占比函数，仅饼状图使用
@@ -101,7 +123,7 @@ void BarChart(double x, double y, double w, double h, int month, int day, int n,
 	for (i = 0; i < n; i++)
 	{
 		DateCalculate(month, day, i);
-		drawRectangle(x+ w / (2 * n + 2), y, w / (2 * n + 2), ReadEpidemicList(NeedMonth, NeedDay, type) / 2, 1);
+		drawRectangle(x + w / (2 * n + 2), y, w / (2 * n + 2), ReadEpidemicList(NeedMonth, NeedDay, type) / 2, 1);
 		x = x + w / (2 * n + 2);
 	}
 }

@@ -7,11 +7,8 @@
 #ifndef DRAW_CHART_H_
 #define DRAW_CHART_H_
 
- /* 折线图绘图区域的宏定义，将在未来删除 */
-#define SIDE_MARGIN 0.5
-#define BOTTOM_MARGIN 2.0
-#define PADDING 0.25
-#define BORDER_HEIGHT 3.0
+ /* 折线图绘图区域的宏定义 */
+#define PADDING 0.2
 
 /* 统一图表区域的宏定义 */
 #include "my_macro.h"
@@ -24,19 +21,15 @@
 #define GZ_H (WINDOW_HEIGHT - GZ_BOTTOM_MARGIN - GZ_TOP_MARGIN)  // 高度
 
 /*
- * 函数名: DrawLineChartFrame
- * -------------------------------------
- * 折线图绘制函数，绘制包括边框、坐标轴和折线
+ * 函数名: LineChart
+ * 参数1: x 矩形框x坐标
+ * 参数2: y 矩形框y坐标
+ * 参数3: w 矩形框宽度
+ * 参数4: h 矩形框高度
+ * ------------------------------------
+ * 绘制折线图
  */
-void DrawLineChartFrame();
-
-/*
- * 函数名: DrawBrokenLine
- * 参数1: type  选择想要显示哪一个属性的折线图，建议使用EpidemicProperty枚举量
- * -------------------------------------
- * 绘制折线，目前处于测试状态，并未完全实现
- */
-void DrawBrokenLine(int type);
+void LineChart(double x, double y, double w, double h);
 
 /*
  * 函数名: FanChart
