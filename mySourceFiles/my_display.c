@@ -168,12 +168,29 @@ static void DrawMenu()
 	sprintf(ChangeThemeLabel, "切换主题（当前：%s）", MyThemes[CurrentTheme].name);
 
 	{
-		const int MenuListFileSelection = MyMenuList(GenUIID(0), 0, MenuBarVertical,
+		int MenuListFileSelection = MyMenuList(GenUIID(0), 0, MenuBarVertical,
 			MenuSelectionWidth, TextStringWidth(MenuListFile[1]) * 1.2,
 			MenuButtonHeight, MenuListFile, sizeof(MenuListFile) / sizeof(MenuListFile[0]));
 
+	FileMenuBranchStart:  // 危险！MenuListFileSelection 分支的开头。如果不清楚它的危险性，请一定不要使用。
+			// 请不要在此注释之上添加任何流程，且保证只在目前的代码块中用到 FileMenuBranchStart 标号
+			// goto语句具有较强的危险性，且在阅读与调试时容易引起困扰。请一定一定慎用！
+			// TODO: 未来将封装成函数，彻底取代这个实现方式
+
 		if (MenuListFileSelection == 2)  // 打开
 		{
+			if (data.HasModified)
+			{
+				const int selection = MessageBox(graphicsWindow,
+					TEXT("您有未保存的更改，请问需要保存这些更改吗？"),
+					TEXT("提示"), MB_OKCANCEL | MB_ICONWARNING);
+				if (selection == IDOK)
+				{
+					MenuListFileSelection = 3;  // 将选项改为“保存”
+					goto FileMenuBranchStart;  //危险！为了保证所有分支都被重新遍历，无条件转移控制流
+					// 已跳出外层分支，请紧随goto的跳转逻辑
+				}
+			}
 			/*以下代码的实现部分参考了 StackOverflow 论坛*/
 			OPENFILENAME ofn;
 			TCHAR szFile[MAX_PATH] = { 0 };
@@ -198,15 +215,16 @@ static void DrawMenu()
 				FileInputList(ofn.lpstrFile);
 
 			GUIOutputMsg("打开成功");
-
 		}
 		else if (MenuListFileSelection == 3)  // 保存
 		{
-			if (data.BaseDir == nullptr)
+			if (data.BaseDir == nullptr)  // 若没有打开任何文件（新建文件状态）
 			{
 				if (data.HasModified)
 				{
-					//TODO: goto(SaveAs)
+					MenuListFileSelection = 4;  // 将选项改为“另存为”
+					goto FileMenuBranchStart;  //危险！为了保证所有分支都被重新遍历，无条件转移控制流
+					// 已跳出外层分支，请紧随goto的跳转逻辑
 				}
 				else
 				{
@@ -228,10 +246,10 @@ static void DrawMenu()
 					TEXT("提示"), MB_OK | MB_ICONINFORMATION);
 				GUIOutputMsg("无需保存");
 			}
+			data.HasModified = false;
 		}
 		else if (MenuListFileSelection == 4)  // 另存为
 		{
-
 			OPENFILENAME ofn;
 			char szFileName[MAX_PATH] = "";
 
@@ -251,6 +269,7 @@ static void DrawMenu()
 			{
 				FileSave(ofn.lpstrFile);
 				data.BaseDir = ofn.lpstrFile;
+				data.HasModified = false;
 				GUIOutputMsg("另存成功");
 			}
 		}
@@ -258,19 +277,36 @@ static void DrawMenu()
 		{
 			if (data.HasModified)
 			{
-				//TODO: 这里应该弹出警告，问用户是否要保存
-				// 注意，data.HasModified 的值在这个分支里可能会变化，在未来可能有于其相关的bug
+				const int selection = MessageBox(graphicsWindow,
+					TEXT("您有未保存的更改，请问需要保存这些更改吗？"),
+					TEXT("提示"), MB_OKCANCEL | MB_ICONWARNING);
+				if (selection == IDOK)
+				{
+					MenuListFileSelection = 3;  // 将选项改为“保存”
+					goto FileMenuBranchStart;  //危险！为了保证所有分支都被重新遍历，无条件转移控制流
+					// 已跳出外层分支，请紧随goto的跳转逻辑
+				}
 			}
-			else
-			{
-				FreeEpidemicList(SentinelNode.next);
-				SentinelNode.next = nullptr;
-				data.BaseDir = nullptr;  // 清空存储当前文件绝对路径的变量
-			}
+
+			FreeEpidemicList(SentinelNode.next);
+			SentinelNode.next = nullptr;
+			data.BaseDir = nullptr;  // 清空存储当前文件绝对路径的变量
 			GUIOutputMsg("关闭成功");
 		}
 		else if (MenuListFileSelection == 6)  // 退出
 		{
+			if (data.HasModified)
+			{
+				const int selection = MessageBox(graphicsWindow,
+					TEXT("您有未保存的更改，请问需要保存这些更改吗？"),
+					TEXT("提示"), MB_OKCANCEL | MB_ICONWARNING);
+				if (selection == IDOK)
+				{
+					MenuListFileSelection = 3;  // 将选项改为“保存”
+					goto FileMenuBranchStart;  //危险！为了保证所有分支都被重新遍历，无条件转移控制流
+					// 已跳出外层分支，请紧随goto的跳转逻辑
+				}
+			}
 			const int selection = MessageBox(graphicsWindow, TEXT("您确定要退出吗？"),
 				TEXT("提示"), MB_OKCANCEL | MB_ICONINFORMATION | MB_DEFBUTTON2);
 			if (selection == IDOK)

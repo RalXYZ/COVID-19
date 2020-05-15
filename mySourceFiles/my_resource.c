@@ -146,14 +146,17 @@ int FileInputList(char* FileName)
 		}
 		if (feof(fp))  // 资源文件已经到达了末尾
 			break;
+
 		epidemic* TempNode = (epidemic*)malloc(sizeof(epidemic));
 		CurrentNode->next = TempNode;
 		TempNode->prev = CurrentNode;
 		CurrentNode = TempNode;
 	}
 
+
 	FreeEpidemicList(SentinelNode.next);  // 释放旧链表
 	SentinelNode.next = TempFirstNode;  // 哨兵节点与新链表连接
+	SentinelNode.next->prev = &SentinelNode;  // 连接新链表和哨兵节点
 	fclose(fp);
 
 	data.BaseDir = FileName;
@@ -169,11 +172,15 @@ int FileSave(char* FileName)
 	FILE* fp = SafeFOpen(FileName, "w");
 	for (epidemic* i = SentinelNode.next; i != nullptr; i = i->next)
 	{
-		fprintf(fp, "%d-%d %d %d %d %d\n",
+		fprintf(fp, "%d-%d %d %d %d %d",
 			i->properties[Month], i->properties[Date],
 			i->properties[Current], i->properties[Total],
 			i->properties[Cured], i->properties[Dead]);
+
+		if (i != nullptr && i->next != nullptr)  // 最后行末尾不换行
+			fputc('\n', fp);
 	}
+
 	fclose(fp);
 	return 0;
 }
