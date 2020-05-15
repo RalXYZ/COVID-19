@@ -14,23 +14,20 @@
 
  /*
   * 结构名: DataProperty
-  * 成员1: TotalDays    链表里所存储数据的总天数
-  * 成员2: MaxElement   链表里初日期外的最大数据，用于缩放统计图
-  * 成员3: BaseDir      当前文件的绝对路径
-  * 成员4: HasModified  相比于输入的文件，链表是否被修改过
   * ------------------------------------
   * 这个结构体里的变量是链表中数据的一些属性
   */
 typedef struct DataProperty
 {
-	int TotalDays;
-	int MaxElement;
-	char* BaseDir;
-	_Bool HasModified;
+	int TotalDays;  // 链表里所存储数据的总天数
+	int MaxElement;  // 链表里初日期外的最大数据，用于缩放统计图
+	char* BaseDir;  // 当前文件的绝对路径
+	_Bool HasModified;  // 相比于输入的文件，链表是否被修改过
 } DataProperty;
 
 #define EPIDEMIC_ELEMENT_NUM 6
 #define EPIDEMIC_PROPERTY_START 2
+#define EPIDEMIC_STATISTIC_NUM (EPIDEMIC_ELEMENT_NUM - EPIDEMIC_PROPERTY_START)
 /*
  * 枚举名: EpidemicProperty
  * 常量1: Month    月份
@@ -40,7 +37,7 @@ typedef struct DataProperty
  * 常量5: Cured    治愈人数
  * 常量6: Dead     死亡人数
  * ------------------------------------
- * 这个结构是存储疫情数据用的双向链表的一个节点。
+ * 这个结构对节点里数组的下标与存储内容构建了对应关系
  */
 typedef enum EpidemicProperty
 {
@@ -51,18 +48,28 @@ typedef enum EpidemicProperty
 
 /*
  * 结构名: epidemic
- * 成员1: properties  存储所有的属性值，每个位置存储的内容由EpidemicProperty解释
- * 成员2: prev        指向上一个节点的指针
- * 成员3: next        指向下一个节点的指针
  * ------------------------------------
- * 这个结构是存储疫情数据用的双向链表的一个节点。
+ * 这个结构是存储疫情数据用的双向链表的一个节点
  */
 typedef struct epidemic
 {
-	int properties[EPIDEMIC_ELEMENT_NUM];
-	struct epidemic* prev;
-	struct epidemic* next;
+	int properties[EPIDEMIC_ELEMENT_NUM];  // 存储所有的属性值，每个位置存储的内容由EpidemicProperty解释
+	struct epidemic* prev;  // 指向上一个节点的指针
+	struct epidemic* next;  // 指向下一个节点的指针
 } epidemic;
+
+/*
+ * 结构名: MyStatus
+ * ------------------------------------
+ * 这个结构存储了程序当前的一些状态值
+ */
+typedef struct MyStatus
+{
+	_Bool HighlightVisible;  // 高亮点是否可见
+	epidemic* HighlightNode;  // 当前高亮的节点
+	EpidemicProperty HighlightProperty;  // 当前高亮的项目，注意，不从0开始！！！
+	int HighlightNum;  // 目前高亮的是链表中的第几个
+} MyStatus;
 
 
 /*
@@ -82,6 +89,20 @@ void InitEpidemicList(epidemic* node);
  * 节点，在功能上类似析构函数。
  */
 void FreeEpidemicList(epidemic* node);
+
+/*
+ * 函数名: InitHighlight
+ * ------------------------------------
+ * 在当前有文件时，初始化这个高亮光标
+ */
+void InitHighlight();
+
+/*
+ * 函数名: DesHighlight
+ * ------------------------------------
+ * 当文件关闭时，恢复高亮光标相关值为默认值
+ */
+void DesHighlight();
 
 /*
  * 函数名: ReadEpidemicList

@@ -29,9 +29,10 @@ bool EraseStatus = false;  // 记录文字擦除状态，目前作调试用，�
 
 extern bool PauseAllProcedure;  // 定义在 my_callback.c
 extern bool DisplayLineChart;   // 定义在 draw_chart.c ，测试用，未来将移除
-extern HWND graphicsWindow;     // GUI窗口句柄，在 libgraphics 里声明
+extern HWND graphicsWindow;     // GUI窗口句柄，在 libgraphics 中声明
 extern DataProperty data;  // 链表相关属性值，在 my_resource.c 中声明
 extern epidemic SentinelNode;  // 哨兵节点，在 my_resource.c 中声明
+extern MyStatus status;  // 当前状态，在 my_resource.c 中定义
 
 /*
  * 函数名: PauseDisplay 目前停用
@@ -134,6 +135,7 @@ void GUIOutputMsg(char* msg)
 static void DrawMenu()
 {
 	static char ChangeThemeLabel[40] = { 0 };
+	static char Highlight[20] = "隐藏高亮光标";
 
 	static char* MenuListFile[] = { "文件",
 		"新建 无功能 | Ctrl-N",
@@ -152,7 +154,8 @@ static void DrawMenu()
 		"绘制图表 无功能" };
 
 	static char* MenuListDisplay[] = { "视图",
-		ChangeThemeLabel };
+		ChangeThemeLabel,
+		Highlight };
 
 	static char* MenuListHelp[] = { "帮助",
 		"使用帮助",
@@ -195,7 +198,7 @@ static void DrawMenu()
 			OPENFILENAME ofn;
 			TCHAR szFile[MAX_PATH] = { 0 };
 
-			SecureZeroMemory(&ofn, sizeof(ofn));  // 将ofn所在内存区域清零
+			ZeroMemory(&ofn, sizeof(ofn));  // 将ofn所在内存区域清零
 
 			/*为 ofn 赋初始值*/
 			ofn.lStructSize = sizeof(ofn);
@@ -253,7 +256,7 @@ static void DrawMenu()
 			OPENFILENAME ofn;
 			char szFileName[MAX_PATH] = "";
 
-			SecureZeroMemory(&ofn, sizeof(ofn));  // 将ofn所在内存区域清零
+			ZeroMemory(&ofn, sizeof(ofn));  // 将ofn所在内存区域清零
 
 			/*为 ofn 赋初始值*/
 			ofn.lStructSize = sizeof(ofn);
@@ -288,6 +291,7 @@ static void DrawMenu()
 				}
 			}
 
+			DesHighlight();
 			FreeEpidemicList(SentinelNode.next);
 			SentinelNode.next = nullptr;
 			data.BaseDir = nullptr;  // 清空存储当前文件绝对路径的变量
@@ -328,12 +332,32 @@ static void DrawMenu()
 
 	{
 		const int MenuListDisplaySelection = MyMenuList(GenUIID(0), MenuSelectionWidth * 3, MenuBarVertical,
-			TextStringWidth(MenuListDisplay[0]) * 2, TextStringWidth(MenuListDisplay[1]) * 1.2,
+			TextStringWidth(MenuListDisplay[0]) * 2, TextStringWidth(MenuListDisplay[1]) * 1.1,
 			MenuButtonHeight, MenuListDisplay, sizeof(MenuListDisplay) / sizeof(MenuListDisplay[0]));
 		if (MenuListDisplaySelection == 1)
 		{
 			CurrentTheme = (CurrentTheme + 1) % THEME_NUM;
 			display();
+		}
+		if (MenuListDisplaySelection == 2)
+		{
+			if (data.BaseDir == nullptr)
+			{
+				MessageBox(graphicsWindow,
+					TEXT("您尚未打开文件。请先打开文件。"),
+					TEXT("提示"), MB_OK | MB_ICONWARNING);
+			}
+
+			else if (!status.HighlightVisible)
+			{
+				sprintf(Highlight, "隐藏高亮光标");
+				status.HighlightVisible = true;
+			}
+			else if (status.HighlightVisible)
+			{
+				sprintf(Highlight, "显示高亮光标");
+				status.HighlightVisible = false;
+			}
 		}
 	}
 
@@ -363,6 +387,20 @@ TEXT("关于本软件"), MB_OK | MB_ICONINFORMATION);
 
 }
 
+static void Highlight()
+{
+	const double LineChatHeight = GZ_H - 2 * PADDING;  // 临时调试用，未来将移除
+	const double HeightInGraph = 1.0 * status.HighlightNode->properties[status.HighlightProperty];
+	const double WidthInGraph = 1.0 * status.HighlightNum * (GZ_W - 2 * PADDING) / (data.TotalDays - 1);
+	SetPenColor("Red");  // 临时调试用
+
+	StretchDrawLine(GZ_X + PADDING,
+		GZ_Y + PADDING + LineChatHeight * (HeightInGraph / data.MaxElement),
+		GZ_W - 2 * PADDING, 0);
+	StretchDrawLine(GZ_X + PADDING + WidthInGraph,
+		GZ_Y + PADDING, 0, GZ_H - 2 * PADDING);
+}
+
 void display()
 {
 	//DisplayClear();
@@ -384,5 +422,10 @@ void display()
 	MovePen(6, WINDOW_HEIGHT - 0.2);
 	DrawTextString("F1显示折线图");
 	if (DisplayLineChart)  // 折线图功能测试函数
+	{
 		LineChart(GZ_X, GZ_Y, GZ_W, GZ_H);
+		if (status.HighlightVisible)
+			Highlight();
+
+	}
 }

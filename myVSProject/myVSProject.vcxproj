@@ -31,6 +31,7 @@
     <ClCompile Include="..\mySourceFiles\my_callback.c" />
     <ClCompile Include="..\mySourceFiles\my_display.c" />
     <ClCompile Include="..\mySourceFiles\my_resource.c" />
+    <ClCompile Include="..\mySourceFiles\my_utilities.c" />
     <ClCompile Include="..\mySourceFiles\prediction_model.c" />
   </ItemGroup>
   <ItemGroup>
@@ -48,6 +49,7 @@
     <ClInclude Include="..\mySourceFiles\my_display.h" />
     <ClInclude Include="..\mySourceFiles\my_resource.h" />
     <ClInclude Include="..\mySourceFiles\my_macro.h" />
+    <ClInclude Include="..\mySourceFiles\my_utilities.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\myResourceFiles\statistic1.covid19" />

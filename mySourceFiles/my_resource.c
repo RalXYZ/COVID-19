@@ -16,8 +16,9 @@
 #include "my_macro.h"
 #include "my_resource.h"
 
-DataProperty data;  // 链表相关属性值
+DataProperty data = { 0, 0, nullptr, false };  // 链表相关属性值
 epidemic SentinelNode;  // 哨兵节点
+MyStatus status = { false, nullptr, 0, 0 };  // 当前状态
 
 void InitEpidemicList(epidemic* node)
 {
@@ -35,6 +36,22 @@ void FreeEpidemicList(epidemic* node)
 		CurrentNode = TempNode;
 	}
 	SentinelNode.next = nullptr;  // 恢复为默认值
+}
+
+void InitHighlight()
+{
+	status.HighlightVisible = true;
+	status.HighlightNode = SentinelNode.next;
+	status.HighlightProperty = EPIDEMIC_PROPERTY_START;
+	status.HighlightNum = 0;
+}
+
+void DesHighlight()
+{
+	status.HighlightVisible = false;
+	status.HighlightNode = nullptr;
+	status.HighlightProperty = 0;
+	status.HighlightNum = 0;
 }
 
 int ReadEpidemicList(int month, int date, EpidemicProperty type)
@@ -153,12 +170,13 @@ int FileInputList(char* FileName)
 		CurrentNode = TempNode;
 	}
 
-
+	DesHighlight();
 	FreeEpidemicList(SentinelNode.next);  // 释放旧链表
 	SentinelNode.next = TempFirstNode;  // 哨兵节点与新链表连接
-	SentinelNode.next->prev = &SentinelNode;  // 连接新链表和哨兵节点
+	SentinelNode.next->prev = nullptr;  // 新链表无法返回哨兵节点
 	fclose(fp);
 
+	InitHighlight();
 	data.BaseDir = FileName;
 	data.HasModified = false;
 	GetDayNum();

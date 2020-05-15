@@ -15,11 +15,14 @@
 #include "my_macro.h"
 #include "my_callback.h"
 #include "my_display.h"
+#include "my_resource.h"
+#include "my_utilities.h"
 
 bool PauseAllProcedure = false;  // 记录是否要暂停所有回调函数的功能，用于弹出对话框时的阻塞
 
 extern bool EraseStatus;  // 定义在 my_display.c
 extern bool DisplayLineChart;  // 定义在 draw_chart.c ，测试用，未来将移除
+extern MyStatus status;  // 当前状态，在 my_resource.c 中定义
 
 void KeyboardEventProcess(int key, int event)
 {
@@ -33,6 +36,22 @@ void KeyboardEventProcess(int key, int event)
 	{
 		if (key == VK_F1)
 			DisplayLineChart = !DisplayLineChart;
+		if (key == VK_RIGHT)
+			if (status.HighlightVisible && status.HighlightNode != nullptr && status.HighlightNode->next != nullptr)
+			{
+				status.HighlightNode = status.HighlightNode->next;
+				++status.HighlightNum;
+			}
+		if (key == VK_LEFT)
+			if (status.HighlightVisible && status.HighlightNode->prev != nullptr)
+			{
+				status.HighlightNode = status.HighlightNode->prev;
+				--status.HighlightNum;
+			}
+		if (key == VK_UP)
+			status.HighlightProperty = UpSelectProperty();
+		if (key == VK_DOWN)
+			status.HighlightProperty = DownSelectProperty();
 	}
 
 	uiGetKeyboard(key, event);
