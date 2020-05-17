@@ -99,6 +99,50 @@ static void InputMyColors(int position, char* name,
 	HexDefineColor(MyThemes[position].accent, AccentColorHex);
 }
 
+/*
+ * DisplayStatistics
+ * -------------------------------------
+ * 在显示高亮光标的同时，显示当日的具体数据
+ */
+static void DisplayStatistics()
+{
+	char date[20] = "";
+	sprintf(date, "%d月%d日：",
+		status.HighlightNode->properties[Month],
+		status.HighlightNode->properties[Day]);
+
+	SetPenColor(MyThemes[CurrentTheme].accent);
+	MovePen(3, 0.05);
+	DrawTextString(date);
+	for (int i = EPIDEMIC_PROPERTY_START; i < EPIDEMIC_ELEMENT_NUM; i++)
+	{
+		char property[20] = "";
+		SetPenColor(MyThemes[CurrentTheme].accent);
+		if (i == status.HighlightProperty)
+			SetPenColor("Red");
+		switch (i)
+		{
+		case Current:
+			sprintf(property, "当前感染%d人 ",
+				status.HighlightNode->properties[Current]);
+			break;
+		case Total:
+			sprintf(property, "累计感染%d人 ",
+				status.HighlightNode->properties[Total]);
+			break;
+		case Cured:
+			sprintf(property, "累计治愈%d人 ",
+				status.HighlightNode->properties[Cured]);
+			break;
+		case Dead:
+			sprintf(property, "累计死亡%d人",
+				status.HighlightNode->properties[Dead]);
+			break;
+		}
+		DrawTextString(property);
+	}
+}
+
 // 注意：更改这个函数的同时也要更改 THEME_NUM 宏
 void InitColor() {
 	InputMyColors(0, "苍松", 0x203227, 0x637B6D, 0x9CC2AD);
@@ -403,17 +447,15 @@ static void Highlight()
 
 void display()
 {
-	//DisplayClear();
 	SetPenColor(MyThemes[CurrentTheme].background);
 	drawRectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 1);
 
 	SetPenColor(MyThemes[CurrentTheme].foreground);
 
-	/* 目前用于调试，检测后来加上的组件是否会对回调函数产生干扰 */
 	MovePen(0, 0.05);
 	if (EraseStatus)
 		SetPenColor(MyThemes[CurrentTheme].accent);
-	DrawTextString(DisplayMessage);
+	DrawTextString(DisplayMessage);  // 画操作信息
 	SetEraseMode(false);
 
 	DrawMenu();  // 绘制菜单组件
@@ -425,7 +467,9 @@ void display()
 	{
 		LineChart(GZ_X, GZ_Y, GZ_W, GZ_H);
 		if (status.HighlightVisible)
+		{
 			Highlight();
-
+			DisplayStatistics();
+		}
 	}
 }

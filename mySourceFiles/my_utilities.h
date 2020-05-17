@@ -13,7 +13,7 @@
   * ------------------------------------
   * 这个函数决定了当按↑键时，属性值应当改为哪个
   */
-EpidemicProperty UpSelectProperty();
+int UpSelectProperty();
 
 /*
  * 函数名: DownSelectProperty
@@ -21,6 +21,6 @@ EpidemicProperty UpSelectProperty();
  * ------------------------------------
  * 这个函数决定了当按↓键时，属性值应当改为哪个
  */
-EpidemicProperty DownSelectProperty();
+int DownSelectProperty();
 
 #endif

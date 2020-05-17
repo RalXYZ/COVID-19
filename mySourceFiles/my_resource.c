@@ -60,7 +60,7 @@ int ReadEpidemicList(int month, int date, EpidemicProperty type)
 	{
 		for (epidemic* i = SentinelNode.next; i != nullptr; i = i->next)
 		{
-			if (date == i->properties[Date] && month == i->properties[Month])
+			if (date == i->properties[Day] && month == i->properties[Month])
 				return i->properties[type];
 		}
 	}
@@ -151,7 +151,7 @@ int FileInputList(char* FileName)
 	for (int i = 0; ; i++)
 	{
 		const int SuccessInput = fscanf(fp, "%d-%d%d%d%d%d",
-			&CurrentNode->properties[Month], &CurrentNode->properties[Date],
+			&CurrentNode->properties[Month], &CurrentNode->properties[Day],
 			&CurrentNode->properties[Current], &CurrentNode->properties[Total],
 			&CurrentNode->properties[Cured], &CurrentNode->properties[Dead]);
 		CurrentNode->next = nullptr;  // 将当前节点的指向后一个节点的指针默认设为空
@@ -191,7 +191,7 @@ int FileSave(char* FileName)
 	for (epidemic* i = SentinelNode.next; i != nullptr; i = i->next)
 	{
 		fprintf(fp, "%d-%d %d %d %d %d",
-			i->properties[Month], i->properties[Date],
+			i->properties[Month], i->properties[Day],
 			i->properties[Current], i->properties[Total],
 			i->properties[Cured], i->properties[Dead]);
 

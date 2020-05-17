@@ -45,7 +45,7 @@ static void ArraySort(int* array, int* partner, int length)
 	}
 }
 
-EpidemicProperty UpSelectProperty()
+int UpSelectProperty()
 {
 	int output = -1;
 	int PropertiesValue[EPIDEMIC_STATISTIC_NUM];
@@ -71,7 +71,7 @@ EpidemicProperty UpSelectProperty()
 	return output;
 }
 
-EpidemicProperty DownSelectProperty()
+int DownSelectProperty()
 {
 	int output = -1;
 	int PropertiesValue[EPIDEMIC_STATISTIC_NUM];
