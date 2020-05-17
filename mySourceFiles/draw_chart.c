@@ -21,6 +21,10 @@
 
 extern int NeedMonth;//需求月份
 extern int NeedDay;//需求日期
+static int line = 0;//折线图标志
+static int fan = 0;//饼状图标志
+static int bar = 0;//柱状图标志
+
 bool DisplayLineChart = false;  // 临时用作调试，在未来将会删除
 
 extern int CurrentTheme;  // 当前主题序号，在 my_display.c 中定义
@@ -83,7 +87,7 @@ void LineChart(double x, double y, double w, double h)
 	DrawLineChartFrame(x, y, w, h);
 }
 
-double DataProportion(double x)//计算占比函数，仅饼状图使用
+double DataProportion(double x)//计算占比函数，饼状图使用
 {
 	double sum = (double)ReadEpidemicList(3, 2, Total) + (double)ReadEpidemicList(3, 2, Cured) + (double)ReadEpidemicList(3, 2, Dead);
 	return x / sum * 360;
@@ -116,7 +120,7 @@ void FanChart()
 
 void BarChart(double x, double y, double w, double h, int month, int day, int n, int type, char* color)
 {
-	drawRectangle(x, y, GetWindowWidth() - 1, GetWindowHeight() - 1, 0);//测试用矩形区域
+	drawRectangle(x, y, w, h, 0);//测试用矩形区域
 	SetPenColor(color);
 	int i;
 
@@ -125,5 +129,56 @@ void BarChart(double x, double y, double w, double h, int month, int day, int n,
 		DateCalculate(month, day, i);
 		drawRectangle(x + w / (2 * n + 2), y, w / (2 * n + 2), ReadEpidemicList(NeedMonth, NeedDay, type) / 2, 1);
 		x = x + w / (2 * n + 2);
+	}
+}
+
+void DrawChart(int month, int day, int n,int type1, int type2, char* color)
+{
+	double wid = GetWindowWidth();
+	double hei = GetWindowHeight();
+	if (button(GenUIID(0), wid / 8, hei / 16, wid / 6, 3 * hei / 32, "柱状图"))
+	{
+		bar = !bar;
+	}
+	if (button(GenUIID(1), 10 * wid / 24, hei / 16, wid / 6, 3 * hei / 32, "饼状图"))
+	{
+		fan = !fan;
+	}
+	if (button(GenUIID(2), 17 * wid / 24, hei / 16, wid / 6, 3 * hei / 32, "折线图"))
+	{
+		line = !line;
+	}
+	if (bar == 1 && fan == 0 && line == 0)
+	{
+		BarChart(wid / 12, hei / 4, 5 * wid / 6, 5 * hei /8, month, day, n, type2, color);
+	}
+	if (bar == 0 && fan == 1 && line == 0)
+	{
+		FanChart(wid / 2, 9 * hei / 16, wid / 6);
+	}
+	if (bar == 0 && fan == 0 && line == 1)
+	{
+		DrawBrokenLine(wid / 12, 9 * hei / 16, 5 * wid / 6, 5 * hei / 16, type1);
+	}
+	if (bar == 1 && fan == 1 && line == 0)
+	{
+		BarChart(wid / 12, hei / 4, 7 * wid / 12, 5 * hei / 8, month, day, n, type2, color);
+		FanChart(19 * wid / 24, 9 * hei / 16, 5 * wid / 48);
+	}
+	if (bar == 1 && fan == 0 && line == 1)
+	{
+		BarChart(wid / 12, hei / 4, 5 * wid / 6, 5 * hei / 16, month, day, n, type2, color);
+		DrawBrokenLine(wid / 12, 9 * hei / 16, 5 * wid / 6, 5 * hei / 16, type1);
+	}
+	if (bar == 0 && fan == 1 && line == 1)
+	{
+		FanChart(19 * wid / 24, 9 * hei / 16, 5 * wid / 48);
+		DrawBrokenLine(wid / 12, hei / 4, 7 * wid / 12, 5 * hei / 8, type1);
+	}
+	if (bar == 1 && fan == 1 && line == 1)
+	{
+		BarChart(wid / 12, hei / 4, 7 * wid / 12, 5 * hei / 16, month, day, n, type2, color);
+		FanChart(19 * wid / 24, 9 * hei / 16, 5 * wid / 48);
+		DrawBrokenLine(wid / 12, 9 * hei / 16, 7 * wid / 12, 5 * hei / 16, type1);
 	}
 }
