@@ -16,8 +16,9 @@
 #include "my_macro.h"
 #include "my_resource.h"
 
-DataProperty data;  // 链表相关属性值
+DataProperty data = { 0, 0, nullptr, false };  // 链表相关属性值
 epidemic SentinelNode;  // 哨兵节点
+MyStatus status = { false, nullptr, 0, 0 };  // 当前状态
 
 void InitEpidemicList(epidemic* node)
 {
@@ -37,13 +38,29 @@ void FreeEpidemicList(epidemic* node)
 	SentinelNode.next = nullptr;  // 恢复为默认值
 }
 
+void InitHighlight()
+{
+	status.HighlightVisible = true;
+	status.HighlightNode = SentinelNode.next;
+	status.HighlightProperty = EPIDEMIC_PROPERTY_START;
+	status.HighlightNum = 0;
+}
+
+void DesHighlight()
+{
+	status.HighlightVisible = false;
+	status.HighlightNode = nullptr;
+	status.HighlightProperty = 0;
+	status.HighlightNum = 0;
+}
+
 int ReadEpidemicList(int month, int date, EpidemicProperty type)
 {
 	if (0 <= type && type < EPIDEMIC_ELEMENT_NUM)
 	{
 		for (epidemic* i = SentinelNode.next; i != nullptr; i = i->next)
 		{
-			if (date == i->properties[Date] && month == i->properties[Month])
+			if (date == i->properties[Day] && month == i->properties[Month])
 				return i->properties[type];
 		}
 	}
@@ -134,7 +151,7 @@ int FileInputList(char* FileName)
 	for (int i = 0; ; i++)
 	{
 		const int SuccessInput = fscanf(fp, "%d-%d%d%d%d%d",
-			&CurrentNode->properties[Month], &CurrentNode->properties[Date],
+			&CurrentNode->properties[Month], &CurrentNode->properties[Day],
 			&CurrentNode->properties[Current], &CurrentNode->properties[Total],
 			&CurrentNode->properties[Cured], &CurrentNode->properties[Dead]);
 		CurrentNode->next = nullptr;  // 将当前节点的指向后一个节点的指针默认设为空
@@ -146,16 +163,20 @@ int FileInputList(char* FileName)
 		}
 		if (feof(fp))  // 资源文件已经到达了末尾
 			break;
+
 		epidemic* TempNode = (epidemic*)malloc(sizeof(epidemic));
 		CurrentNode->next = TempNode;
 		TempNode->prev = CurrentNode;
 		CurrentNode = TempNode;
 	}
 
+	DesHighlight();
 	FreeEpidemicList(SentinelNode.next);  // 释放旧链表
 	SentinelNode.next = TempFirstNode;  // 哨兵节点与新链表连接
+	SentinelNode.next->prev = nullptr;  // 新链表无法返回哨兵节点
 	fclose(fp);
 
+	InitHighlight();
 	data.BaseDir = FileName;
 	data.HasModified = false;
 	GetDayNum();
@@ -169,11 +190,15 @@ int FileSave(char* FileName)
 	FILE* fp = SafeFOpen(FileName, "w");
 	for (epidemic* i = SentinelNode.next; i != nullptr; i = i->next)
 	{
-		fprintf(fp, "%d-%d %d %d %d %d\n",
-			i->properties[Month], i->properties[Date],
+		fprintf(fp, "%d-%d %d %d %d %d",
+			i->properties[Month], i->properties[Day],
 			i->properties[Current], i->properties[Total],
 			i->properties[Cured], i->properties[Dead]);
+
+		if (i != nullptr && i->next != nullptr)  // 最后行末尾不换行
+			fputc('\n', fp);
 	}
+
 	fclose(fp);
 	return 0;
 }

@@ -63,6 +63,9 @@
     <ClCompile Include="..\mySourceFiles\draw_chart.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\mySourceFiles\my_utilities.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\myExternalLibraries\libgraphics\exception.h">
@@ -105,6 +108,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\mySourceFiles\draw_chart.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\mySourceFiles\my_utilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

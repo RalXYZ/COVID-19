@@ -29,9 +29,10 @@ bool EraseStatus = false;  // 记录文字擦除状态，目前作调试用，�
 
 extern bool PauseAllProcedure;  // 定义在 my_callback.c
 extern bool DisplayLineChart;   // 定义在 draw_chart.c ，测试用，未来将移除
-extern HWND graphicsWindow;     // GUI窗口句柄，在 libgraphics 里声明
+extern HWND graphicsWindow;     // GUI窗口句柄，在 libgraphics 中声明
 extern DataProperty data;  // 链表相关属性值，在 my_resource.c 中声明
 extern epidemic SentinelNode;  // 哨兵节点，在 my_resource.c 中声明
+extern MyStatus status;  // 当前状态，在 my_resource.c 中定义
 
 /*
  * 函数名: PauseDisplay 目前停用
@@ -98,6 +99,50 @@ static void InputMyColors(int position, char* name,
 	HexDefineColor(MyThemes[position].accent, AccentColorHex);
 }
 
+/*
+ * DisplayStatistics
+ * -------------------------------------
+ * 在显示高亮光标的同时，显示当日的具体数据
+ */
+static void DisplayStatistics()
+{
+	char date[20] = "";
+	sprintf(date, "%d月%d日：",
+		status.HighlightNode->properties[Month],
+		status.HighlightNode->properties[Day]);
+
+	SetPenColor(MyThemes[CurrentTheme].accent);
+	MovePen(3, 0.05);
+	DrawTextString(date);
+	for (int i = EPIDEMIC_PROPERTY_START; i < EPIDEMIC_ELEMENT_NUM; i++)
+	{
+		char property[20] = "";
+		SetPenColor(MyThemes[CurrentTheme].accent);
+		if (i == status.HighlightProperty)
+			SetPenColor("Red");
+		switch (i)
+		{
+		case Current:
+			sprintf(property, "当前感染%d人 ",
+				status.HighlightNode->properties[Current]);
+			break;
+		case Total:
+			sprintf(property, "累计感染%d人 ",
+				status.HighlightNode->properties[Total]);
+			break;
+		case Cured:
+			sprintf(property, "累计治愈%d人 ",
+				status.HighlightNode->properties[Cured]);
+			break;
+		case Dead:
+			sprintf(property, "累计死亡%d人",
+				status.HighlightNode->properties[Dead]);
+			break;
+		}
+		DrawTextString(property);
+	}
+}
+
 // 注意：更改这个函数的同时也要更改 THEME_NUM 宏
 void InitColor() {
 	InputMyColors(0, "苍松", 0x203227, 0x637B6D, 0x9CC2AD);
@@ -134,6 +179,7 @@ void GUIOutputMsg(char* msg)
 static void DrawMenu()
 {
 	static char ChangeThemeLabel[40] = { 0 };
+	static char Highlight[20] = "隐藏高亮光标";
 
 	static char* MenuListFile[] = { "文件",
 		"新建 无功能 | Ctrl-N",
@@ -152,7 +198,8 @@ static void DrawMenu()
 		"绘制图表 无功能" };
 
 	static char* MenuListDisplay[] = { "视图",
-		ChangeThemeLabel };
+		ChangeThemeLabel,
+		Highlight };
 
 	static char* MenuListHelp[] = { "帮助",
 		"使用帮助",
@@ -168,17 +215,34 @@ static void DrawMenu()
 	sprintf(ChangeThemeLabel, "切换主题（当前：%s）", MyThemes[CurrentTheme].name);
 
 	{
-		const int MenuListFileSelection = MyMenuList(GenUIID(0), 0, MenuBarVertical,
+		int MenuListFileSelection = MyMenuList(GenUIID(0), 0, MenuBarVertical,
 			MenuSelectionWidth, TextStringWidth(MenuListFile[1]) * 1.2,
 			MenuButtonHeight, MenuListFile, sizeof(MenuListFile) / sizeof(MenuListFile[0]));
 
+	FileMenuBranchStart:  // 危险！MenuListFileSelection 分支的开头。如果不清楚它的危险性，请一定不要使用。
+			// 请不要在此注释之上添加任何流程，且保证只在目前的代码块中用到 FileMenuBranchStart 标号
+			// goto语句具有较强的危险性，且在阅读与调试时容易引起困扰。请一定一定慎用！
+			// TODO: 未来将封装成函数，彻底取代这个实现方式
+
 		if (MenuListFileSelection == 2)  // 打开
 		{
+			if (data.HasModified)
+			{
+				const int selection = MessageBox(graphicsWindow,
+					TEXT("您有未保存的更改，请问需要保存这些更改吗？"),
+					TEXT("提示"), MB_OKCANCEL | MB_ICONWARNING);
+				if (selection == IDOK)
+				{
+					MenuListFileSelection = 3;  // 将选项改为“保存”
+					goto FileMenuBranchStart;  //危险！为了保证所有分支都被重新遍历，无条件转移控制流
+					// 已跳出外层分支，请紧随goto的跳转逻辑
+				}
+			}
 			/*以下代码的实现部分参考了 StackOverflow 论坛*/
 			OPENFILENAME ofn;
 			TCHAR szFile[MAX_PATH] = { 0 };
 
-			SecureZeroMemory(&ofn, sizeof(ofn));  // 将ofn所在内存区域清零
+			ZeroMemory(&ofn, sizeof(ofn));  // 将ofn所在内存区域清零
 
 			/*为 ofn 赋初始值*/
 			ofn.lStructSize = sizeof(ofn);
@@ -198,15 +262,16 @@ static void DrawMenu()
 				FileInputList(ofn.lpstrFile);
 
 			GUIOutputMsg("打开成功");
-
 		}
 		else if (MenuListFileSelection == 3)  // 保存
 		{
-			if (data.BaseDir == nullptr)
+			if (data.BaseDir == nullptr)  // 若没有打开任何文件（新建文件状态）
 			{
 				if (data.HasModified)
 				{
-					//TODO: goto(SaveAs)
+					MenuListFileSelection = 4;  // 将选项改为“另存为”
+					goto FileMenuBranchStart;  //危险！为了保证所有分支都被重新遍历，无条件转移控制流
+					// 已跳出外层分支，请紧随goto的跳转逻辑
 				}
 				else
 				{
@@ -228,14 +293,14 @@ static void DrawMenu()
 					TEXT("提示"), MB_OK | MB_ICONINFORMATION);
 				GUIOutputMsg("无需保存");
 			}
+			data.HasModified = false;
 		}
 		else if (MenuListFileSelection == 4)  // 另存为
 		{
-
 			OPENFILENAME ofn;
 			char szFileName[MAX_PATH] = "";
 
-			SecureZeroMemory(&ofn, sizeof(ofn));  // 将ofn所在内存区域清零
+			ZeroMemory(&ofn, sizeof(ofn));  // 将ofn所在内存区域清零
 
 			/*为 ofn 赋初始值*/
 			ofn.lStructSize = sizeof(ofn);
@@ -251,6 +316,7 @@ static void DrawMenu()
 			{
 				FileSave(ofn.lpstrFile);
 				data.BaseDir = ofn.lpstrFile;
+				data.HasModified = false;
 				GUIOutputMsg("另存成功");
 			}
 		}
@@ -258,19 +324,37 @@ static void DrawMenu()
 		{
 			if (data.HasModified)
 			{
-				//TODO: 这里应该弹出警告，问用户是否要保存
-				// 注意，data.HasModified 的值在这个分支里可能会变化，在未来可能有于其相关的bug
+				const int selection = MessageBox(graphicsWindow,
+					TEXT("您有未保存的更改，请问需要保存这些更改吗？"),
+					TEXT("提示"), MB_OKCANCEL | MB_ICONWARNING);
+				if (selection == IDOK)
+				{
+					MenuListFileSelection = 3;  // 将选项改为“保存”
+					goto FileMenuBranchStart;  //危险！为了保证所有分支都被重新遍历，无条件转移控制流
+					// 已跳出外层分支，请紧随goto的跳转逻辑
+				}
 			}
-			else
-			{
-				FreeEpidemicList(SentinelNode.next);
-				SentinelNode.next = nullptr;
-				data.BaseDir = nullptr;  // 清空存储当前文件绝对路径的变量
-			}
+
+			DesHighlight();
+			FreeEpidemicList(SentinelNode.next);
+			SentinelNode.next = nullptr;
+			data.BaseDir = nullptr;  // 清空存储当前文件绝对路径的变量
 			GUIOutputMsg("关闭成功");
 		}
 		else if (MenuListFileSelection == 6)  // 退出
 		{
+			if (data.HasModified)
+			{
+				const int selection = MessageBox(graphicsWindow,
+					TEXT("您有未保存的更改，请问需要保存这些更改吗？"),
+					TEXT("提示"), MB_OKCANCEL | MB_ICONWARNING);
+				if (selection == IDOK)
+				{
+					MenuListFileSelection = 3;  // 将选项改为“保存”
+					goto FileMenuBranchStart;  //危险！为了保证所有分支都被重新遍历，无条件转移控制流
+					// 已跳出外层分支，请紧随goto的跳转逻辑
+				}
+			}
 			const int selection = MessageBox(graphicsWindow, TEXT("您确定要退出吗？"),
 				TEXT("提示"), MB_OKCANCEL | MB_ICONINFORMATION | MB_DEFBUTTON2);
 			if (selection == IDOK)
@@ -292,12 +376,32 @@ static void DrawMenu()
 
 	{
 		const int MenuListDisplaySelection = MyMenuList(GenUIID(0), MenuSelectionWidth * 3, MenuBarVertical,
-			TextStringWidth(MenuListDisplay[0]) * 2, TextStringWidth(MenuListDisplay[1]) * 1.2,
+			TextStringWidth(MenuListDisplay[0]) * 2, TextStringWidth(MenuListDisplay[1]) * 1.1,
 			MenuButtonHeight, MenuListDisplay, sizeof(MenuListDisplay) / sizeof(MenuListDisplay[0]));
 		if (MenuListDisplaySelection == 1)
 		{
 			CurrentTheme = (CurrentTheme + 1) % THEME_NUM;
 			display();
+		}
+		if (MenuListDisplaySelection == 2)
+		{
+			if (data.BaseDir == nullptr)
+			{
+				MessageBox(graphicsWindow,
+					TEXT("您尚未打开文件。请先打开文件。"),
+					TEXT("提示"), MB_OK | MB_ICONWARNING);
+			}
+
+			else if (!status.HighlightVisible)
+			{
+				sprintf(Highlight, "隐藏高亮光标");
+				status.HighlightVisible = true;
+			}
+			else if (status.HighlightVisible)
+			{
+				sprintf(Highlight, "显示高亮光标");
+				status.HighlightVisible = false;
+			}
 		}
 	}
 
@@ -327,19 +431,31 @@ TEXT("关于本软件"), MB_OK | MB_ICONINFORMATION);
 
 }
 
+static void Highlight()
+{
+	const double LineChatHeight = GZ_H - 2 * PADDING;  // 临时调试用，未来将移除
+	const double HeightInGraph = 1.0 * status.HighlightNode->properties[status.HighlightProperty];
+	const double WidthInGraph = 1.0 * status.HighlightNum * (GZ_W - 2 * PADDING) / (data.TotalDays - 1);
+	SetPenColor("Red");  // 临时调试用
+
+	StretchDrawLine(GZ_X + PADDING,
+		GZ_Y + PADDING + LineChatHeight * (HeightInGraph / data.MaxElement),
+		GZ_W - 2 * PADDING, 0);
+	StretchDrawLine(GZ_X + PADDING + WidthInGraph,
+		GZ_Y + PADDING, 0, GZ_H - 2 * PADDING);
+}
+
 void display()
 {
-	//DisplayClear();
 	SetPenColor(MyThemes[CurrentTheme].background);
 	drawRectangle(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 1);
 
 	SetPenColor(MyThemes[CurrentTheme].foreground);
 
-	/* 目前用于调试，检测后来加上的组件是否会对回调函数产生干扰 */
 	MovePen(0, 0.05);
 	if (EraseStatus)
 		SetPenColor(MyThemes[CurrentTheme].accent);
-	DrawTextString(DisplayMessage);
+	DrawTextString(DisplayMessage);  // 画操作信息
 	SetEraseMode(false);
 
 	DrawMenu();  // 绘制菜单组件
@@ -348,5 +464,12 @@ void display()
 	MovePen(6, WINDOW_HEIGHT - 0.2);
 	DrawTextString("F1显示折线图");
 	if (DisplayLineChart)  // 折线图功能测试函数
+	{
 		LineChart(GZ_X, GZ_Y, GZ_W, GZ_H);
+		if (status.HighlightVisible)
+		{
+			Highlight();
+			DisplayStatistics();
+		}
+	}
 }

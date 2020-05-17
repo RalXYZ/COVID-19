@@ -5,6 +5,10 @@
  *
  */
 
+#pragma comment(lib, "winmm.lib")  // 链接 Windows multi media 动态链接库，用于播放背景音乐
+
+#include <Windows.h>
+
 #include "graphics.h"
 #include "extgraph.h"
 #include "imgui.h"
@@ -36,6 +40,12 @@ void Main()
 	registerKeyboardEvent(KeyboardEventProcess);
 	registerMouseEvent(MouseEventProcess);
 	registerCharEvent(CharEventProcess);
+
+	/*打开并播放背景音乐*/
+	mciSendString("open ..\\myResourceFiles\\Prologue.mp3 alias bgm",
+		NULL, 0, NULL);
+	mciSendString("play bgm repeat",
+		NULL, 0, NULL);
 
 	GUIOutputMsg("准备就绪");
 }
