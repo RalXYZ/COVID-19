@@ -18,6 +18,7 @@
 #include "draw_chart.h"
 #include "my_display.h"
 #include "my_resource.h"
+#include "prediction_model.h"
 
 extern int NeedMonth;//需求月份
 extern int NeedDay;//需求日期
@@ -132,7 +133,7 @@ void BarChart(double x, double y, double w, double h, int month, int day, int n,
 	}
 }
 
-void DrawChart(int month, int day, int n,int type1, int type2, char* color)
+void DrawChart(int month, int day, int n, int type1, int type2, char* color)
 {
 	double wid = GetWindowWidth();
 	double hei = GetWindowHeight();
@@ -150,7 +151,7 @@ void DrawChart(int month, int day, int n,int type1, int type2, char* color)
 	}
 	if (bar == 1 && fan == 0 && line == 0)
 	{
-		BarChart(wid / 12, hei / 4, 5 * wid / 6, 5 * hei /8, month, day, n, type2, color);
+		BarChart(wid / 12, hei / 4, 5 * wid / 6, 5 * hei / 8, month, day, n, type2, color);
 	}
 	if (bar == 0 && fan == 1 && line == 0)
 	{
@@ -158,7 +159,7 @@ void DrawChart(int month, int day, int n,int type1, int type2, char* color)
 	}
 	if (bar == 0 && fan == 0 && line == 1)
 	{
-		DrawBrokenLine(wid / 12, 9 * hei / 16, 5 * wid / 6, 5 * hei / 16, type1);
+		LineChart(wid / 12, 9 * hei / 16, 5 * wid / 6, 5 * hei / 16);
 	}
 	if (bar == 1 && fan == 1 && line == 0)
 	{
@@ -168,17 +169,17 @@ void DrawChart(int month, int day, int n,int type1, int type2, char* color)
 	if (bar == 1 && fan == 0 && line == 1)
 	{
 		BarChart(wid / 12, hei / 4, 5 * wid / 6, 5 * hei / 16, month, day, n, type2, color);
-		DrawBrokenLine(wid / 12, 9 * hei / 16, 5 * wid / 6, 5 * hei / 16, type1);
+		LineChart(wid / 12, 9 * hei / 16, 5 * wid / 6, 5 * hei / 16);
 	}
 	if (bar == 0 && fan == 1 && line == 1)
 	{
 		FanChart(19 * wid / 24, 9 * hei / 16, 5 * wid / 48);
-		DrawBrokenLine(wid / 12, hei / 4, 7 * wid / 12, 5 * hei / 8, type1);
+		LineChart(wid / 12, hei / 4, 7 * wid / 12, 5 * hei / 8);
 	}
 	if (bar == 1 && fan == 1 && line == 1)
 	{
 		BarChart(wid / 12, hei / 4, 7 * wid / 12, 5 * hei / 16, month, day, n, type2, color);
 		FanChart(19 * wid / 24, 9 * hei / 16, 5 * wid / 48);
-		DrawBrokenLine(wid / 12, 9 * hei / 16, 7 * wid / 12, 5 * hei / 16, type1);
+		LineChart(wid / 12, 9 * hei / 16, 7 * wid / 12, 5 * hei / 16);
 	}
 }

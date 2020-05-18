@@ -28,6 +28,7 @@
     <ClCompile Include="..\myExternalLibraries\simpleGUI\imgui.c" />
     <ClCompile Include="..\mySourceFiles\draw_chart.c" />
     <ClCompile Include="..\mySourceFiles\main.c" />
+    <ClCompile Include="..\mySourceFiles\menu_functions.c" />
     <ClCompile Include="..\mySourceFiles\my_callback.c" />
     <ClCompile Include="..\mySourceFiles\my_display.c" />
     <ClCompile Include="..\mySourceFiles\my_resource.c" />
@@ -45,11 +46,13 @@
     <ClInclude Include="..\myExternalLibraries\libgraphics\strlib.h" />
     <ClInclude Include="..\myExternalLibraries\simpleGUI\imgui.h" />
     <ClInclude Include="..\mySourceFiles\draw_chart.h" />
+    <ClInclude Include="..\mySourceFiles\menu_functions.h" />
     <ClInclude Include="..\mySourceFiles\my_callback.h" />
     <ClInclude Include="..\mySourceFiles\my_display.h" />
     <ClInclude Include="..\mySourceFiles\my_resource.h" />
     <ClInclude Include="..\mySourceFiles\my_macro.h" />
     <ClInclude Include="..\mySourceFiles\my_utilities.h" />
+    <ClInclude Include="..\mySourceFiles\prediction_model.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\myResourceFiles\statistic1.covid19" />

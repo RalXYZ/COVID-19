@@ -21,17 +21,30 @@
 #define GZ_H (WINDOW_HEIGHT - GZ_BOTTOM_MARGIN - GZ_TOP_MARGIN)  // 高度
 
 /*
+ * 函数名: LineChart
+ * 参数1: x 矩形框x坐标
+ * 参数2: y 矩形框y坐标
+ * 参数3: w 矩形框宽度
+ * 参数4: h 矩形框高度
+ * ------------------------------------
+ * 绘制折线图
+ */
+void LineChart(double x, double y, double w, double h);
+
+/*
  * 函数名: DataProportion
  * ------------------------------------
  * 计算占比函数，饼状图使用
  */
 double DataProportion(double x);
+
 /*
  * 函数名: FanChart
  * ------------------------------------
  * 绘制饼状图，表示当天数据占比分布
  */
 void FanChart();
+
 /*
  * 函数名: BarChart
  * 参数1: x 矩形框x坐标

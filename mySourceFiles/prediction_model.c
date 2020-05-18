@@ -1,11 +1,13 @@
-/*
- * ÎÄ¼şÃû: prediction_model.c
+ï»¿/*
+ * æ–‡ä»¶å: prediction_model.c
  * -------------------------------------
- * Õâ¸öÎÄ¼şÊµÏÖÁË»ùÓÚSEIRÄ£ĞÍµÄÒßÇéÔ¤²â
- * ÔÚÊ¹ÓÃÊı¾İ»­Í¼Ê±£¬Îñ±Ø½«ÌìÊı´¦¼õÒ»£¬Èç: [day - 1]
+ * è¿™ä¸ªæ–‡ä»¶å®ç°äº†åŸºäºSEIRæ¨¡å‹çš„ç–«æƒ…é¢„æµ‹
+ * åœ¨ä½¿ç”¨æ•°æ®ç”»å›¾æ—¶ï¼ŒåŠ¡å¿…å°†å¤©æ•°å¤„å‡ä¸€ï¼Œå¦‚: [day - 1]
  */
 #include <stdio.h>
 #include <math.h>
+
+#include "prediction_model.h"
 
 static double i_infection_rate;
 static double e_infection_rate;
@@ -15,51 +17,51 @@ static double e_touch;
 static double recovery_rate;
 static double mul_1, mul_2;
 
-static int InflectionDay;//¹ÕµãÈÕÆÚ
-static int InflectionNumber;//¹ÕµãÖµ
-int NeedMonth;//ĞèÇóÔÂ·İ
-int NeedDay;//ĞèÇóÈÕÆÚ
+static int InflectionDay;//æ‹ç‚¹æ—¥æœŸ
+static int InflectionNumber;//æ‹ç‚¹å€¼
+int NeedMonth;//éœ€æ±‚æœˆä»½
+int NeedDay;//éœ€æ±‚æ—¥æœŸ
 
-double S[102] = { 0 };//Ò×¸ĞÕß
-double E[102] = { 0 };//Ç±·üÕß
-double I[102] = { 0 };//¸ĞÈ¾Õß
-double R[102] = { 0 };//¿µ¸´Õß
+double S[102] = { 0 };//æ˜“æ„Ÿè€…
+double E[102] = { 0 };//æ½œä¼è€…
+double I[102] = { 0 };//æ„ŸæŸ“è€…
+double R[102] = { 0 };//åº·å¤è€…
 /*
- * º¯ÊıÃû1: SEIREnterInt
- * º¯ÊıÃû2: SEIREnterDouble
- * ²ÎÊı1: i_infection_rate ¸ĞÈ¾Õß´«È¾ÂÊ
- * ²ÎÊı2: e_infection_rate Ç±·üÕß´«È¾ÂÊ                                                                                                                                                          
- * ²ÎÊı3: e_turnto_i Ç±·üÕß±äÎª¸ĞÈ¾ÕßµÄ±ÈÂÊ
- * ²ÎÊı4: i_touch ¸ĞÈ¾Õß½Ó´¥ÈËÊı
- * ²ÎÊı5: e_touch Ç±·üÕß½Ó´¥ÈËÊı
- * ²ÎÊı6: recovery_rate ¿µ¸´¸ÅÂÊ
- * ²ÎÊı7: mul_1 ²ÎÊı7*²ÎÊı10
- * ²ÎÊı8: mul_2 ²ÎÊı8*²ÎÊı11
+ * å‡½æ•°å1: SEIREnterInt
+ * å‡½æ•°å2: SEIREnterDouble
+ * å‚æ•°1: i_infection_rate æ„ŸæŸ“è€…ä¼ æŸ“ç‡
+ * å‚æ•°2: e_infection_rate æ½œä¼è€…ä¼ æŸ“ç‡
+ * å‚æ•°3: e_turnto_i æ½œä¼è€…å˜ä¸ºæ„ŸæŸ“è€…çš„æ¯”ç‡
+ * å‚æ•°4: i_touch æ„ŸæŸ“è€…æ¥è§¦äººæ•°
+ * å‚æ•°5: e_touch æ½œä¼è€…æ¥è§¦äººæ•°
+ * å‚æ•°6: recovery_rate åº·å¤æ¦‚ç‡
+ * å‚æ•°7: mul_1 å‚æ•°7*å‚æ•°10
+ * å‚æ•°8: mul_2 å‚æ•°8*å‚æ•°11
  * -------------------------------------
- * ÒÔÏÂÁ½¸öº¯ÊıÂ¼ÈëÒßÇéÄ£ĞÍµÄ»ù±¾²ÎÊı
- * ²ÎÊıÒÑ¾­ÓĞËùÔ¤Éè
+ * ä»¥ä¸‹ä¸¤ä¸ªå‡½æ•°å½•å…¥ç–«æƒ…æ¨¡å‹çš„åŸºæœ¬å‚æ•°
+ * å‚æ•°å·²ç»æœ‰æ‰€é¢„è®¾
  */
-void SEIREnterInt(int* variable, int value) 
+void SEIREnterInt(int* variable, int value)
 {
 	*variable = value;
 }
-void SEIREnterDouble(double* variable, double value) 
+void SEIREnterDouble(double* variable, double value)
 {
 	*variable = value;
 }
 /*
- * º¯ÊıÃû: SEIR
+ * å‡½æ•°å: SEIR
  * -------------------------------------
- * ±¾º¯ÊıÍ¨¹ı·Ö±ğµ÷ÓÃÒßÇé²ÎÊı
- * ¼ÆËãÏà¹ØÊı¾İ²¢´æ´¢ÔÚÊı×éÖĞ
- * µ÷ÓÃÊı¾İÖ±½ÓÊ¹ÓÃÊı×éÃûS£¬E£¬I£¬R
- * Êı¾İ·¶Î§²»Òª³¬¹ı100
- * ÀıÈç½ìÊ±¼ÓÈëÊäÈëÒç³öÌáĞÑ: Ô¤²âÊ±¼ä¹ı³¤£¬Ä£ĞÍÎŞĞ§
- * ÔÚÊ¹ÓÃÊı¾İ»­Í¼Ê±£¬Îñ±Ø½«ÌìÊı´¦¼õÒ»£¬Èç: [day - 1]
+ * æœ¬å‡½æ•°é€šè¿‡åˆ†åˆ«è°ƒç”¨ç–«æƒ…å‚æ•°
+ * è®¡ç®—ç›¸å…³æ•°æ®å¹¶å­˜å‚¨åœ¨æ•°ç»„ä¸­
+ * è°ƒç”¨æ•°æ®ç›´æ¥ä½¿ç”¨æ•°ç»„åSï¼ŒEï¼ŒIï¼ŒR
+ * æ•°æ®èŒƒå›´ä¸è¦è¶…è¿‡100
+ * ä¾‹å¦‚å±Šæ—¶åŠ å…¥è¾“å…¥æº¢å‡ºæé†’: é¢„æµ‹æ—¶é—´è¿‡é•¿ï¼Œæ¨¡å‹æ— æ•ˆ
+ * åœ¨ä½¿ç”¨æ•°æ®ç”»å›¾æ—¶ï¼ŒåŠ¡å¿…å°†å¤©æ•°å¤„å‡ä¸€ï¼Œå¦‚: [day - 1]
  */
 void SEIR()
-{	
-	int K = 0;//Ñ­»·±äÁ¿
+{
+	int K = 0;//å¾ªç¯å˜é‡
 	double p = 10000;
 
 	S[0] = 10000;
@@ -79,15 +81,15 @@ void SEIR()
 	}
 }
 /*
- * º¯ÊıÃû: EpidemicInflectionPoint
- * ²ÎÊı1: Arr[] ÊäÈëÊı×é I »ò E
+ * å‡½æ•°å: EpidemicInflectionPoint
+ * å‚æ•°1: Arr[] è¾“å…¥æ•°ç»„ I æˆ– E
  * -------------------------------------
- * ±¾º¯ÊıÍ¨¹ı·Ö±ğµ÷ÓÃÒßÇéÊı¾İ£¬¼ÆËã¸÷ÏîÊı¾İÈËÊı·åÖµ(½öÏŞ¸ĞÈ¾ÈËÊıÓëÇ±·üÈËÊı)
- * ²åÈëÅÅĞò¼ÆËãÒßÇé¹Õµã,¹ÕµãÌìÊıÎªInflectionDay£¬ÖµÎªInflectionNumber
+ * æœ¬å‡½æ•°é€šè¿‡åˆ†åˆ«è°ƒç”¨ç–«æƒ…æ•°æ®ï¼Œè®¡ç®—å„é¡¹æ•°æ®äººæ•°å³°å€¼(ä»…é™æ„ŸæŸ“äººæ•°ä¸æ½œä¼äººæ•°)
+ * æ’å…¥æ’åºè®¡ç®—ç–«æƒ…æ‹ç‚¹,æ‹ç‚¹å¤©æ•°ä¸ºInflectionDayï¼Œå€¼ä¸ºInflectionNumber
  */
 int EpidemicInflectionPoint(double Arr[])
 {
-	int t,k;
+	int t, k;
 	int C[102];
 	for (k = 0; k < 100; k++)
 		C[k] = Arr[k];
@@ -109,17 +111,17 @@ int EpidemicInflectionPoint(double Arr[])
 	C[0] = InflectionNumber;
 }
 /*
- * º¯ÊıÃû: DateCalculate
+ * å‡½æ•°å: DateCalculate
  * -------------------------------------
- * ±¾º¯Êı¼ÆËãnÌìºóµÄÈÕÆÚ
- * NeedMonth:ÔÂ·İ NeedDay:ÈÕÆÚ
+ * æœ¬å‡½æ•°è®¡ç®—nå¤©åçš„æ—¥æœŸ
+ * NeedMonth:æœˆä»½ NeedDay:æ—¥æœŸ
  */
 void DateCalculate(int month, int day, int n)
 {
-	int mon[12] = { 31,29,31,30,31,30,31,31,30,31,30,31 };//¸÷ÔÂÌìÊı
-	int sum = 0, sum1 = 0;//¼ÆÈë±¾ÔÂ×ÜÌìÊı£¬±¾ÔÂÇ°×ÜÌìÊı
+	int mon[12] = { 31,29,31,30,31,30,31,31,30,31,30,31 };//å„æœˆå¤©æ•°
+	int sum = 0, sum1 = 0;//è®¡å…¥æœ¬æœˆæ€»å¤©æ•°ï¼Œæœ¬æœˆå‰æ€»å¤©æ•°
 	int k;
-	int t = 0;//¼ÇÂ¼ÉÏÒ»¸ösum
+	int t = 0;//è®°å½•ä¸Šä¸€ä¸ªsum
 	for (k = 0; k < month - 1; k++)
 	{
 		sum1 += mon[k];
