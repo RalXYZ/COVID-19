@@ -19,6 +19,7 @@
 #include "my_display.h"
 #include "draw_chart.h"
 #include "my_resource.h"
+#include "menu_functions.h"
 
 void DisplayClear();  // 定义在 graphics.c
 int CurrentTheme = 3;  // 当前主题序号
@@ -219,146 +220,23 @@ static void DrawMenu()
 			MenuSelectionWidth, TextStringWidth(MenuListFile[1]) * 1.2,
 			MenuButtonHeight, MenuListFile, sizeof(MenuListFile) / sizeof(MenuListFile[0]));
 
-	FileMenuBranchStart:  // 危险！MenuListFileSelection 分支的开头。如果不清楚它的危险性，请一定不要使用。
-			// 请不要在此注释之上添加任何流程，且保证只在目前的代码块中用到 FileMenuBranchStart 标号
-			// goto语句具有较强的危险性，且在阅读与调试时容易引起困扰。请一定一定慎用！
-			// TODO: 未来将封装成函数，彻底取代这个实现方式
-
-		if (MenuListFileSelection == 2)  // 打开
+		switch (MenuListFileSelection)
 		{
-			if (data.HasModified)
-			{
-				const int selection = MessageBox(graphicsWindow,
-					TEXT("您有未保存的更改，请问需要保存这些更改吗？"),
-					TEXT("提示"), MB_OKCANCEL | MB_ICONWARNING);
-				if (selection == IDOK)
-				{
-					MenuListFileSelection = 3;  // 将选项改为“保存”
-					goto FileMenuBranchStart;  //危险！为了保证所有分支都被重新遍历，无条件转移控制流
-					// 已跳出外层分支，请紧随goto的跳转逻辑
-				}
-			}
-			/*以下代码的实现部分参考了 StackOverflow 论坛*/
-			OPENFILENAME ofn;
-			TCHAR szFile[MAX_PATH] = { 0 };
-
-			ZeroMemory(&ofn, sizeof(ofn));  // 将ofn所在内存区域清零
-
-			/*为 ofn 赋初始值*/
-			ofn.lStructSize = sizeof(ofn);
-			ofn.hwndOwner = graphicsWindow;  // 传入窗口句柄
-			ofn.lpstrFile = szFile;
-			ofn.nMaxFile = sizeof(szFile);
-			ofn.lpstrFilter = "COVID19 FILES\0*.COVID19\0";  // 支持打开的文件类型
-			ofn.nFilterIndex = 1;
-			ofn.lpstrFileTitle = NULL;
-			ofn.nMaxFileTitle = 0;
-			ofn.lpstrInitialDir = "..\\myResourceFiles";  // 默认目录
-			ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;  // 目录和文件必须存在，否则弹出警告对话框
-
-			GUIOutputMsg("正在打开");
-
-			if (GetOpenFileName(&ofn) == TRUE)  // ofn.lpstrFile 会被赋上文件的绝对路径，字符串形式
-				FileInputList(ofn.lpstrFile);
-
-			GUIOutputMsg("打开成功");
-		}
-		else if (MenuListFileSelection == 3)  // 保存
-		{
-			if (data.BaseDir == nullptr)  // 若没有打开任何文件（新建文件状态）
-			{
-				if (data.HasModified)
-				{
-					MenuListFileSelection = 4;  // 将选项改为“另存为”
-					goto FileMenuBranchStart;  //危险！为了保证所有分支都被重新遍历，无条件转移控制流
-					// 已跳出外层分支，请紧随goto的跳转逻辑
-				}
-				else
-				{
-					display();
-					MessageBox(graphicsWindow, TEXT("您目前没有新建或打开任何文件，无需保存"),
-						TEXT("提示"), MB_OK | MB_ICONINFORMATION);
-					GUIOutputMsg("目前未打开文件");
-				}
-			}
-			else if (data.HasModified)  // 如果链表里的数据被修改过
-			{
-				FileSave(data.BaseDir);
-				GUIOutputMsg("保存成功");
-			}
-			else
-			{
-				display();
-				MessageBox(graphicsWindow, TEXT("您的文件已与GUI同步，无需保存"),
-					TEXT("提示"), MB_OK | MB_ICONINFORMATION);
-				GUIOutputMsg("无需保存");
-			}
-			data.HasModified = false;
-		}
-		else if (MenuListFileSelection == 4)  // 另存为
-		{
-			OPENFILENAME ofn;
-			char szFileName[MAX_PATH] = "";
-
-			ZeroMemory(&ofn, sizeof(ofn));  // 将ofn所在内存区域清零
-
-			/*为 ofn 赋初始值*/
-			ofn.lStructSize = sizeof(ofn);
-			ofn.hwndOwner = graphicsWindow;
-			ofn.lpstrFilter = "COVID19 FILES\0*.covid19\0";
-			ofn.lpstrFile = szFileName;
-			ofn.nMaxFile = MAX_PATH;
-			ofn.lpstrInitialDir = "%UserProfile%\\Documents";  // 默认目录
-			ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
-			ofn.lpstrDefExt = "covid19";
-
-			if (GetSaveFileName(&ofn))
-			{
-				FileSave(ofn.lpstrFile);
-				data.BaseDir = ofn.lpstrFile;
-				data.HasModified = false;
-				GUIOutputMsg("另存成功");
-			}
-		}
-		else if (MenuListFileSelection == 5)  // 关闭
-		{
-			if (data.HasModified)
-			{
-				const int selection = MessageBox(graphicsWindow,
-					TEXT("您有未保存的更改，请问需要保存这些更改吗？"),
-					TEXT("提示"), MB_OKCANCEL | MB_ICONWARNING);
-				if (selection == IDOK)
-				{
-					MenuListFileSelection = 3;  // 将选项改为“保存”
-					goto FileMenuBranchStart;  //危险！为了保证所有分支都被重新遍历，无条件转移控制流
-					// 已跳出外层分支，请紧随goto的跳转逻辑
-				}
-			}
-
-			DesHighlight();
-			FreeEpidemicList(SentinelNode.next);
-			SentinelNode.next = nullptr;
-			data.BaseDir = nullptr;  // 清空存储当前文件绝对路径的变量
-			GUIOutputMsg("关闭成功");
-		}
-		else if (MenuListFileSelection == 6)  // 退出
-		{
-			if (data.HasModified)
-			{
-				const int selection = MessageBox(graphicsWindow,
-					TEXT("您有未保存的更改，请问需要保存这些更改吗？"),
-					TEXT("提示"), MB_OKCANCEL | MB_ICONWARNING);
-				if (selection == IDOK)
-				{
-					MenuListFileSelection = 3;  // 将选项改为“保存”
-					goto FileMenuBranchStart;  //危险！为了保证所有分支都被重新遍历，无条件转移控制流
-					// 已跳出外层分支，请紧随goto的跳转逻辑
-				}
-			}
-			const int selection = MessageBox(graphicsWindow, TEXT("您确定要退出吗？"),
-				TEXT("提示"), MB_OKCANCEL | MB_ICONINFORMATION | MB_DEFBUTTON2);
-			if (selection == IDOK)
-				exit(0);
+		case 2:  // 打开
+			MenuFileOpen();
+			break;
+		case 3:  // 保存
+			MenuFileSave();
+			break;
+		case 4:  // 另存为
+			MenuFileSaveAs();
+			break;
+		case 5:  // 关闭
+			MenuFileClose();
+			break;
+		case 6:  // 退出
+			MenuFileExit();
+			break;
 		}
 	}
 
