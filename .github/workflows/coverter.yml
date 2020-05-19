@@ -25,5 +25,5 @@ jobs:
       - name: Upload Converted Files
         uses: actions/upload-artifact@v2
         with: 
-          name: mySourceFiles-GB2312-${{ github.run_id }}
+          name: mySourceFiles-GBK-${{ github.run_id }}
           path: ./mySourceFiles
