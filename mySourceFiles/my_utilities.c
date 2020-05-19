@@ -1,11 +1,12 @@
 ﻿/*
  * 文件名: my_utilities.c
  * -------------------------------------
- * 这个文件实现了杂项功能
+ * 这个文件实现了杂项功能，大多为工具性质
  *
  */
 
 #include <Windows.h>
+#include <stdio.h>
 #include <ctype.h>
 #include <stdbool.h>
 
@@ -43,6 +44,43 @@ static void ArraySort(int* array, int* partner, int length)
 			}
 		}
 	}
+}
+
+void MyExitConsole() {
+	FreeConsole();                  // 该函数在 wincon.h 声明  
+	freopen("CON", "r+t", stdin);   // 将stdin重定向到默认位置 
+	freopen("CON", "w+t", stdout);  // 将stdout重定向到默认位置 
+}
+
+void PauseDisplay() {
+	display();                   // GUI刷新一次
+	status.PauseAllProcedure = true;    // 停止所有GUI行为
+}
+
+void ContinueDisplay() {
+	startTimer(TIME_ELAPSE_1, TIME_ELAPSE_1);     // 重置计时器
+	status.PauseAllProcedure = false;   // 取消禁止所有GUI行为
+}
+
+int SafeNNegIntInput(int digits) {
+	// TODO: 当第一个字符即为空格时，goto到此函数开头
+	int sum = 0;
+	for (int i = 0; i <= digits; i++) {
+		int input = getchar();
+		if (input == '\n')
+			return sum;
+		else if (!(isdigit(input)))  // 如果不是数字
+		{
+			while (getchar() != '\n')  // 清空键盘缓冲区；不能使用 fflush() 代替，否则会出现UB
+				;
+			return -1;  // 出现非法符号
+		}
+		sum *= 10;
+		sum += input - '0';
+	}
+	while (getchar() != '\n')  // 清空键盘缓冲区；不能使用 fflush() 代替，否则会出现UB
+		;
+	return -2;  // 超过位数限制
 }
 
 int UpSelectProperty()
@@ -95,4 +133,23 @@ int DownSelectProperty()
 		}
 	}
 	return output;
+}
+
+char* PropertyMeaning(int property)
+{
+	switch (property)
+	{
+	case Month:
+		return "月";
+	case Day:
+		return "日";
+	case Current:
+		return "当前确诊";
+	case Total:
+		return "累计确诊";
+	case Cured:
+		return "累计治愈";
+	case Dead:
+		return "累计死亡";
+	}
 }

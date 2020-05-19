@@ -36,28 +36,6 @@ extern epidemic SentinelNode;  // 哨兵节点，在 my_resource.c 中声明
 extern MyStatus status;  // 当前状态，在 my_resource.c 中定义
 
 /*
- * 函数名: PauseDisplay 目前停用
- * -------------------------------------
- * 封装了停止GUI行为时所需的一些步骤
-
-static void PauseDisplay() {
-	display();                   // GUI刷新一次
-	PauseAllProcedure = true;    // 停止所有GUI行为
-}
-*/
-
-/*
- * 函数名: ContinueDisplay 目前停用
- * -------------------------------------
- * 封装了取消停止GUI行为时所需的一些步骤
- *
-static void ContinueDisplay() {
-	startTimer(TIME_ELAPSE_1, TIME_ELAPSE_1);     // 重置计时器
-	PauseAllProcedure = false;   // 取消禁止所有GUI行为
-}
-*/
-
-/*
  * HexDefineColor
  * 参数1: name   指向你想处理的字符串的指针
  * 参数2: value  十六进制颜色码值
@@ -182,7 +160,7 @@ static void DrawMenu()
 	static char ChangeThemeLabel[40] = { 0 };
 	static char Highlight[20] = "隐藏高亮光标";
 
-	static char* MenuListFile[] = { "文件",
+	static char* MenuFile[] = { "文件",
 		"新建 无功能 | Ctrl-N",
 		"打开 | Ctrl-O",
 		"保存 | Ctrl-S",
@@ -190,24 +168,24 @@ static void DrawMenu()
 		"关闭 | Ctrl-W",
 		"退出 | Ctrl-Q" };
 
-	static char* MenuListTool[] = { "编辑",
+	static char* MenuEdit[] = { "编辑",
 		"录入 无功能",
-		"修改 无功能",
+		"修改",
 		"删除 无功能" };
 
-	static char* MenuListDraw[] = { "绘图",
+	static char* MenuDraw[] = { "绘图",
 		"绘制图表 无功能" };
 
-	static char* MenuListDisplay[] = { "视图",
+	static char* MenuDisplay[] = { "视图",
 		ChangeThemeLabel,
 		Highlight };
 
-	static char* MenuListHelp[] = { "帮助",
+	static char* MenuHelp[] = { "帮助",
 		"使用帮助",
 		"关于本软件" };
 
 
-	const double MenuSelectionWidth = TextStringWidth(MenuListFile[0]) * 2;  // 菜单栏选项都是两个中文字
+	const double MenuSelectionWidth = TextStringWidth(MenuFile[0]) * 2;  // 菜单栏选项都是两个中文字
 	const double MenuButtonHeight = GetFontHeight() * 1.5;  // 菜单栏每一个按钮的高度
 	const double MenuBarVertical = GetWindowHeight() - MenuButtonHeight;  // 菜单栏的竖直位置
 
@@ -216,11 +194,11 @@ static void DrawMenu()
 	sprintf(ChangeThemeLabel, "切换主题（当前：%s）", MyThemes[CurrentTheme].name);
 
 	{
-		int MenuListFileSelection = MyMenuList(GenUIID(0), 0, MenuBarVertical,
-			MenuSelectionWidth, TextStringWidth(MenuListFile[1]) * 1.2,
-			MenuButtonHeight, MenuListFile, sizeof(MenuListFile) / sizeof(MenuListFile[0]));
+		const int MenuFileSelection = MyMenuList(GenUIID(0), 0, MenuBarVertical,
+			MenuSelectionWidth, TextStringWidth(MenuFile[1]) * 1.2,
+			MenuButtonHeight, MenuFile, sizeof(MenuFile) / sizeof(MenuFile[0]));
 
-		switch (MenuListFileSelection)
+		switch (MenuFileSelection)
 		{
 		case 2:  // 打开
 			MenuFileOpen();
@@ -241,27 +219,33 @@ static void DrawMenu()
 	}
 
 	{
-		const int MenuListToolSelection = MyMenuList(GenUIID(0), MenuSelectionWidth, MenuBarVertical,
-			TextStringWidth(MenuListTool[0]) * 2, TextStringWidth(MenuListTool[1]) * 1.2,
-			MenuButtonHeight, MenuListTool, sizeof(MenuListTool) / sizeof(MenuListTool[0]));
+		const int MenuEditSelection = MyMenuList(GenUIID(0), MenuSelectionWidth, MenuBarVertical,
+			TextStringWidth(MenuEdit[0]) * 2, TextStringWidth(MenuEdit[1]) * 1.2,
+			MenuButtonHeight, MenuEdit, sizeof(MenuEdit) / sizeof(MenuEdit[0]));
+		switch (MenuEditSelection)
+		{
+		case 2:  // 修改
+			MenuEditChange();
+			break;
+		}
 	}
 
 	{
-		const int MenuListDrawSelection = MyMenuList(GenUIID(0), MenuSelectionWidth * 2, MenuBarVertical,
-			TextStringWidth(MenuListDraw[0]) * 2, TextStringWidth(MenuListDraw[1]) * 1.2,
-			MenuButtonHeight, MenuListDraw, sizeof(MenuListDraw) / sizeof(MenuListDraw[0]));
+		const int MenuDrawSelection = MyMenuList(GenUIID(0), MenuSelectionWidth * 2, MenuBarVertical,
+			TextStringWidth(MenuDraw[0]) * 2, TextStringWidth(MenuDraw[1]) * 1.2,
+			MenuButtonHeight, MenuDraw, sizeof(MenuDraw) / sizeof(MenuDraw[0]));
 	}
 
 	{
-		const int MenuListDisplaySelection = MyMenuList(GenUIID(0), MenuSelectionWidth * 3, MenuBarVertical,
-			TextStringWidth(MenuListDisplay[0]) * 2, TextStringWidth(MenuListDisplay[1]) * 1.1,
-			MenuButtonHeight, MenuListDisplay, sizeof(MenuListDisplay) / sizeof(MenuListDisplay[0]));
-		if (MenuListDisplaySelection == 1)
+		const int MenuDisplaySelection = MyMenuList(GenUIID(0), MenuSelectionWidth * 3, MenuBarVertical,
+			TextStringWidth(MenuDisplay[0]) * 2, TextStringWidth(MenuDisplay[1]) * 1.1,
+			MenuButtonHeight, MenuDisplay, sizeof(MenuDisplay) / sizeof(MenuDisplay[0]));
+		if (MenuDisplaySelection == 1)
 		{
 			CurrentTheme = (CurrentTheme + 1) % THEME_NUM;
 			display();
 		}
-		if (MenuListDisplaySelection == 2)
+		if (MenuDisplaySelection == 2)
 		{
 			if (data.BaseDir == nullptr)
 			{
@@ -284,16 +268,16 @@ static void DrawMenu()
 	}
 
 	{
-		const int MenuListHelpSelection = MyMenuList(GenUIID(0), MenuSelectionWidth * 4, MenuBarVertical,
-			TextStringWidth(MenuListHelp[0]) * 2, TextStringWidth(MenuListHelp[2]) * 1.4,
-			MenuButtonHeight, MenuListHelp, sizeof(MenuListHelp) / sizeof(MenuListHelp[0]));
-		if (MenuListHelpSelection == 1)  // 使用帮助
+		const int MenuHelpSelection = MyMenuList(GenUIID(0), MenuSelectionWidth * 4, MenuBarVertical,
+			TextStringWidth(MenuHelp[0]) * 2, TextStringWidth(MenuHelp[2]) * 1.4,
+			MenuButtonHeight, MenuHelp, sizeof(MenuHelp) / sizeof(MenuHelp[0]));
+		if (MenuHelpSelection == 1)  // 使用帮助
 		{
 			// system("start ..\\xxx");  // 将指令传给shell；由于目前还没有帮助文档，这行代码被注释掉
 			MessageBox(graphicsWindow, TEXT("目前帮助文档还不存在，但用于打开帮助文档的代码已写好。"),
 				TEXT("提示"), MB_OK | MB_ICONINFORMATION);
 		}
-		if (MenuListHelpSelection == 2)  // 关于本软件
+		if (MenuHelpSelection == 2)  // 关于本软件
 		{
 			MessageBox(graphicsWindow, TEXT("本软件不是开源软件。\n\
 本软件是2019学年春夏学期“程序设计专题”大作业。\n\

@@ -18,7 +18,7 @@
 
 DataProperty data = { 0, 0, nullptr, false };  // 链表相关属性值
 epidemic SentinelNode;  // 哨兵节点
-MyStatus status = { false, nullptr, 0, 0 };  // 当前状态
+MyStatus status = { false, nullptr, 0, 0 , false };  // 当前状态
 
 void InitEpidemicList(epidemic* node)
 {
@@ -126,12 +126,7 @@ static void GetDayNum()
 		pass;
 }
 
-/*
- * 函数名: GetMaxElement
- * ------------------------------------
- * 取得疫情链表中 除日期外的最大元素
- */
-static void GetMaxElement()
+void GetMaxElement()
 {
 	data.MaxElement = -1;  // 由于统计数据一定非负，那么就把最大值初始化为负数
 	for (EpidemicProperty i = EPIDEMIC_PROPERTY_START; i < EPIDEMIC_ELEMENT_NUM; i++)

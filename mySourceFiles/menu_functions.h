@@ -13,4 +13,6 @@ void MenuFileSaveAs();
 void MenuFileClose();
 void MenuFileExit();
 
+void MenuEditChange();
+
 #endif

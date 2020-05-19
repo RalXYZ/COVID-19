@@ -1,0 +1,29 @@
+# This is a basic workflow to help you get started with Actions
+ 
+name: Converter
+ 
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on: [push, pull_request]
+ 
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  encoding:
+    name: Encoding
+    runs-on: ubuntu-latest
+    if: "! contains(toJSON(github.event.commits.*.message), '[skip-ci]')"
+    steps:
+      - name: Check out source code
+        uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      - name: Convert mySourceFiles
+        run: |
+          find ./mySourceFiles -type f -regex '.*\.\(c\|h\)' -exec python3 ./myResourceFiles/encode_converter.py {} \;
+      - name: Upload Converted Files
+        uses: actions/upload-artifact@v2
+        with: 
+          name: mySourceFiles-GB2312-${{ github.run_id }}
+          path: ./mySourceFiles

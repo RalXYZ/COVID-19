@@ -69,6 +69,7 @@ typedef struct MyStatus
 	epidemic* HighlightNode;  // 当前高亮的节点
 	EpidemicProperty HighlightProperty;  // 当前高亮的项目，注意，不从0开始！！！
 	int HighlightNum;  // 目前高亮的是链表中的第几个
+	_Bool PauseAllProcedure;
 } MyStatus;
 
 
@@ -114,6 +115,13 @@ void DesHighlight();
  * 这个函数的目的是取一个特定日期中的特定值。
  */
 int ReadEpidemicList(int month, int date, EpidemicProperty type);
+
+/*
+ * 函数名: GetMaxElement
+ * ------------------------------------
+ * 取得疫情链表中 除日期外的最大元素
+ */
+void GetMaxElement();
 
 /*
  * 函数名: FileInputList

@@ -4,13 +4,18 @@
  * 这个文件实现了菜单栏里的所有选项
  */
 
+#include <stdio.h>
 #include <stdbool.h>
-
 #include <Windows.h>
 
+#include "graphics.h"
+
 #include "menu_functions.h"
+
 #include "my_display.h"
+#include "my_macro.h"
 #include "my_resource.h"
+#include "my_utilities.h"
 
 
 extern HWND graphicsWindow;     // GUI窗口句柄，在 libgraphics 中声明
@@ -157,4 +162,58 @@ void MenuFileExit()
 		TEXT("提示"), MB_OKCANCEL | MB_ICONINFORMATION | MB_DEFBUTTON2);
 	if (selection == IDOK)
 		exit(0);
+}
+
+/***********************************************************************************/
+
+void MenuEditChange()
+{
+	if (data.BaseDir == nullptr)
+	{
+		display();
+		MessageBox(graphicsWindow,
+			TEXT("您尚未打开文件。请先打开文件。"),
+			TEXT("提示"), MB_OK | MB_ICONWARNING);
+		return;
+	}
+
+	//PauseDisplay();
+
+	InitConsole();
+
+	while (true)
+	{
+		printf("您当前要更改的是”%s“，未更改前的值是 %d \n",
+			PropertyMeaning(status.HighlightProperty),
+			status.HighlightNode->properties[status.HighlightProperty]);
+		printf("请输入您想更改为的值，要求为不超过%d位的十进制非负数: ", MAX_DIGIT);
+		int input = SafeNNegIntInput(MAX_DIGIT);
+		if (input == -1)
+		{
+			const int selection = MessageBox(graphicsWindow,
+				TEXT("您的输入有非法字符。请问您要重新输入吗？"),
+				TEXT("错误"), MB_OKCANCEL | MB_ICONERROR);
+			if (selection == IDCANCEL)
+				break;
+		}
+		else if (input == -2)
+		{
+			const int selection = MessageBox(graphicsWindow,
+				TEXT("您的输入超过了范围。请问您要重新输入吗？"),
+				TEXT("错误"), MB_OKCANCEL | MB_ICONERROR);
+			if (selection == IDCANCEL)
+				break;
+		}
+		else
+		{
+			data.HasModified = true;
+			status.HighlightNode->properties[status.HighlightProperty] = input;
+			GetMaxElement();
+			display();
+			break;
+		}
+	}
+	MyExitConsole();  // 退出终端窗口
+
+	//ContinueDisplay();
 }
