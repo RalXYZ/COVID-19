@@ -321,6 +321,7 @@ void display()
 	SetEraseMode(false);
 
 	DrawMenu();  // 绘制菜单组件
+	DrawChart(3, 1, 40, 1, Current, MyThemes[CurrentTheme].foreground);
 
 	/* 目前用于测试折线图，后期将会删除 */
 	MovePen(6, WINDOW_HEIGHT - 0.2);

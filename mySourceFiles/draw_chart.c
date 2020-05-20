@@ -101,8 +101,8 @@ void FanChart(double centerX, double centerY, double radius)
 
 	double AngleSum = 0;//记录转过角度
 
-	MovePen(centerX + 2, centerY);//绘图起点
-	endX = centerX + 2;//绘图终点
+	MovePen(centerX + radius, centerY);//绘图起点
+	endX = centerX + radius;//绘图终点
 	endY = centerY;
 
 	int i;
@@ -126,8 +126,8 @@ void BarChart(double x, double y, double w, double h, int month, int day, int n,
 	for (i = 0; i < n; i++)
 	{
 		DateCalculate(month, day, i);
-		drawRectangle(x + w / (2 * n + 2), y, w / (2 * n + 2), ReadEpidemicList(NeedMonth, NeedDay, type) / 2, 1);
-		x = x + w / (2 * n + 2);
+		drawRectangle(x + w / (2 * n + 2), y, w / (2 * n + 2), ReadEpidemicList(NeedMonth, NeedDay, type) / (1.0 * data.MaxElement), 1);
+		x += 2 * w / (2 * n + 2);
 	}
 }
 

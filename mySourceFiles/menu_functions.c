@@ -98,7 +98,7 @@ void MenuFileSave()
 void MenuFileSaveAs()
 {
 	OPENFILENAME ofn;
-	char szFileName[MAX_PATH] = "";
+	char szFileName[MAX_PATH] = "Untitled.covid19";  // 默认文件名
 
 	ZeroMemory(&ofn, sizeof(ofn));  // 将ofn所在内存区域清零
 
