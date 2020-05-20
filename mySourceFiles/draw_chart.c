@@ -94,13 +94,11 @@ double DataProportion(double x)//计算占比函数，饼状图使用
 	return x / sum * 360;
 }
 
-void FanChart()
+void FanChart(double centerX, double centerY, double radius)
 {
-	int radius = 2;//这个是半径，测试用预设为2
 	double now[3] = { ReadEpidemicList(3, 2, Total), ReadEpidemicList(3, 2, Cured), ReadEpidemicList(3, 2, Dead) };
 	double endX, endY;//这个记录每次画笔末尾坐标
-	double centerX = GetWindowWidth() / 2;//圆心坐标
-	double centerY = GetWindowHeight() / 2;
+
 	double AngleSum = 0;//记录转过角度
 
 	MovePen(centerX + 2, centerY);//绘图起点
