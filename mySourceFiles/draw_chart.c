@@ -153,6 +153,7 @@ void DrawChart(int month, int day, int n, int type1, int type2, char* color)
 	}
 	if (bar == 0 && fan == 1 && line == 0)
 	{
+		drawRectangle(7 * wid / 24, hei / 4, 5 * wid / 12, 5 * hei / 8, 0);
 		FanChart(wid / 2, 9 * hei / 16, wid / 6);
 	}
 	if (bar == 0 && fan == 0 && line == 1)
@@ -162,6 +163,7 @@ void DrawChart(int month, int day, int n, int type1, int type2, char* color)
 	if (bar == 1 && fan == 1 && line == 0)
 	{
 		BarChart(wid / 12, hei / 4, 7 * wid / 12, 5 * hei / 8, month, day, n, type2, color);
+		drawRectangle(16 * wid / 24, hei / 4, wid / 4, 5 * hei / 8, 0);
 		FanChart(19 * wid / 24, 9 * hei / 16, 5 * wid / 48);
 	}
 	if (bar == 1 && fan == 0 && line == 1)
@@ -171,12 +173,14 @@ void DrawChart(int month, int day, int n, int type1, int type2, char* color)
 	}
 	if (bar == 0 && fan == 1 && line == 1)
 	{
+		drawRectangle(16 * wid / 24, hei / 4, wid / 4, 5 * hei / 8, 0);
 		FanChart(19 * wid / 24, 9 * hei / 16, 5 * wid / 48);
 		LineChart(wid / 12, hei / 4, 7 * wid / 12, 5 * hei / 8);
 	}
 	if (bar == 1 && fan == 1 && line == 1)
 	{
 		BarChart(wid / 12, hei / 4, 7 * wid / 12, 5 * hei / 16, month, day, n, type2, color);
+		drawRectangle(16 * wid / 24, hei / 4, wid / 4, 5 * hei / 8, 0);
 		FanChart(19 * wid / 24, 9 * hei / 16, 5 * wid / 48);
 		LineChart(wid / 12, 9 * hei / 16, 7 * wid / 12, 5 * hei / 16);
 	}
