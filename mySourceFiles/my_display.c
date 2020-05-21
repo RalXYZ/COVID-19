@@ -97,7 +97,7 @@ static void DisplayStatistics()
 	{
 		char property[20] = "";
 		SetPenColor(MyThemes[CurrentTheme].accent);
-		if (i == status.HighlightProperty)
+		if (i == status.HighlightProperty)  // 如果该项目为当前高亮项目
 			SetPenColor("Red");
 		switch (i)
 		{
@@ -300,10 +300,10 @@ static void Highlight()
 	const double WidthInGraph = 1.0 * status.HighlightNum * (GZ_W - 2 * PADDING) / (data.TotalDays - 1);
 	SetPenColor("Red");  // 临时调试用
 
-	StretchDrawLine(GZ_X + PADDING,
+	StretchDrawLine(GZ_X + PADDING,  // 画横向
 		GZ_Y + PADDING + LineChatHeight * (HeightInGraph / data.MaxElement),
 		GZ_W - 2 * PADDING, 0);
-	StretchDrawLine(GZ_X + PADDING + WidthInGraph,
+	StretchDrawLine(GZ_X + PADDING + WidthInGraph,  // 画纵向
 		GZ_Y + PADDING, 0, GZ_H - 2 * PADDING);
 }
 
@@ -315,7 +315,7 @@ void display()
 	SetPenColor(MyThemes[CurrentTheme].foreground);
 
 	MovePen(0, 0.05);
-	if (EraseStatus)
+	if (EraseStatus)  // 闪烁
 		SetPenColor(MyThemes[CurrentTheme].accent);
 	DrawTextString(DisplayMessage);  // 画操作信息
 	SetEraseMode(false);

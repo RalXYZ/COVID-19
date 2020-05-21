@@ -11,7 +11,6 @@
 #include "graphics.h"
 
 #include "menu_functions.h"
-
 #include "my_display.h"
 #include "my_macro.h"
 #include "my_resource.h"
@@ -39,7 +38,7 @@ void MenuFileOpen()
 	}
 	/*以下代码的实现部分参考了 StackOverflow 论坛*/
 	OPENFILENAME ofn;
-	TCHAR szFile[MAX_PATH] = { 0 };
+	static TCHAR szFile[MAX_PATH] = { 0 };
 
 	ZeroMemory(&ofn, sizeof(ofn));  // 将ofn所在内存区域清零
 
@@ -98,7 +97,7 @@ void MenuFileSave()
 void MenuFileSaveAs()
 {
 	OPENFILENAME ofn;
-	char szFileName[MAX_PATH] = "Untitled.covid19";  // 默认文件名
+	static char szFileName[MAX_PATH] = "Untitled.covid19";  // 默认文件名，将存储文件路径
 
 	ZeroMemory(&ofn, sizeof(ofn));  // 将ofn所在内存区域清零
 
@@ -112,11 +111,11 @@ void MenuFileSaveAs()
 	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 	ofn.lpstrDefExt = "covid19";
 
-	if (GetSaveFileName(&ofn))
+	if (GetSaveFileName(&ofn))  // 拿到文件保存的目录
 	{
-		FileSave(ofn.lpstrFile);
-		data.BaseDir = ofn.lpstrFile;
-		data.HasModified = false;
+		FileSave(ofn.lpstrFile);  // 保存文件
+		data.BaseDir = ofn.lpstrFile;  // 保存文件路径
+		data.HasModified = false;  // 文件已是最新
 		GUIOutputMsg("另存成功");
 	}
 }
@@ -174,6 +173,7 @@ void MenuEditChange()
 		MessageBox(graphicsWindow,
 			TEXT("您尚未打开文件。请先打开文件。"),
 			TEXT("提示"), MB_OK | MB_ICONWARNING);
+		GUIOutputMsg("文件未打开");
 		return;
 	}
 
@@ -194,7 +194,10 @@ void MenuEditChange()
 				TEXT("您的输入有非法字符。请问您要重新输入吗？"),
 				TEXT("错误"), MB_OKCANCEL | MB_ICONERROR);
 			if (selection == IDCANCEL)
+			{
+				GUIOutputMsg("修改未完成");
 				break;
+			}
 		}
 		else if (input == -2)
 		{
@@ -202,7 +205,10 @@ void MenuEditChange()
 				TEXT("您的输入超过了范围。请问您要重新输入吗？"),
 				TEXT("错误"), MB_OKCANCEL | MB_ICONERROR);
 			if (selection == IDCANCEL)
+			{
+				GUIOutputMsg("修改未完成");
 				break;
+			}
 		}
 		else
 		{
@@ -210,6 +216,7 @@ void MenuEditChange()
 			status.HighlightNode->properties[status.HighlightProperty] = input;
 			GetMaxElement();
 			display();
+			GUIOutputMsg("修改完成");
 			break;
 		}
 	}

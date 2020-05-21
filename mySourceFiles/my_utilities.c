@@ -48,8 +48,8 @@ static void ArraySort(int* array, int* partner, int length)
 
 void MyExitConsole() {
 	FreeConsole();                  // 该函数在 wincon.h 声明  
-	freopen("CON", "r+t", stdin);   // 将stdin重定向到默认位置 
-	freopen("CON", "w+t", stdout);  // 将stdout重定向到默认位置 
+	freopen("NUL", "r+t", stdin);   // 将stdin重定向到默认位置 
+	freopen("NUL", "w+t", stdout);  // 将stdout重定向到默认位置 
 }
 
 void PauseDisplay() {

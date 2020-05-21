@@ -48,6 +48,5 @@ void Main()
 	mciSendString("play bgm repeat",
 		NULL, 0, NULL);
 		*/
-
 	GUIOutputMsg("准备就绪");
 }
