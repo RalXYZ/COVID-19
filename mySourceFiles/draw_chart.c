@@ -126,8 +126,8 @@ void BarChart(double x, double y, double w, double h, int month, int day, int n,
 	for (i = 0; i < n; i++)
 	{
 		DateCalculate(month, day, i);
-		drawRectangle(x + w / (2 * n + 2), y, w / (2 * n + 2), ReadEpidemicList(NeedMonth, NeedDay, type) / (1.0 * data.MaxElement), 1);
-		x += 2 * w / (2 * n + 2);
+		drawRectangle(x + w / (2 * n + 1), y, w / (2 * n + 1), ReadEpidemicList(NeedMonth, NeedDay, type) / (1.0 * data.MaxElement), 1);
+		x += 2 * w / (2 * n + 1);
 	}
 }
 
