@@ -11,6 +11,9 @@
 #include "graphics.h"
 
 #include "menu_functions.h"
+
+#include <conio.h>
+
 #include "my_display.h"
 #include "my_macro.h"
 #include "my_resource.h"
@@ -18,6 +21,7 @@
 
 
 extern HWND graphicsWindow;     // GUI窗口句柄，在 libgraphics 中声明
+extern HWND consoleWindow;    // 终端窗口句柄，在 libgraphics 中声明
 extern DataProperty data;  // 链表相关属性值，在 my_resource.c 中声明
 extern epidemic SentinelNode;  // 哨兵节点，在 my_resource.c 中声明
 extern MyStatus status;  // 当前状态，在 my_resource.c 中定义
@@ -177,39 +181,26 @@ void MenuEditChange()
 		return;
 	}
 
-	//PauseDisplay();
+	// PauseDisplay();
 
 	InitConsole();
 
 	while (true)
 	{
-		printf("您当前要更改的是”%s“，未更改前的值是 %d \n",
+		printf("您当前要更改的是“%s”，未更改前的值是 %d \n",
 			PropertyMeaning(status.HighlightProperty),
 			status.HighlightNode->properties[status.HighlightProperty]);
 		printf("请输入您想更改为的值，要求为不超过%d位的十进制非负数: ", MAX_DIGIT);
 		int input = SafeNNegIntInput(MAX_DIGIT);
 		if (input == -1)
 		{
-			const int selection = MessageBox(graphicsWindow,
-				TEXT("您的输入有非法字符。请问您要重新输入吗？"),
-				TEXT("错误"), MB_OKCANCEL | MB_ICONERROR);
-			if (selection == IDCANCEL)
-			{
-				GUIOutputMsg("修改未完成");
-				break;
-			}
+			printf("您的输入有非法字符，请重新输入。\n");
+			//printf("按任意键继续\n");
+			//if (_getch() == -32);
+			// TODO: 这边的阻塞有点问题，注释掉了，可以考虑看看是为啥
 		}
 		else if (input == -2)
-		{
-			const int selection = MessageBox(graphicsWindow,
-				TEXT("您的输入超过了范围。请问您要重新输入吗？"),
-				TEXT("错误"), MB_OKCANCEL | MB_ICONERROR);
-			if (selection == IDCANCEL)
-			{
-				GUIOutputMsg("修改未完成");
-				break;
-			}
-		}
+			printf("您的输入超出了范围，请重新输入。\n");
 		else
 		{
 			data.HasModified = true;
@@ -222,5 +213,5 @@ void MenuEditChange()
 	}
 	MyExitConsole();  // 退出终端窗口
 
-	//ContinueDisplay();
+	// ContinueDisplay();
 }
