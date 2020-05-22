@@ -29,7 +29,6 @@ char* DisplayMessage = "";
 bool EraseStatus = false;  // 记录文字擦除状态，目前作调试用，检测后来加上的组件是否会对回调函数产生干扰
 
 extern bool PauseAllProcedure;  // 定义在 my_callback.c
-extern bool DisplayLineChart;   // 定义在 draw_chart.c ，测试用，未来将移除
 extern HWND graphicsWindow;     // GUI窗口句柄，在 libgraphics 中声明
 extern DataProperty data;  // 链表相关属性值，在 my_resource.c 中声明
 extern epidemic SentinelNode;  // 哨兵节点，在 my_resource.c 中声明
@@ -76,50 +75,6 @@ static void InputMyColors(int position, char* name,
 
 	MyThemes[position].accent = IntegerToString(AccentColorHex);
 	HexDefineColor(MyThemes[position].accent, AccentColorHex);
-}
-
-/*
- * DisplayStatistics
- * -------------------------------------
- * 在显示高亮光标的同时，显示当日的具体数据
- */
-static void DisplayStatistics()
-{
-	char date[20] = "";
-	sprintf(date, "%d月%d日：",
-		status.HighlightNode->properties[Month],
-		status.HighlightNode->properties[Day]);
-
-	SetPenColor(MyThemes[CurrentTheme].accent);
-	MovePen(3, 0.05);
-	DrawTextString(date);
-	for (int i = EPIDEMIC_PROPERTY_START; i < EPIDEMIC_ELEMENT_NUM; i++)
-	{
-		char property[20] = "";
-		SetPenColor(MyThemes[CurrentTheme].accent);
-		if (i == status.HighlightProperty)  // 如果该项目为当前高亮项目
-			SetPenColor("Red");
-		switch (i)
-		{
-		case Current:
-			sprintf(property, "当前感染%d人 ",
-				status.HighlightNode->properties[Current]);
-			break;
-		case Total:
-			sprintf(property, "累计感染%d人 ",
-				status.HighlightNode->properties[Total]);
-			break;
-		case Cured:
-			sprintf(property, "累计治愈%d人 ",
-				status.HighlightNode->properties[Cured]);
-			break;
-		case Dead:
-			sprintf(property, "累计死亡%d人",
-				status.HighlightNode->properties[Dead]);
-			break;
-		}
-		DrawTextString(property);
-	}
 }
 
 // 注意：更改这个函数的同时也要更改 THEME_NUM 宏
@@ -293,20 +248,6 @@ TEXT("关于本软件"), MB_OK | MB_ICONINFORMATION);
 
 }
 
-static void Highlight()
-{
-	const double LineChatHeight = GZ_H - 2 * PADDING;  // 临时调试用，未来将移除
-	const double HeightInGraph = 1.0 * status.HighlightNode->properties[status.HighlightProperty];
-	const double WidthInGraph = 1.0 * status.HighlightNum * (GZ_W - 2 * PADDING) / (data.TotalDays - 1);
-	SetPenColor("Red");  // 临时调试用
-
-	StretchDrawLine(GZ_X + PADDING,  // 画横向
-		GZ_Y + PADDING + LineChatHeight * (HeightInGraph / data.MaxElement),
-		GZ_W - 2 * PADDING, 0);
-	StretchDrawLine(GZ_X + PADDING + WidthInGraph,  // 画纵向
-		GZ_Y + PADDING, 0, GZ_H - 2 * PADDING);
-}
-
 void display()
 {
 	SetPenColor(MyThemes[CurrentTheme].background);
@@ -321,18 +262,5 @@ void display()
 	SetEraseMode(false);
 
 	DrawMenu();  // 绘制菜单组件
-	DrawChart(3, 1, 3, 25, 40, 1, Current, MyThemes[CurrentTheme].foreground);
-
-	/* 目前用于测试折线图，后期将会删除 */
-	MovePen(6, WINDOW_HEIGHT - 0.2);
-	DrawTextString("F1显示折线图");
-	if (DisplayLineChart)  // 折线图功能测试函数
-	{
-		LineChart(GZ_X, GZ_Y, GZ_W, GZ_H);
-		if (status.HighlightVisible)
-		{
-			Highlight();
-			DisplayStatistics();
-		}
-	}
+	DrawChart(3, 1, 40);
 }

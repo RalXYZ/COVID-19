@@ -12,8 +12,6 @@
 
 #include "menu_functions.h"
 
-#include <conio.h>
-
 #include "my_display.h"
 #include "my_macro.h"
 #include "my_resource.h"
