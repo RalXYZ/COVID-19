@@ -94,9 +94,9 @@ double DataProportion(double x)//计算占比函数，饼状图使用
 	return x / sum * 360;
 }
 
-void FanChart(double centerX, double centerY, double radius)
+void FanChart(double centerX, double centerY, double radius, int month, int day)
 {
-	double now[3] = { ReadEpidemicList(3, 2, Total), ReadEpidemicList(3, 2, Cured), ReadEpidemicList(3, 2, Dead) };
+	double now[3] = { ReadEpidemicList(month, day, Total), ReadEpidemicList(month, day, Cured), ReadEpidemicList(month, day, Dead) };
 	double endX, endY;//这个记录每次画笔末尾坐标
 
 	double AngleSum = 0;//记录转过角度
@@ -122,16 +122,18 @@ void BarChart(double x, double y, double w, double h, int month, int day, int n,
 	drawRectangle(x, y, w, h, 0);//测试用矩形区域
 	SetPenColor(color);
 	int i;
+	double pro;
 
 	for (i = 0; i < n; i++)
 	{
 		DateCalculate(month, day, i);
-		drawRectangle(x + w / (2 * n + 1), y, w / (2 * n + 1), ReadEpidemicList(NeedMonth, NeedDay, type) / (1.0 * data.MaxElement), 1);
+		pro = ReadEpidemicList(NeedMonth, NeedDay, type) / (1.0 * data.MaxElement);
+		drawRectangle(x + w / (2 * n + 1), y, w / (2 * n + 1), 1.02 * h * pro, 1);
 		x += 2 * w / (2 * n + 1);
 	}
 }
 
-void DrawChart(int month, int day, int n, int type1, int type2, char* color)
+void DrawChart(int month, int day, int monthfan, int dayfan, int n, int type1, int type2, char* color)
 {
 	double wid = GetWindowWidth();
 	double hei = GetWindowHeight();
@@ -154,7 +156,7 @@ void DrawChart(int month, int day, int n, int type1, int type2, char* color)
 	if (bar == 0 && fan == 1 && line == 0)
 	{
 		drawRectangle(7 * wid / 24, hei / 4, 5 * wid / 12, 5 * hei / 8, 0);
-		FanChart(wid / 2, 9 * hei / 16, wid / 6);
+		FanChart(wid / 2, 9 * hei / 16, wid / 6, monthfan, dayfan);
 	}
 	if (bar == 0 && fan == 0 && line == 1)
 	{
@@ -164,7 +166,7 @@ void DrawChart(int month, int day, int n, int type1, int type2, char* color)
 	{
 		BarChart(wid / 12, hei / 4, 7 * wid / 12, 5 * hei / 8, month, day, n, type2, color);
 		drawRectangle(16 * wid / 24, hei / 4, wid / 4, 5 * hei / 8, 0);
-		FanChart(19 * wid / 24, 9 * hei / 16, 5 * wid / 48);
+		FanChart(19 * wid / 24, 9 * hei / 16, 5 * wid / 48, monthfan, dayfan);
 	}
 	if (bar == 1 && fan == 0 && line == 1)
 	{
@@ -174,14 +176,14 @@ void DrawChart(int month, int day, int n, int type1, int type2, char* color)
 	if (bar == 0 && fan == 1 && line == 1)
 	{
 		drawRectangle(16 * wid / 24, hei / 4, wid / 4, 5 * hei / 8, 0);
-		FanChart(19 * wid / 24, 9 * hei / 16, 5 * wid / 48);
+		FanChart(19 * wid / 24, 9 * hei / 16, 5 * wid / 48, monthfan, dayfan);
 		LineChart(wid / 12, hei / 4, 7 * wid / 12, 5 * hei / 8);
 	}
 	if (bar == 1 && fan == 1 && line == 1)
 	{
 		BarChart(wid / 12, hei / 4, 7 * wid / 12, 5 * hei / 16, month, day, n, type2, color);
 		drawRectangle(16 * wid / 24, hei / 4, wid / 4, 5 * hei / 8, 0);
-		FanChart(19 * wid / 24, 9 * hei / 16, 5 * wid / 48);
+		FanChart(19 * wid / 24, 9 * hei / 16, 5 * wid / 48, monthfan, dayfan);
 		LineChart(wid / 12, 9 * hei / 16, 7 * wid / 12, 5 * hei / 16);
 	}
 }
