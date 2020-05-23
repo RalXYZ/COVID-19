@@ -64,7 +64,7 @@ static void DisplayStatistics()
 		status.HighlightNode->properties[Month],
 		status.HighlightNode->properties[Day]);
 
-	MovePen(3, 0.05);
+	MovePen(2.8, 0.05);
 	DrawTextString(date);
 	for (int i = EPIDEMIC_PROPERTY_START; i < EPIDEMIC_ELEMENT_NUM; i++)
 	{
@@ -142,7 +142,7 @@ static void DrawBrokenLine(double x, double y, double w, double h, int type)
 	if (status.HighlightVisible)
 	{
 		Highlight(x, y, w, h);
-		DisplayStatistics();
+		// DisplayStatistics();
 	}
 	SetPenSize(1);  // 将笔触宽度恢复到初始状态
 }
@@ -227,8 +227,14 @@ static void FanChart(double centerX, double centerY, double radius)
  */
 static void BarChart(double x, double y, double w, double h, int month, int day, int n)
 {
+	/*坐标变换*/
+	double xt = x + PADDING;
+	double yt = y + PADDING;
+	double wt = w - 2 * PADDING;
+	double ht = h - 2 * PADDING;
+
 	SetPenColor(MyThemes[CurrentTheme].foreground);
-	drawRectangle(x, y, w, h, 0);  // 测试用矩形区域
+	drawRectangle(xt, yt, wt, ht, 0);  // 测试用矩形区域
 	int i;
 	const int CurrentMonth = status.HighlightNode->properties[Month];
 	const int CurrentDay = status.HighlightNode->properties[Day];
@@ -241,9 +247,11 @@ static void BarChart(double x, double y, double w, double h, int month, int day,
 		else
 			SetPenColor(GetEpidemicColor(status.HighlightProperty));
 		double pro = ReadEpidemicList(NeedMonth, NeedDay, status.HighlightProperty) / (1.0 * data.MaxElement);
-		drawRectangle(x + w / (2 * n + 1), y, w / (2 * n + 1), 1.0 * h * pro, 1);
-		x += 2 * w / (2 * n + 1);
+		drawRectangle(xt + wt / (2 * n + 1), yt, wt / (2 * n + 1), 1.0 * ht * pro, 1);
+		xt += 2 * wt / (2 * n + 1);
 	}
+
+	DrawLineChartFrame(x, y, w, h);
 }
 
 void DrawChart(int month, int day, int n)
@@ -252,12 +260,14 @@ void DrawChart(int month, int day, int n)
 		return;
 	const double width = GetWindowWidth();
 	const double height = GetWindowHeight();
-	if (button(GenUIID(0), width / 8, height / 16, width / 6, 3 * height / 32, "柱状图"))
-		bar = !bar;
-	if (button(GenUIID(1), 10 * width / 24, height / 16, width / 6, 3 * height / 32, "饼状图"))
-		fan = !fan;
-	if (button(GenUIID(2), 17 * width / 24, height / 16, width / 6, 3 * height / 32, "折线图"))
+	extern int MyButton(int id, double x, double y, double w, double h, char* label);  // 在 imgui.c 中定义
+
+	if (MyButton(GenUIID(0), width / 8, 0.55, width / 6, 3 * height / 32, "折线图"))
 		line = !line;
+	if (MyButton(GenUIID(1), 10 * width / 24, 0.55, width / 6, 3 * height / 32, "柱状图"))
+		bar = !bar;
+	if (MyButton(GenUIID(2), 17 * width / 24, 0.55, width / 6, 3 * height / 32, "饼状图"))
+		fan = !fan;
 
 	if (bar == 1 && fan == 0 && line == 0)
 	{
@@ -300,4 +310,6 @@ void DrawChart(int month, int day, int n)
 		FanChart(19 * width / 24, 9 * height / 16, 5 * width / 48);
 		LineChart(width / 12, 9 * height / 16, 7 * width / 12, 5 * height / 16);
 	}
+
+	DisplayStatistics();  // 绘制右下角的统计数据
 }
