@@ -59,19 +59,19 @@ static void DrawLineChartFrame(double x, double y, double w, double h)
 static void DisplayStatistics()
 {
 	char date[20] = "";
+	SetPenColor(MyThemes[CurrentTheme].foreground);
 	sprintf(date, "%d月%d日：",
 		status.HighlightNode->properties[Month],
 		status.HighlightNode->properties[Day]);
 
-	SetPenColor(MyThemes[CurrentTheme].accent);
 	MovePen(3, 0.05);
 	DrawTextString(date);
 	for (int i = EPIDEMIC_PROPERTY_START; i < EPIDEMIC_ELEMENT_NUM; i++)
 	{
 		char property[20] = "";
-		SetPenColor(MyThemes[CurrentTheme].accent);
+		SetPenColor(GetEpidemicColor(i));
 		if (i == status.HighlightProperty)  // 如果该项目为当前高亮项目
-			SetPenColor("Red");
+			SetStyle(1);  // 粗体
 		switch (i)
 		{
 		case Current:
@@ -92,15 +92,18 @@ static void DisplayStatistics()
 			break;
 		}
 		DrawTextString(property);
+		SetStyle(0);  // 恢复字体样式为正常状态
 	}
 }
 
 static void Highlight(double x, double y, double w, double h)
 {
-	const double LineChatHeight = h - 2 * PADDING;  // 临时调试用，未来将移除
+	const double LineChatHeight = h - 2 * PADDING;
 	const double HeightInGraph = 1.0 * status.HighlightNode->properties[status.HighlightProperty];
 	const double WidthInGraph = 1.0 * status.HighlightNum * (w - 2 * PADDING) / (data.TotalDays - 1);
-	SetPenColor("Red");  // 临时调试用
+
+	SetPenSize(1);
+	SetPenColor(MyThemes[CurrentTheme].accent);
 
 	StretchDrawLine(x + PADDING,  // 画横向
 		y + PADDING + LineChatHeight * (HeightInGraph / data.MaxElement),
@@ -125,7 +128,9 @@ static void DrawBrokenLine(double x, double y, double w, double h, int type)
 	const double LineChatHeight = h - 2 * PADDING;  // 折线图高度
 	int count = 0;  // 计数器
 
-	SetPenColor(MyThemes[CurrentTheme].accent);  // 暂时设为强调色，以后可能引入更多颜色
+	if (type == status.HighlightProperty)
+		SetPenSize(2);
+	SetPenColor(GetEpidemicColor(type));
 	for (epidemic* i = SentinelNode.next; i != nullptr && i->next != nullptr; i = i->next)  // 循环画割线
 	{
 		PointDrawLine(x + PADDING + step * (count - start),
@@ -139,6 +144,7 @@ static void DrawBrokenLine(double x, double y, double w, double h, int type)
 		Highlight(x, y, w, h);
 		DisplayStatistics();
 	}
+	SetPenSize(1);  // 将笔触宽度恢复到初始状态
 }
 
 void LineChart(double x, double y, double w, double h)
@@ -177,22 +183,34 @@ static void FanChart(double centerX, double centerY, double radius)
 
 	SetPenColor(MyThemes[CurrentTheme].accent);
 
-	SetPenSize(2);
+	// SetPenSize(2);
 
 	for (int i = 0; i < 3; i++)//循环次数即显示参数数，每次执行一次画弧和一次画线
 	{
 		MovePen(centerX, centerY);
-		//StartFilledRegion(1);
+		switch (i)
+		{
+		case 0:
+			SetPenColor(GetEpidemicColor(Current));
+			break;
+		case 1:
+			SetPenColor(GetEpidemicColor(Cured));
+			break;
+		case 2:
+			SetPenColor(GetEpidemicColor(Dead));
+			break;
+		}
+		StartFilledRegion(1);
 		DrawLine(VectorX, VectorY);
 		DrawArc(radius, AngleSum, DataProportion(now[i]));
 		AngleSum = AngleSum + DataProportion(now[i]);
 		VectorX = GetCurrentX() - centerX;
 		VectorY = GetCurrentY() - centerY;
 		DrawLine(-VectorX, -VectorY);
-		//EndFilledRegion();
+		EndFilledRegion();
 	}
 
-	SetPenSize(1);
+	// SetPenSize(1);
 }
 
 /*
@@ -219,9 +237,9 @@ static void BarChart(double x, double y, double w, double h, int month, int day,
 	{
 		DateCalculate(month, day, i);
 		if (NeedDay == CurrentDay && NeedMonth == CurrentMonth)
-			SetPenColor("Red");  // 临时
+			SetPenColor(MyThemes[CurrentTheme].accent);  // 临时
 		else
-			SetPenColor(MyThemes[CurrentTheme].accent);
+			SetPenColor(GetEpidemicColor(status.HighlightProperty));
 		double pro = ReadEpidemicList(NeedMonth, NeedDay, status.HighlightProperty) / (1.0 * data.MaxElement);
 		drawRectangle(x + w / (2 * n + 1), y, w / (2 * n + 1), 1.0 * h * pro, 1);
 		x += 2 * w / (2 * n + 1);

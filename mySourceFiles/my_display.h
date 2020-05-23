@@ -12,15 +12,19 @@
  /*
   * 结构体名: theme
   * -------------------------------------
-  * 这个结构体由三个字符指针构成。
-  * 每一个字符指针应该指向一个已被定义的颜色的颜色名。
-  * 把三个字符指针组合在一起，形成了一套颜色，即一个主题 (theme)
+  * 这个结构体由八个字符指针构成。
+  * 后七个字符指针应该指向一个已被定义的颜色的颜色名。
+  * 把这些字符指针组合在一起，形成了一套颜色，即一个主题 (theme)
   */
 typedef struct theme {
-	char* name;
+	char* name;        // 主题的名字
 	char* background;  // 背景色
 	char* foreground;  // 前景色
 	char* accent;      // 强调色
+	char* current;
+	char* total;
+	char* cured;
+	char* dead;
 } theme;
 
 /*
@@ -30,6 +34,14 @@ typedef struct theme {
  * 将这些主题的颜色信息通过 libgraphics 的函数进行定义。
  */
 void InitColor();
+
+/*
+ * 函数名: GetEpidemicColor
+ * 参数1: property  EpidemicProperty枚举值
+ * -------------------------------------
+ * 传入一个枚举值，传出这个枚举值当前的颜色
+ */
+char* GetEpidemicColor(int property);
 
 /*
  * 函数名: StretchDrawLine

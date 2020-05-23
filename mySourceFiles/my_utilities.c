@@ -151,5 +151,7 @@ char* PropertyMeaning(int property)
 		return "累计治愈";
 	case Dead:
 		return "累计死亡";
+	default:
+		return nullptr;
 	}
 }

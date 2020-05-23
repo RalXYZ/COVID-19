@@ -60,11 +60,16 @@ static void HexDefineColor(string name, int value) {
  * 参数2: BackgroundColorHex  背景色十六进制颜色码值
  * 参数3: ForegroundColorHex  前景色十六进制颜色码值
  * 参数4: AccentColorHex      强调色十六进制颜色码值
+ * 参数5: CurrentColorHex     当前感染色十六进制颜色码值
+ * 参数6: TotalColorHex       总感染色十六进制颜色码值
+ * 参数7: CuredColorHex       治愈色十六进制颜色码值
+ * 参数8: DeadColorHex        死亡色十六进制颜色码值
  * -------------------------------------
  * 输入一组（3个）有序的十六进制颜色码，将它们存储在给定的位置上
  */
 static void InputMyColors(int position, char* name,
-	int BackgroundColorHex, int ForegroundColorHex, int AccentColorHex) {
+	int BackgroundColorHex, int ForegroundColorHex, int AccentColorHex,
+	int CurrentColorHex, int TotalColorHex, int CuredColorHex, int DeadColorHex) {
 	MyThemes[position].name = name;
 
 	MyThemes[position].background = IntegerToString(BackgroundColorHex);
@@ -75,16 +80,45 @@ static void InputMyColors(int position, char* name,
 
 	MyThemes[position].accent = IntegerToString(AccentColorHex);
 	HexDefineColor(MyThemes[position].accent, AccentColorHex);
+
+	MyThemes[position].current = IntegerToString(CurrentColorHex);
+	HexDefineColor(MyThemes[position].current, CurrentColorHex);
+
+	MyThemes[position].total = IntegerToString(TotalColorHex);
+	HexDefineColor(MyThemes[position].total, TotalColorHex);
+
+	MyThemes[position].cured = IntegerToString(CuredColorHex);
+	HexDefineColor(MyThemes[position].cured, CuredColorHex);
+
+	MyThemes[position].dead = IntegerToString(DeadColorHex);
+	HexDefineColor(MyThemes[position].dead, DeadColorHex);
 }
 
 // 注意：更改这个函数的同时也要更改 THEME_NUM 宏
 void InitColor() {
-	InputMyColors(0, "苍松", 0x203227, 0x637B6D, 0x9CC2AD);
-	InputMyColors(1, "红豆", 0xB9B2B4, 0x1B121F, 0x7A0B0E);
-	InputMyColors(2, "蔷薇", 0x312E31, 0xFFB6B9, 0xFF5F7F);
-	InputMyColors(3, "万圣节", 0x1C162B, 0xB94E0A, 0xC38112);
-	InputMyColors(4, "熊猫", 0x222222, 0x828282, 0xEAEAEA);
-	InputMyColors(5, "蓝鹊", 0xC9D1D9, 0x4780BA, 0xBA5255);
+	InputMyColors(0, "苍松", 0x203227, 0x637B6D, 0x9CC2AD, 0x8EAC4A, 0xCFDB35, 0x10D296, 0xC0C0C0);
+	InputMyColors(1, "红豆", 0xB9B2B4, 0x1B121F, 0x7A0B0E, 0x9A5C5C, 0xCF4141, 0x6AA40C, 0x4B4B4B);
+	InputMyColors(2, "蔷薇", 0x312E31, 0xFFB6B9, 0xFF5F7F, 0xEF8D8D, 0xC20A0A, 0xAFCF0F, 0xB4B4B4);
+	InputMyColors(3, "万圣节", 0x1C162B, 0xB94E0A, 0xC38112, 0xC46C6C, 0xFC5534, 0xA5A836, 0x737373);
+	InputMyColors(4, "熊猫", 0x222222, 0x828282, 0xEAEAEA, 0xE0948C, 0xEF2D2D, 0x0FCF66, 0x686868);
+	InputMyColors(5, "蓝鹊", 0xC9D1D9, 0x4780BA, 0xBA5255, 0xDB8177, 0xA61616, 0x10E26F, 0x4F4F4F);
+}
+
+char* GetEpidemicColor(int property)
+{
+	switch (property)
+	{
+	case Current:
+		return MyThemes[CurrentTheme].current;
+	case Total:
+		return MyThemes[CurrentTheme].total;
+	case Cured:
+		return MyThemes[CurrentTheme].cured;
+	case Dead:
+		return MyThemes[CurrentTheme].dead;
+	default:
+		return nullptr;
+	}
 }
 
 void StretchDrawLine(double StartX, double StartY, double StretchX, double StretchY)
