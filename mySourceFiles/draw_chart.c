@@ -152,7 +152,9 @@ void LineChart(double x, double y, double w, double h)
 
 double DataProportion(double x)//计算占比函数，饼状图使用
 {
-	double sum = (double)ReadEpidemicList(3, 2, Total) + (double)ReadEpidemicList(3, 2, Cured) + (double)ReadEpidemicList(3, 2, Dead);
+	const int month = status.HighlightNode->properties[Month];
+	const int day = status.HighlightNode->properties[Day];
+	double sum = (double)ReadEpidemicList(month, day, Current) + (double)ReadEpidemicList(month, day, Cured) + (double)ReadEpidemicList(month, day, Dead);
 	return x / sum * 360;
 }
 
@@ -165,26 +167,32 @@ static void FanChart(double centerX, double centerY, double radius)
 {
 	const int month = status.HighlightNode->properties[Month];
 	const int day = status.HighlightNode->properties[Day];
-	double now[3] = { ReadEpidemicList(month, day, Total), ReadEpidemicList(month, day, Cured), ReadEpidemicList(month, day, Dead) };
-	double endX, endY;//这个记录每次画笔末尾坐标
+	double now[3] = { ReadEpidemicList(month, day, Current), ReadEpidemicList(month, day, Cured), ReadEpidemicList(month, day, Dead) };
 
 	double AngleSum = 0;//记录转过角度
 
 	MovePen(centerX + radius, centerY);//绘图起点
-	endX = centerX + radius;//绘图终点
-	endY = centerY;
+	double VectorX = radius;//绘图终点
+	double VectorY = 0;
 
 	SetPenColor(MyThemes[CurrentTheme].accent);
 
+	SetPenSize(2);
+
 	for (int i = 0; i < 3; i++)//循环次数即显示参数数，每次执行一次画弧和一次画线
 	{
-		MovePen(endX, endY);
+		MovePen(centerX, centerY);
+		//StartFilledRegion(1);
+		DrawLine(VectorX, VectorY);
 		DrawArc(radius, AngleSum, DataProportion(now[i]));
 		AngleSum = AngleSum + DataProportion(now[i]);
-		endX = GetCurrentX();
-		endY = GetCurrentY();
-		DrawLine(centerX - endX, centerY - endY);
+		VectorX = GetCurrentX() - centerX;
+		VectorY = GetCurrentY() - centerY;
+		DrawLine(-VectorX, -VectorY);
+		//EndFilledRegion();
 	}
+
+	SetPenSize(1);
 }
 
 /*
@@ -202,9 +210,8 @@ static void FanChart(double centerX, double centerY, double radius)
 static void BarChart(double x, double y, double w, double h, int month, int day, int n)
 {
 	SetPenColor(MyThemes[CurrentTheme].foreground);
-	drawRectangle(x, y, w, h, 0);//测试用矩形区域
+	drawRectangle(x, y, w, h, 0);  // 测试用矩形区域
 	int i;
-	double pro;
 	const int CurrentMonth = status.HighlightNode->properties[Month];
 	const int CurrentDay = status.HighlightNode->properties[Day];
 
@@ -215,8 +222,8 @@ static void BarChart(double x, double y, double w, double h, int month, int day,
 			SetPenColor("Red");  // 临时
 		else
 			SetPenColor(MyThemes[CurrentTheme].accent);
-		pro = ReadEpidemicList(NeedMonth, NeedDay, status.HighlightProperty) / (1.0 * data.MaxElement);
-		drawRectangle(x + w / (2 * n + 1), y, w / (2 * n + 1), 1.02 * h * pro, 1);
+		double pro = ReadEpidemicList(NeedMonth, NeedDay, status.HighlightProperty) / (1.0 * data.MaxElement);
+		drawRectangle(x + w / (2 * n + 1), y, w / (2 * n + 1), 1.0 * h * pro, 1);
 		x += 2 * w / (2 * n + 1);
 	}
 }

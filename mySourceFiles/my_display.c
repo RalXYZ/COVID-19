@@ -262,5 +262,5 @@ void display()
 	SetEraseMode(false);
 
 	DrawMenu();  // 绘制菜单组件
-	DrawChart(3, 1, 40);
+	DrawChart(3, 1, data.TotalDays);
 }
