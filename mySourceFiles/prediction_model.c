@@ -4,9 +4,18 @@
  * 这个文件实现了基于SEIR模型的疫情预测
  * 在使用数据画图时，务必将天数处减一，如: [day - 1]
  */
+#include <Windows.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include <math.h>
-
+#include "graphics.h"
+#include "extgraph.h"
+#include "imgui.h"
+#include "my_macro.h"
+#include "my_callback.h"
+#include "draw_chart.h"
+#include "my_display.h"
+#include "my_resource.h"
 #include "prediction_model.h"
 /*
  * SEIR相关函数集中注释
@@ -20,14 +29,17 @@
  * 参数7: mul_1 参数7*参数10
  * 参数8: mul_2 参数8*参数11
 */
-static double i_infection_rate;
-static double e_infection_rate;
-static double e_turnto_i;
-static double i_touch;
-static double e_touch;
-static double recovery_rate;
-static double mul_1, mul_2;
+double i_infection_rate;
+double e_infection_rate;
+double e_turnto_i;
+double i_touch;
+double e_touch;
+double recovery_rate;
+double mul_1, mul_2;
+int population;
 
+int SEIRmonth;
+int SEIRday;
 static int InflectionDay;//拐点日期
 static int InflectionNumber;//拐点值
 int NeedMonth;//需求月份
@@ -48,14 +60,14 @@ void SEIREnterDouble(double* variable, double value)
 	*variable = value;
 }
 
-void SEIR()
+void SEIR(int SEIRmonth, int SEIRday)
 {
 	int K = 0;//循环变量
 	double p = 10000;
 
-	S[0] = 10000;
+	S[0] = population;
 	E[0] = 0;
-	I[0] = 1;
+	I[0] = ReadEpidemicList(SEIRmonth, SEIRday, Current);
 	R[0] = 0;
 
 	for (K = 1; K < 100; K++)
@@ -126,4 +138,26 @@ void DateCalculate(int month, int day, int n)
 		t = sum;
 	}
 	NeedDay = sum1 + day + n - t;
+}
+
+double StringDouble(char *p)
+{
+	double temp = 0;
+	while (*p)
+	{
+		temp = temp * 10 + *p - '0';
+		p++;
+	}
+	return temp;
+}
+
+int StringInt(char* p)
+{
+	int temp = 0;
+	while (*p)
+	{
+		temp = temp * 10 + *p - '0';
+		p++;
+	}
+	return temp;
 }

@@ -34,7 +34,7 @@ void SEIREnterDouble(double* variable, double value);
  * 例如届时加入输入溢出提醒: 预测时间过长，模型无效
  * 在使用数据画图时，务必将天数处减一，如: [day - 1]
  */
-void SEIR();
+void SEIR(int month, int day);
 /*
  * 函数名: EpidemicInflectionPoint
  * 参数1: Arr[] 输入数组 I 或 E
@@ -50,4 +50,18 @@ int EpidemicInflectionPoint(double Arr[]);
   * NeedMonth:月份 NeedDay:日期
   */
 void DateCalculate(int month, int day, int n);
+/*
+  * 函数名: StringDouble
+  * -------------------------------------
+  * 本函数将字符转化为double变量
+  * 
+  */
+double StringDouble(char *p);
+/*
+  * 函数名: StringInt
+  * -------------------------------------
+  * 本函数将字符转化为int变量
+  *
+  */
+int StringInt(char* p);
 #endif

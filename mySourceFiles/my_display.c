@@ -297,4 +297,5 @@ void display()
 
 	DrawMenu();  // 绘制菜单组件
 	DrawChart(3, 1, data.TotalDays);
+//	PredictionInterface();//调试用
 }
