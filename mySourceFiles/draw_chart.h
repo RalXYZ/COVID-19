@@ -47,4 +47,11 @@ double DataProportion(double x);
  * 在指定位置通过响应按钮画图
  */
 void DrawChart(int month, int day, int n);
+/*
+ * 函数名: DrawPredictionInterface
+ * -------------------------------------
+ * 本函数提供进行疫情预测的界面
+ *
+ */
+void DrawPredictionInterface();
 #endif

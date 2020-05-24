@@ -313,3 +313,8 @@ void DrawChart(int month, int day, int n)
 
 	DisplayStatistics();  // 绘制右下角的统计数据
 }
+
+void PredictionInterface()
+{
+
+}
