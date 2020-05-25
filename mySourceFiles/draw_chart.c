@@ -400,7 +400,7 @@ void PredictionInterface()
 	drawLabel(x - fH / 2 - TextStringWidth("起始月份"), (y -= h * 1.5) + fH * 0.7, "起始月份");
 	if (textbox(GenUIID(0), x, y, w, h, mon, sizeof(mon)))
 	{
-		SEIREnterInt(&SEIRmonth, StringDouble(mon));
+		SEIREnterInt(&SEIRmonth, StringInt(mon));
 	};
 
 	SetPenColor("Black");
