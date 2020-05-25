@@ -148,6 +148,7 @@ static void DrawMenu()
 {
 	static char ChangeThemeLabel[40] = { 0 };
 	static char Highlight[20] = "隐藏高亮光标";
+	static char MenuDrawPrediction[20] = "显示预测";
 
 	static char* MenuFile[] = { "文件",
 		"新建 无功能 | Ctrl-N",
@@ -163,7 +164,8 @@ static void DrawMenu()
 		"删除 无功能" };
 
 	static char* MenuDraw[] = { "绘图",
-		"绘制图表 无功能" };
+		"绘制图表 无功能",
+		MenuDrawPrediction };
 
 	static char* MenuDisplay[] = { "视图",
 		ChangeThemeLabel,
@@ -182,6 +184,7 @@ static void DrawMenu()
 
 	sprintf(ChangeThemeLabel, "切换主题（当前：%s）", MyThemes[CurrentTheme].name);
 
+	// 文件
 	{
 		const int MenuFileSelection = MyMenuList(GenUIID(0), 0, MenuBarVertical,
 			MenuSelectionWidth, TextStringWidth(MenuFile[1]) * 1.2,
@@ -207,6 +210,7 @@ static void DrawMenu()
 		}
 	}
 
+	// 编辑
 	{
 		const int MenuEditSelection = MyMenuList(GenUIID(0), MenuSelectionWidth, MenuBarVertical,
 			TextStringWidth(MenuEdit[0]) * 2, TextStringWidth(MenuEdit[1]) * 1.2,
@@ -219,12 +223,25 @@ static void DrawMenu()
 		}
 	}
 
+	// 绘图
 	{
 		const int MenuDrawSelection = MyMenuList(GenUIID(0), MenuSelectionWidth * 2, MenuBarVertical,
 			TextStringWidth(MenuDraw[0]) * 2, TextStringWidth(MenuDraw[1]) * 1.2,
 			MenuButtonHeight, MenuDraw, sizeof(MenuDraw) / sizeof(MenuDraw[0]));
+		if (MenuDrawSelection == 2)
+		{
+			status.DisplayPrediction = !(status.DisplayPrediction);
+
+			if (status.DisplayPrediction)
+				sprintf(MenuDrawPrediction, "隐藏预测");
+			else
+				sprintf(MenuDrawPrediction, "显示预测");
+
+			display();
+		}
 	}
 
+	// 视图
 	{
 		const int MenuDisplaySelection = MyMenuList(GenUIID(0), MenuSelectionWidth * 3, MenuBarVertical,
 			TextStringWidth(MenuDisplay[0]) * 2, TextStringWidth(MenuDisplay[1]) * 1.1,
@@ -256,6 +273,7 @@ static void DrawMenu()
 		}
 	}
 
+	// 帮助
 	{
 		const int MenuHelpSelection = MyMenuList(GenUIID(0), MenuSelectionWidth * 4, MenuBarVertical,
 			TextStringWidth(MenuHelp[0]) * 2, TextStringWidth(MenuHelp[2]) * 1.4,
@@ -297,5 +315,6 @@ void display()
 
 	DrawMenu();  // 绘制菜单组件
 	DrawChart(3, 1, data.TotalDays);
-//	PredictionInterface();//调试用
+	if (status.DisplayPrediction)
+		PredictionInterface();  //调试用
 }

@@ -53,5 +53,5 @@ void DrawChart(int month, int day, int n);
  * 本函数提供进行疫情预测的界面
  *
  */
-void DrawPredictionInterface();
+void PredictionInterface();
 #endif

@@ -18,7 +18,7 @@
 
 DataProperty data = { 0, 0, nullptr, false };  // 链表相关属性值
 epidemic SentinelNode;  // 哨兵节点
-MyStatus status = { false, nullptr, 0, 0 , false };  // 当前状态
+MyStatus status = { false, nullptr, 0, 0 , false , false };  // 当前状态
 
 void InitEpidemicList(epidemic* node)
 {
