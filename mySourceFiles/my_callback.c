@@ -74,6 +74,8 @@ void CharEventProcess(char key)
 {
 	if (status.PauseAllProcedure)
 		return;
+	uiGetChar(key); // GUI字符输入
+	display(); 
 }
 
 void TimerEventProcess(int timerID)
