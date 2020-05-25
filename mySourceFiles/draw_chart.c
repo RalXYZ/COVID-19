@@ -386,7 +386,7 @@ void PredictionInterface()
 	drawLabel(x - fH / 2 - TextStringWidth("潜伏者接触人数"), (y -= h * 1.5) + fH * 0.7, "潜伏者接触人数");
 	if (textbox(GenUIID(0), x, y, w, h, f, sizeof(f)))
 	{
-		SEIREnterInt(&e_touch, StringInt(e));
+		SEIREnterInt(&e_touch, StringInt(f));
 	};
 
 	SetPenColor("green");
