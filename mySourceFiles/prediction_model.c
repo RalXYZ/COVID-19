@@ -32,8 +32,8 @@
 double i_infection_rate;
 double e_infection_rate;
 double e_turnto_i;
-double i_touch;
-double e_touch;
+int i_touch;
+int e_touch;
 double recovery_rate;
 double mul_1, mul_2;
 int population;

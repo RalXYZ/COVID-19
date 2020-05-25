@@ -29,8 +29,8 @@ static int bar = 0;//柱状图标志
 extern double i_infection_rate;
 extern double e_infection_rate;
 extern double e_turnto_i;
-extern double i_touch;
-extern double e_touch;
+extern int i_touch;
+extern int e_touch;
 extern double recovery_rate;
 extern int population;
 
