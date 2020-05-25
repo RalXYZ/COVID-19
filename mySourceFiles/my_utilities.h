@@ -63,4 +63,17 @@ int DownSelectProperty();
  */
 char* PropertyMeaning(int property);
 
+/*
+ * 函数名: DateCalculatePro
+ * 参数1: month  传入起始月份，传出终止月份
+ * 参数2: day  传入起始日，传出终止日
+ * 参数3: step  跨过的天数，可0可正可负
+ * 返回值: 1代表正常，0代表跨年异常
+ * ------------------------------------
+ * 功能更完备的时间计算函数
+ * 计算在一个*闰年*中，某天后 step 天是哪天
+ * 注意， step 可0可正可负，且不支持跨年
+ */
+int DateCalculatePro(int* month, int* day, int step);
+
 #endif

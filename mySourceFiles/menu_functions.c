@@ -175,7 +175,7 @@ void MenuEditChange()
 		MessageBox(graphicsWindow,
 			TEXT("您尚未打开文件。请先打开文件。"),
 			TEXT("提示"), MB_OK | MB_ICONWARNING);
-		GUIOutputMsg("文件未打开");
+		GUIOutputMsg("修改未完成");
 		return;
 	}
 
@@ -213,3 +213,94 @@ void MenuEditChange()
 
 	// ContinueDisplay();
 }
+
+void MenuEditFrontInsert()
+{
+	if (data.BaseDir == nullptr)
+	{
+		display();
+		MessageBox(graphicsWindow,
+			TEXT("您尚未打开文件。请先打开文件。"),
+			TEXT("提示"), MB_OK | MB_ICONWARNING);
+		GUIOutputMsg("文件未打开");
+		return;
+	}
+
+	/* 欲更改的日期，先赋为初始值 */
+	int NewMonth = SentinelNode.next->properties[Month], NewDay = SentinelNode.next->properties[Day];
+	if (!DateCalculatePro(&NewMonth, &NewDay, -1))
+	{
+		MessageBox(graphicsWindow,
+			TEXT("您要插入的日期已跨年。"),
+			TEXT("错误"), MB_OK | MB_ICONWARNING);
+		return;
+	}
+
+	/* 节点新建，初始化与连接 */
+	epidemic* NewNode = (epidemic*)malloc(sizeof(epidemic));
+	NewNode->properties[Month] = NewMonth;
+	NewNode->properties[Day] = NewDay;
+	NewNode->properties[Current] = 0;
+	NewNode->properties[Total] = 0;
+	NewNode->properties[Cured] = 0;
+	NewNode->properties[Dead] = 0;
+	NewNode->prev = nullptr;
+	NewNode->next = SentinelNode.next;
+	SentinelNode.next->prev = NewNode;
+	SentinelNode.next = NewNode;
+
+	++data.TotalDays;
+	data.HasModified = true;
+	++status.HighlightNum;
+	GetDayNum();
+	GetMaxElement();
+	display();
+}
+
+void MenuEditBackInsert()
+{
+	if (data.BaseDir == nullptr)
+	{
+		display();
+		MessageBox(graphicsWindow,
+			TEXT("您尚未打开文件。请先打开文件。"),
+			TEXT("提示"), MB_OK | MB_ICONWARNING);
+		GUIOutputMsg("文件未打开");
+		return;
+	}
+
+	/* 欲更改的日期，先赋为初始值 */
+	int NewMonth = SentinelNode.next->properties[Month], NewDay = SentinelNode.next->properties[Day];
+	if (!DateCalculatePro(&NewMonth, &NewDay, data.TotalDays))
+	{
+		MessageBox(graphicsWindow,
+			TEXT("您要插入的日期已跨年。"),
+			TEXT("错误"), MB_OK | MB_ICONWARNING);
+		return;
+	}
+
+	/* 节点新建，初始化与连接 */
+	epidemic* NewNode = (epidemic*)malloc(sizeof(epidemic));
+	NewNode->properties[Month] = NewMonth;
+	NewNode->properties[Day] = NewDay;
+	NewNode->properties[Current] = 0;
+	NewNode->properties[Total] = 0;
+	NewNode->properties[Cured] = 0;
+	NewNode->properties[Dead] = 0;
+
+	epidemic* TempNode = SentinelNode.next;
+	while (TempNode->next != nullptr)  // 找到尾节点
+		TempNode = TempNode->next;
+
+	TempNode->next = NewNode;
+	NewNode->prev = TempNode;
+	NewNode->next = nullptr;
+
+	++data.TotalDays;
+	data.HasModified = true;
+	GetDayNum();
+	GetMaxElement();
+	display();
+}
+
+// TODO: 在做删除时，一定要注意删除后链表的长度，以及高亮光标所在的节点会不会被删掉

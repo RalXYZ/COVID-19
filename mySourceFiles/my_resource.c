@@ -114,12 +114,7 @@ static void EndFileInputTask(char* reason, epidemic* FirstNode, FILE* fp)
 	MessageBox(graphicsWindow, TEXT(reason), TEXT("错误"), MB_OK | MB_ICONERROR);
 }
 
-/*
- * 函数名: GetDayNum
- * ------------------------------------
- * 取得疫情链表中的总天数
- */
-static void GetDayNum()
+void GetDayNum()
 {
 	data.TotalDays = 0;
 	for (epidemic* i = &SentinelNode; i->next != nullptr; i = i->next, ++data.TotalDays)

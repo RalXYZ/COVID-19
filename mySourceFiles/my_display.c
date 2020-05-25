@@ -159,17 +159,17 @@ static void DrawMenu()
 		"退出 | Ctrl-Q" };
 
 	static char* MenuEdit[] = { "编辑",
-		"录入 无功能",
 		"修改",
-		"删除 无功能" };
+		"前置录入",
+		"后置录入",
+		"前置删除 无功能",
+		"后置删除 无功能" };
 
 	static char* MenuDraw[] = { "绘图",
 		"绘制图表 无功能",
-		MenuDrawPrediction };
-
-	static char* MenuDisplay[] = { "视图",
-		ChangeThemeLabel,
-		Highlight };
+		MenuDrawPrediction,
+		Highlight,
+		ChangeThemeLabel };
 
 	static char* MenuHelp[] = { "帮助",
 		"使用帮助",
@@ -213,12 +213,18 @@ static void DrawMenu()
 	// 编辑
 	{
 		const int MenuEditSelection = MyMenuList(GenUIID(0), MenuSelectionWidth, MenuBarVertical,
-			TextStringWidth(MenuEdit[0]) * 2, TextStringWidth(MenuEdit[1]) * 1.2,
+			TextStringWidth(MenuEdit[0]) * 2, TextStringWidth(MenuEdit[4]) * 1.2,
 			MenuButtonHeight, MenuEdit, sizeof(MenuEdit) / sizeof(MenuEdit[0]));
 		switch (MenuEditSelection)
 		{
-		case 2:  // 修改
+		case 1:  // 修改
 			MenuEditChange();
+			break;
+		case 2:  // 前置录入
+			MenuEditFrontInsert();
+			break;
+		case 3:  // 后置录入
+			MenuEditBackInsert();
 			break;
 		}
 	}
@@ -226,7 +232,7 @@ static void DrawMenu()
 	// 绘图
 	{
 		const int MenuDrawSelection = MyMenuList(GenUIID(0), MenuSelectionWidth * 2, MenuBarVertical,
-			TextStringWidth(MenuDraw[0]) * 2, TextStringWidth(MenuDraw[1]) * 1.2,
+			TextStringWidth(MenuDraw[0]) * 2, TextStringWidth(MenuDraw[4]) * 1.2,
 			MenuButtonHeight, MenuDraw, sizeof(MenuDraw) / sizeof(MenuDraw[0]));
 		if (MenuDrawSelection == 2)
 		{
@@ -239,19 +245,7 @@ static void DrawMenu()
 
 			display();
 		}
-	}
-
-	// 视图
-	{
-		const int MenuDisplaySelection = MyMenuList(GenUIID(0), MenuSelectionWidth * 3, MenuBarVertical,
-			TextStringWidth(MenuDisplay[0]) * 2, TextStringWidth(MenuDisplay[1]) * 1.1,
-			MenuButtonHeight, MenuDisplay, sizeof(MenuDisplay) / sizeof(MenuDisplay[0]));
-		if (MenuDisplaySelection == 1)
-		{
-			CurrentTheme = (CurrentTheme + 1) % THEME_NUM;
-			display();
-		}
-		if (MenuDisplaySelection == 2)
+		else if (MenuDrawSelection == 3)
 		{
 			if (data.BaseDir == nullptr)
 			{
@@ -271,11 +265,16 @@ static void DrawMenu()
 				status.HighlightVisible = false;
 			}
 		}
+		else if (MenuDrawSelection == 4)
+		{
+			CurrentTheme = (CurrentTheme + 1) % THEME_NUM;
+			display();
+		}
 	}
 
 	// 帮助
 	{
-		const int MenuHelpSelection = MyMenuList(GenUIID(0), MenuSelectionWidth * 4, MenuBarVertical,
+		const int MenuHelpSelection = MyMenuList(GenUIID(0), MenuSelectionWidth * 3, MenuBarVertical,
 			TextStringWidth(MenuHelp[0]) * 2, TextStringWidth(MenuHelp[2]) * 1.4,
 			MenuButtonHeight, MenuHelp, sizeof(MenuHelp) / sizeof(MenuHelp[0]));
 		if (MenuHelpSelection == 1)  // 使用帮助
@@ -314,7 +313,10 @@ void display()
 	SetEraseMode(false);
 
 	DrawMenu();  // 绘制菜单组件
-	DrawChart(3, 1, data.TotalDays);
+
+	if (data.BaseDir != nullptr)
+		DrawChart(SentinelNode.next->properties[Month], SentinelNode.next->properties[Day], data.TotalDays);
+
 	if (status.DisplayPrediction)
 		PredictionInterface();  //调试用
 }

@@ -17,18 +17,18 @@
 #include "my_display.h"
 #include "my_resource.h"
 #include "prediction_model.h"
-/*
- * SEIR相关函数集中注释
- * -------------------------------------
- * 参数1: i_infection_rate 感染者传染率
- * 参数2: e_infection_rate 潜伏者传染率
- * 参数3: e_turnto_i 潜伏者变为感染者的比率
- * 参数4: i_touch 感染者接触人数
- * 参数5: e_touch 潜伏者接触人数
- * 参数6: recovery_rate 康复概率
- * 参数7: mul_1 参数7*参数10
- * 参数8: mul_2 参数8*参数11
-*/
+ /*
+  * SEIR相关函数集中注释
+  * -------------------------------------
+  * 参数1: i_infection_rate 感染者传染率
+  * 参数2: e_infection_rate 潜伏者传染率
+  * 参数3: e_turnto_i 潜伏者变为感染者的比率
+  * 参数4: i_touch 感染者接触人数
+  * 参数5: e_touch 潜伏者接触人数
+  * 参数6: recovery_rate 康复概率
+  * 参数7: mul_1 参数7*参数10
+  * 参数8: mul_2 参数8*参数11
+ */
 double i_infection_rate;
 double e_infection_rate;
 double e_turnto_i;
@@ -88,12 +88,12 @@ void SEIR(int SEIRmonth, int SEIRday)
  * 本函数通过分别调用疫情数据，计算各项数据人数峰值(仅限感染人数与潜伏人数)
  * 插入排序计算疫情拐点,拐点天数为InflectionDay，值为InflectionNumber
  */
-int EpidemicInflectionPoint(double Arr[])
+void EpidemicInflectionPoint(double Arr[])
 {
 	int t, k;
 	int C[102];
 	for (k = 0; k < 100; k++)
-		C[k] = Arr[k];
+		C[k] = (int)Arr[k];
 	int i, j;
 	for (i = 1; i < 100; i++)
 	{
@@ -140,7 +140,7 @@ void DateCalculate(int month, int day, int n)
 	NeedDay = sum1 + day + n - t;
 }
 
-double StringDouble(char *p)
+double StringDouble(char* p)
 {
 	double temp = 0;
 	while (*p)

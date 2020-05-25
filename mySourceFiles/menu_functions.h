@@ -14,5 +14,7 @@ void MenuFileClose();
 void MenuFileExit();
 
 void MenuEditChange();
+void MenuEditFrontInsert();
+void MenuEditBackInsert();
 
 #endif

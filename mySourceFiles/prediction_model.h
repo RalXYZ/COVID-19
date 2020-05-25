@@ -7,21 +7,21 @@
 #ifndef PREDICTION_MODEL_H_
 #define PREDICTION_MODEL_H_
 
-/*
- * 函数名1: SEIREnterInt
- * 函数名2: SEIREnterDouble
- * 参数1: i_infection_rate 感染者传染率
- * 参数2: e_infection_rate 潜伏者传染率
- * 参数3: e_turnto_i 潜伏者变为感染者的比率
- * 参数4: i_touch 感染者接触人数
- * 参数5: e_touch 潜伏者接触人数
- * 参数6: recovery_rate 康复概率
- * 参数7: mul_1 参数7*参数10
- * 参数8: mul_2 参数8*参数11
- * -------------------------------------
- * 以下两个函数录入疫情模型的基本参数
- * 参数已经有所预设
- */
+ /*
+  * 函数名1: SEIREnterInt
+  * 函数名2: SEIREnterDouble
+  * 参数1: i_infection_rate 感染者传染率
+  * 参数2: e_infection_rate 潜伏者传染率
+  * 参数3: e_turnto_i 潜伏者变为感染者的比率
+  * 参数4: i_touch 感染者接触人数
+  * 参数5: e_touch 潜伏者接触人数
+  * 参数6: recovery_rate 康复概率
+  * 参数7: mul_1 参数7*参数10
+  * 参数8: mul_2 参数8*参数11
+  * -------------------------------------
+  * 以下两个函数录入疫情模型的基本参数
+  * 参数已经有所预设
+  */
 void SEIREnterInt(int* variable, int value);
 void SEIREnterDouble(double* variable, double value);
 /*
@@ -42,7 +42,7 @@ void SEIR(int month, int day);
  * 本函数通过分别调用疫情数据，计算各项数据人数峰值(仅限感染人数与潜伏人数)
  * 插入排序计算疫情拐点,拐点天数为InflectionDay，值为InflectionNumber
  */
-int EpidemicInflectionPoint(double Arr[]);
+void EpidemicInflectionPoint(double Arr[]);
 /*
   * 函数名: DateCalculate
   * -------------------------------------
@@ -54,9 +54,9 @@ void DateCalculate(int month, int day, int n);
   * 函数名: StringDouble
   * -------------------------------------
   * 本函数将字符转化为double变量
-  * 
+  *
   */
-double StringDouble(char *p);
+double StringDouble(char* p);
 /*
   * 函数名: StringInt
   * -------------------------------------

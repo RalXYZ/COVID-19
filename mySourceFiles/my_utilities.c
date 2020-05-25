@@ -155,3 +155,54 @@ char* PropertyMeaning(int property)
 		return nullptr;
 	}
 }
+
+int DateCalculatePro(int* month, int* day, int step)
+{
+	int TempMonth = *month, TempDay = *day;
+	int months[12] = { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+	if (!step)
+		return 1;
+	else if (step > 0)
+	{
+		TempDay = 1;                               // 将日期重置到该月第一天
+		step += (TempDay - 1);                     // 那么步长也需要修改
+		while (true)
+		{
+			if (step >= months[TempMonth - 1])     // 跨月
+			{
+				step -= months[TempMonth - 1];
+				++TempMonth;
+				if (TempMonth > 12)                // 跨年了
+					return 0;                      // 异常，本函数未实现跨年
+			}
+			else {
+				TempDay += step;
+				step = 0;
+				break;
+			}
+		}
+	}
+	else
+	{
+		step -= (months[TempMonth - 1] - TempDay);
+		TempDay = months[TempMonth - 1];           // 将日期重置到该月最后一天
+		while (true)
+		{
+			if (step <= -months[TempMonth - 1])   // 跨月
+			{
+				step += months[TempMonth - 1];
+				TempMonth -= 1;
+				if (TempMonth < 1)                // 跨年了
+					return 0;                      // 异常，本函数未实现跨年
+				TempDay = months[TempMonth - 1];
+			}
+			else {
+				TempDay += step;
+				step = 0;
+				break;
+			}
+		}
+	}
+	*month = TempMonth, * day = TempDay;
+	return 1;
+}

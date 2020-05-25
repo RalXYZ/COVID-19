@@ -118,6 +118,13 @@ void DesHighlight();
 int ReadEpidemicList(int month, int date, EpidemicProperty type);
 
 /*
+ * 函数名: GetDayNum
+ * ------------------------------------
+ * 取得疫情链表中的总天数
+ */
+void GetDayNum();
+
+/*
  * 函数名: GetMaxElement
  * ------------------------------------
  * 取得疫情链表中 除日期外的最大元素

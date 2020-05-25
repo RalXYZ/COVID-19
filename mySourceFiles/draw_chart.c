@@ -110,7 +110,7 @@ static void Highlight(double x, double y, double w, double h)
 {
 	const double LineChatHeight = h - 2 * PADDING;
 	const double HeightInGraph = 1.0 * status.HighlightNode->properties[status.HighlightProperty];
-	const double WidthInGraph = 1.0 * status.HighlightNum * (w - 2 * PADDING) / (data.TotalDays - 1);
+	double WidthInGraph = 1.0 * status.HighlightNum * (w - 2 * PADDING) / (data.TotalDays - 1);
 
 	SetPenSize(1);
 	SetPenColor(MyThemes[CurrentTheme].accent);
@@ -149,11 +149,6 @@ static void DrawBrokenLine(double x, double y, double w, double h, int type)
 			y + PADDING + LineChatHeight * (1.0 * i->next->properties[type] / data.MaxElement));
 		++count;
 	}
-	if (status.HighlightVisible)
-	{
-		Highlight(x, y, w, h);
-		// DisplayStatistics();
-	}
 	SetPenSize(1);  // 将笔触宽度恢复到初始状态
 }
 
@@ -163,7 +158,11 @@ void LineChart(double x, double y, double w, double h)
 	DrawBrokenLine(x, y, w, h, Total);
 	DrawBrokenLine(x, y, w, h, Cured);
 	DrawBrokenLine(x, y, w, h, Dead);
+
 	DrawLineChartFrame(x, y, w, h);
+
+	if (status.HighlightVisible)
+		Highlight(x, y, w, h);
 }
 
 double DataProportion(double x)//计算占比函数，饼状图使用
@@ -193,7 +192,11 @@ static void FanChart(double centerX, double centerY, double radius)
 
 	SetPenColor(MyThemes[CurrentTheme].accent);
 
-	// SetPenSize(2);
+	if (!now[0] && !now[1] && !now[2])
+	{
+		DrawArc(radius, 0, 360);
+		return;
+	}
 
 	for (int i = 0; i < 3; i++)//循环次数即显示参数数，每次执行一次画弧和一次画线
 	{
@@ -219,8 +222,6 @@ static void FanChart(double centerX, double centerY, double radius)
 		DrawLine(-VectorX, -VectorY);
 		EndFilledRegion();
 	}
-
-	// SetPenSize(1);
 }
 
 /*
@@ -266,8 +267,6 @@ static void BarChart(double x, double y, double w, double h, int month, int day,
 
 void DrawChart(int month, int day, int n)
 {
-	if (data.BaseDir == nullptr)
-		return;
 	const double width = GetWindowWidth();
 	const double height = GetWindowHeight();
 	extern int MyButton(int id, double x, double y, double w, double h, char* label);  // 在 imgui.c 中定义
