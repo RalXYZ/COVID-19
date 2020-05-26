@@ -11,18 +11,23 @@
 #include "graphics.h"
 
 #include "menu_functions.h"
-
 #include "my_display.h"
 #include "my_macro.h"
 #include "my_resource.h"
 #include "my_utilities.h"
-
 
 extern HWND graphicsWindow;     // GUI窗口句柄，在 libgraphics 中声明
 extern HWND consoleWindow;    // 终端窗口句柄，在 libgraphics 中声明
 extern DataProperty data;  // 链表相关属性值，在 my_resource.c 中声明
 extern epidemic SentinelNode;  // 哨兵节点，在 my_resource.c 中声明
 extern MyStatus status;  // 当前状态，在 my_resource.c 中定义
+
+void MenuFileNew()
+{
+	if (data.BaseDir != nullptr)  // 保证这个分支后，data.BaseDir 一定为空
+		MenuFileClose();  // 把旧文件清了
+	FileInputList(NEW_FILE_DIR);
+}
 
 void MenuFileOpen()
 {
@@ -66,20 +71,17 @@ void MenuFileOpen()
 
 void MenuFileSave()
 {
-	if (data.BaseDir == nullptr)  // 若没有打开任何文件（新建文件状态）
+	if (data.BaseDir == nullptr)  // 若没有打开任何文件
 	{
-		if (data.HasModified)
-		{
-			MenuFileSaveAs();
-			return;
-		}
-		else
-		{
-			display();
-			MessageBox(graphicsWindow, TEXT("您目前没有新建或打开任何文件，无需保存"),
-				TEXT("提示"), MB_OK | MB_ICONINFORMATION);
-			GUIOutputMsg("目前未打开文件");
-		}
+		display();
+		MessageBox(graphicsWindow, TEXT("您目前没有新建或打开任何文件，无需保存"),
+			TEXT("提示"), MB_OK | MB_ICONINFORMATION);
+		GUIOutputMsg("目前未打开文件");
+	}
+	else if (!strcmp(data.BaseDir, NEW_FILE_DIR))
+	{
+		MenuFileSaveAs();
+		return;
 	}
 	else if (data.HasModified)  // 如果链表里的数据被修改过
 	{
@@ -249,7 +251,6 @@ void MenuEditFrontInsert()
 	SentinelNode.next->prev = NewNode;
 	SentinelNode.next = NewNode;
 
-	++data.TotalDays;
 	data.HasModified = true;
 	++status.HighlightNum;
 	GetDayNum();
@@ -296,7 +297,6 @@ void MenuEditBackInsert()
 	NewNode->prev = TempNode;
 	NewNode->next = nullptr;
 
-	++data.TotalDays;
 	data.HasModified = true;
 	GetDayNum();
 	GetMaxElement();
@@ -304,3 +304,84 @@ void MenuEditBackInsert()
 }
 
 // TODO: 在做删除时，一定要注意删除后链表的长度，以及高亮光标所在的节点会不会被删掉
+
+void MenuEditFrontDelete()
+{
+	if (data.BaseDir == nullptr)
+	{
+		display();
+		MessageBox(graphicsWindow,
+			TEXT("您尚未打开文件。请先打开文件。"),
+			TEXT("提示"), MB_OK | MB_ICONWARNING);
+		GUIOutputMsg("文件未打开");
+		return;
+	}
+	if (data.TotalDays <= MIN_LIST_LENGTH)
+	{
+		display();
+		MessageBox(graphicsWindow,
+			TEXT("您的链表已达到最短长度，无法进行删除。"),
+			TEXT("提示"), MB_OK | MB_ICONWARNING);
+		GUIOutputMsg("删除未完成");
+		return;
+	}
+
+	if (status.HighlightNode != SentinelNode.next)  // 如果不是首个数据节点
+	{
+		--status.HighlightNum;
+	}
+	else
+	{
+		status.HighlightNode = SentinelNode.next->next;
+	}
+
+	epidemic* TempNode = SentinelNode.next;
+	SentinelNode.next = SentinelNode.next->next;
+	SentinelNode.next->prev = nullptr;
+	free(TempNode);
+
+	data.HasModified = true;
+	GetDayNum();
+	GetMaxElement();
+	display();
+}
+
+void MenuEditBackDelete()
+{
+	if (data.BaseDir == nullptr)
+	{
+		display();
+		MessageBox(graphicsWindow,
+			TEXT("您尚未打开文件。请先打开文件。"),
+			TEXT("提示"), MB_OK | MB_ICONWARNING);
+		GUIOutputMsg("文件未打开");
+		return;
+	}
+	if (data.TotalDays <= MIN_LIST_LENGTH)
+	{
+		display();
+		MessageBox(graphicsWindow,
+			TEXT("您的链表已达到最短长度，无法进行删除。"),
+			TEXT("提示"), MB_OK | MB_ICONWARNING);
+		GUIOutputMsg("删除未完成");
+		return;
+	}
+
+	epidemic* TempNode = SentinelNode.next;
+	while (TempNode->next != nullptr)  // 找到尾节点
+		TempNode = TempNode->next;
+
+	if (status.HighlightNode == TempNode)  // 如果是尾节点
+	{
+		--status.HighlightNum;
+		status.HighlightNode = TempNode->prev;
+	}
+
+	TempNode->prev->next = nullptr;
+	free(TempNode);
+
+	data.HasModified = true;
+	GetDayNum();
+	GetMaxElement();
+	display();
+}

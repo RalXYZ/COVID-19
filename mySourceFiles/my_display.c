@@ -151,7 +151,7 @@ static void DrawMenu()
 	static char MenuDrawPrediction[20] = "显示预测";
 
 	static char* MenuFile[] = { "文件",
-		"新建 无功能 | Ctrl-N",
+		"新建 | Ctrl-N",
 		"打开 | Ctrl-O",
 		"保存 | Ctrl-S",
 		"另存为",
@@ -162,11 +162,11 @@ static void DrawMenu()
 		"修改",
 		"前置录入",
 		"后置录入",
-		"前置删除 无功能",
-		"后置删除 无功能" };
+		"前置删除",
+		"后置删除" };
 
 	static char* MenuDraw[] = { "绘图",
-		"绘制图表 无功能",
+		"绘制图表",
 		MenuDrawPrediction,
 		Highlight,
 		ChangeThemeLabel };
@@ -192,6 +192,9 @@ static void DrawMenu()
 
 		switch (MenuFileSelection)
 		{
+		case 1:  // 新建
+			MenuFileNew();
+			break;
 		case 2:  // 打开
 			MenuFileOpen();
 			break;
@@ -226,14 +229,32 @@ static void DrawMenu()
 		case 3:  // 后置录入
 			MenuEditBackInsert();
 			break;
+		case 4:  // 前置删除
+			MenuEditFrontDelete();
+			break;
+		case 5:  // 后置删除
+			MenuEditBackDelete();
+			break;
 		}
 	}
 
 	// 绘图
 	{
 		const int MenuDrawSelection = MyMenuList(GenUIID(0), MenuSelectionWidth * 2, MenuBarVertical,
-			TextStringWidth(MenuDraw[0]) * 2, TextStringWidth(MenuDraw[4]) * 1.2,
+			TextStringWidth(MenuDraw[0]) * 2, TextStringWidth(MenuDraw[4]) * 1.02,
 			MenuButtonHeight, MenuDraw, sizeof(MenuDraw) / sizeof(MenuDraw[0]));
+		if (MenuDrawSelection == 1)
+		{
+			extern _Bool DisplayLineChart, DisplayFanChart, DisplayBarChart;
+			if (data.BaseDir == nullptr)
+			{
+				MessageBox(graphicsWindow,
+					TEXT("您尚未打开文件。请先打开文件。"),
+					TEXT("提示"), MB_OK | MB_ICONWARNING);
+			}
+			else
+				DisplayLineChart = DisplayFanChart = DisplayBarChart = true;
+		}
 		if (MenuDrawSelection == 2)
 		{
 			status.DisplayPrediction = !(status.DisplayPrediction);
@@ -275,7 +296,7 @@ static void DrawMenu()
 	// 帮助
 	{
 		const int MenuHelpSelection = MyMenuList(GenUIID(0), MenuSelectionWidth * 3, MenuBarVertical,
-			TextStringWidth(MenuHelp[0]) * 2, TextStringWidth(MenuHelp[2]) * 1.4,
+			TextStringWidth(MenuHelp[0]) * 2, TextStringWidth(MenuHelp[2]) * 1.15,
 			MenuButtonHeight, MenuHelp, sizeof(MenuHelp) / sizeof(MenuHelp[0]));
 		if (MenuHelpSelection == 1)  // 使用帮助
 		{

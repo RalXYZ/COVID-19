@@ -22,9 +22,9 @@
 
 extern int NeedMonth;//需求月份
 extern int NeedDay;//需求日期
-static int line = 0;//折线图标志
-static int fan = 0;//饼状图标志
-static int bar = 0;//柱状图标志
+_Bool DisplayLineChart = false;  //折线图标志
+_Bool DisplayFanChart = false;  //饼状图标志
+_Bool DisplayBarChart = false;  //柱状图标志
 
 extern double i_infection_rate;
 extern double e_infection_rate;
@@ -272,46 +272,46 @@ void DrawChart(int month, int day, int n)
 	extern int MyButton(int id, double x, double y, double w, double h, char* label);  // 在 imgui.c 中定义
 
 	if (MyButton(GenUIID(0), width / 8, 0.55, width / 6, 3 * height / 32, "折线图"))
-		line = !line;
+		DisplayLineChart = !DisplayLineChart;
 	if (MyButton(GenUIID(1), 10 * width / 24, 0.55, width / 6, 3 * height / 32, "柱状图"))
-		bar = !bar;
+		DisplayBarChart = !DisplayBarChart;
 	if (MyButton(GenUIID(2), 17 * width / 24, 0.55, width / 6, 3 * height / 32, "饼状图"))
-		fan = !fan;
+		DisplayFanChart = !DisplayFanChart;
 
-	if (bar == 1 && fan == 0 && line == 0)
+	if (DisplayBarChart == 1 && DisplayFanChart == 0 && DisplayLineChart == 0)
 	{
 		BarChart(width / 12, height / 4, 5 * width / 6, 5 * height / 8, month, day, n);
 	}
-	else if (bar == 0 && fan == 1 && line == 0)
+	else if (DisplayBarChart == 0 && DisplayFanChart == 1 && DisplayLineChart == 0)
 	{
 		SetPenColor(MyThemes[CurrentTheme].foreground);
 		drawRectangle(7 * width / 24, height / 4, 5 * width / 12, 5 * height / 8, 0);
 		FanChart(width / 2, 9 * height / 16, width / 6);
 	}
-	else if (bar == 0 && fan == 0 && line == 1)
+	else if (DisplayBarChart == 0 && DisplayFanChart == 0 && DisplayLineChart == 1)
 	{
 		LineChart(width / 12, height / 4, 5 * width / 6, 5 * height / 8);
 	}
-	else if (bar == 1 && fan == 1 && line == 0)
+	else if (DisplayBarChart == 1 && DisplayFanChart == 1 && DisplayLineChart == 0)
 	{
 		BarChart(width / 12, height / 4, 7 * width / 12, 5 * height / 8, month, day, n);
 		SetPenColor(MyThemes[CurrentTheme].foreground);
 		drawRectangle(16 * width / 24, height / 4, width / 4, 5 * height / 8, 0);
 		FanChart(19 * width / 24, 9 * height / 16, 5 * width / 48);
 	}
-	else if (bar == 1 && fan == 0 && line == 1)
+	else if (DisplayBarChart == 1 && DisplayFanChart == 0 && DisplayLineChart == 1)
 	{
 		BarChart(width / 12, height / 4, 5 * width / 6, 5 * height / 16, month, day, n);
 		LineChart(width / 12, 9 * height / 16, 5 * width / 6, 5 * height / 16);
 	}
-	else if (bar == 0 && fan == 1 && line == 1)
+	else if (DisplayBarChart == 0 && DisplayFanChart == 1 && DisplayLineChart == 1)
 	{
 		SetPenColor(MyThemes[CurrentTheme].foreground);
 		drawRectangle(16 * width / 24, height / 4, width / 4, 5 * height / 8, 0);
 		FanChart(19 * width / 24, 9 * height / 16, 5 * width / 48);
 		LineChart(width / 12, height / 4, 7 * width / 12, 5 * height / 8);
 	}
-	else if (bar == 1 && fan == 1 && line == 1)
+	else if (DisplayBarChart == 1 && DisplayFanChart == 1 && DisplayLineChart == 1)
 	{
 		BarChart(width / 12, height / 4, 7 * width / 12, 5 * height / 16, month, day, n);
 		SetPenColor(MyThemes[CurrentTheme].foreground);
