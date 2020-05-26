@@ -88,12 +88,12 @@ void SEIR(int SEIRmonth, int SEIRday)
  * 本函数通过分别调用疫情数据，计算各项数据人数峰值(仅限感染人数与潜伏人数)
  * 插入排序计算疫情拐点,拐点天数为InflectionDay，值为InflectionNumber
  */
-void EpidemicInflectionPoint(double Arr[])
+double EpidemicInflectionPoint(double Arr[])
 {
 	int t, k;
-	int C[102];
+	double C[102];
 	for (k = 0; k < 100; k++)
-		C[k] = (int)Arr[k];
+		C[k] = Arr[k];
 	int i, j;
 	for (i = 1; i < 100; i++)
 	{
@@ -110,6 +110,7 @@ void EpidemicInflectionPoint(double Arr[])
 		}
 	}
 	C[0] = InflectionNumber;
+	return C[0];
 }
 /*
  * 函数名: DateCalculate
@@ -172,7 +173,7 @@ void PredictionInterface()
 	static char f[10] = "20";
 	static char g[10] = "1";
 
-	static char mon[10] = "1";
+	static char mon[10] = "3";
 	static char day[10] = "1";
 
 	const double wid = GetWindowWidth();
@@ -190,6 +191,10 @@ void PredictionInterface()
 	if (textbox(GenUIID(0), x, y, w, h, a, sizeof(a)))
 	{
 		SEIREnterInt(&population, StringInt(a));
+	}
+	else
+	{
+		SEIREnterInt(&population, 10000);
 	};
 
 	SetPenColor("red");
@@ -197,7 +202,11 @@ void PredictionInterface()
 	if (textbox(GenUIID(0), x, y, w, h, b, sizeof(b)))
 	{
 		SEIREnterDouble(&i_infection_rate, StringDouble(b) / 100);
-	};
+	}
+	else
+	{
+		SEIREnterDouble(&i_infection_rate, 0.03);
+	}
 
 	SetPenColor("Gray");
 	drawLabel(x - fH / 2 - TextStringWidth("潜伏者传染率(百分)"), (y -= h * 1.5) + fH * 0.7, "潜伏者传染率(百分)");
@@ -205,47 +214,115 @@ void PredictionInterface()
 	{
 		SEIREnterDouble(&e_infection_rate, StringDouble(c) / 100);
 	}
+	else
+	{
+		SEIREnterDouble(&e_infection_rate, 0.03);
+	}
 
 	SetPenColor("Dark Gray");
 	drawLabel(x - fH / 2 - TextStringWidth("潜感转化率(百分)"), (y -= h * 1.5) + fH * 0.7, "潜感转化率(百分)");
 	if (textbox(GenUIID(0), x, y, w, h, d, sizeof(d)))
 	{
 		SEIREnterDouble(&e_turnto_i, StringDouble(d) / 100);
-	};
+	}
+	else
+	{
+		SEIREnterDouble(&e_turnto_i, 0.01);
+	}
 
 	SetPenColor("Magenta");
 	drawLabel(x - fH / 2 - TextStringWidth("感染者接触人数"), (y -= h * 1.5) + fH * 0.7, "感染者接触人数");
 	if (textbox(GenUIID(0), x, y, w, h, e, sizeof(e)))
 	{
 		SEIREnterInt(&i_touch, StringInt(e));
-	};
+	}
+	else
+	{
+		SEIREnterInt(&i_touch, 20);
+	}
 
 	SetPenColor("Cyan");
 	drawLabel(x - fH / 2 - TextStringWidth("潜伏者接触人数"), (y -= h * 1.5) + fH * 0.7, "潜伏者接触人数");
 	if (textbox(GenUIID(0), x, y, w, h, f, sizeof(f)))
 	{
 		SEIREnterInt(&e_touch, StringInt(f));
-	};
+	}
+	else
+	{
+		SEIREnterInt(&e_touch, 20);
+	}
 
 	SetPenColor("green");
 	drawLabel(x - fH / 2 - TextStringWidth("康复率(百分)"), (y -= h * 1.5) + fH * 0.7, "康复率(百分)");
 	if (textbox(GenUIID(0), x, y, w, h, g, sizeof(g)))
 	{
 		SEIREnterDouble(&recovery_rate, StringDouble(g) / 100);
-	};
+	}
+	else
+	{
+		SEIREnterDouble(&recovery_rate, 0.01);
+	}
 
 	SetPenColor("Black");
 	drawLabel(x - fH / 2 - TextStringWidth("起始月份"), (y -= h * 1.5) + fH * 0.7, "起始月份");
 	if (textbox(GenUIID(0), x, y, w, h, mon, sizeof(mon)))
 	{
 		SEIREnterInt(&SEIRmonth, StringInt(mon));
-	};
+	}
+	else
+	{
+		SEIREnterInt(&SEIRmonth, 3);
+	}
 
 	SetPenColor("Black");
 	drawLabel(x - fH / 2 - TextStringWidth("起始日期"), (y -= h * 1.5) + fH * 0.7, "起始日期");
 	if (textbox(GenUIID(0), x, y, w, h, day, sizeof(day)))
 	{
 		SEIREnterInt(&SEIRday, StringInt(day));
-	};
+	}
+	else
+	{
+		SEIREnterInt(&SEIRday, 1);
+	}
 
+}
+
+void PredictionChart()
+{
+	const double wid = GetWindowWidth();
+	const double hei = GetWindowHeight();
+	
+	int i;
+	double x = 21 * wid / 48;
+	double y = 7 * hei / 32;
+	double kl = 0.98 * 9 * hei / 16;
+
+	SEIR(SEIRmonth, SEIRday);
+	drawRectangle(5 * wid /12, 3 * hei / 16, 13 * wid /24, 5 * hei / 8, 0);
+	drawRectangle(21 * wid / 48, 7 * hei / 32,  wid / 2, 9 * hei / 16, 0);
+
+	MovePen(x, y + kl * S[0] / population);
+	SetPenColor("yellow");
+	for (i = 1; i < 50; i++)
+	{
+		DrawLine(wid / 100, kl * (S[i] - S[i - 1])/ population);
+	}
+	MovePen(x, y);
+	SetPenColor("Cyan");
+	for (i = 1; i < 50; i++)
+	{
+		DrawLine(wid / 100, kl * (E[i] - E[i - 1]) / population);
+	}
+	MovePen(x, y);
+	SetPenColor("red");
+	for (i = 1; i < 50; i++)
+	{
+		DrawLine(wid / 100, kl * (I[i] - I[i - 1]) / population);
+	}
+	MovePen(x, y);
+	SetPenColor("green");
+	for (i = 1; i < 50; i++)
+	{
+		DrawLine(wid / 100, kl * (R[i] - R[i - 1]) / population);
+	}
 }

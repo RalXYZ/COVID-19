@@ -42,7 +42,7 @@ void SEIR(int month, int day);
  * 本函数通过分别调用疫情数据，计算各项数据人数峰值(仅限感染人数与潜伏人数)
  * 插入排序计算疫情拐点,拐点天数为InflectionDay，值为InflectionNumber
  */
-void EpidemicInflectionPoint(double Arr[]);
+double EpidemicInflectionPoint(double Arr[]);
 /*
   * 函数名: DateCalculate
   * -------------------------------------
@@ -65,10 +65,17 @@ double StringDouble(char* p);
   */
 int StringInt(char* p);
 /*
- * 函数名: DrawPredictionInterface
+ * 函数名: PredictionInterface
  * -------------------------------------
  * 本函数提供进行疫情预测的界面
  *
  */
 void PredictionInterface();
+/*
+ * 函数名: PredictionChart
+ * -------------------------------------
+ * 本函数显示进行疫情预测的折线图表
+ *
+ */
+void PredictionChart();
 #endif
