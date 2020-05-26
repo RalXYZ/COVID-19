@@ -64,4 +64,11 @@ double StringDouble(char* p);
   *
   */
 int StringInt(char* p);
+/*
+ * 函数名: DrawPredictionInterface
+ * -------------------------------------
+ * 本函数提供进行疫情预测的界面
+ *
+ */
+void PredictionInterface();
 #endif

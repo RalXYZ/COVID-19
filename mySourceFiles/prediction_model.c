@@ -29,17 +29,17 @@
   * 参数7: mul_1 参数7*参数10
   * 参数8: mul_2 参数8*参数11
  */
-double i_infection_rate;
-double e_infection_rate;
-double e_turnto_i;
-int i_touch;
-int e_touch;
-double recovery_rate;
-double mul_1, mul_2;
-int population;
+static double i_infection_rate;
+static double e_infection_rate;
+static double e_turnto_i;
+static int i_touch;
+static int e_touch;
+static double recovery_rate;
+static double mul_1, mul_2;
+static int population;
 
-int SEIRmonth;
-int SEIRday;
+static int SEIRmonth;
+static int SEIRday;
 static int InflectionDay;//拐点日期
 static int InflectionNumber;//拐点值
 int NeedMonth;//需求月份
@@ -160,4 +160,92 @@ int StringInt(char* p)
 		p++;
 	}
 	return temp;
+}
+
+void PredictionInterface()
+{
+	static char a[10] = "10000";
+	static char b[10] = "3";
+	static char c[10] = "3";
+	static char d[10] = "1";
+	static char e[10] = "20";
+	static char f[10] = "20";
+	static char g[10] = "1";
+
+	static char mon[10] = "1";
+	static char day[10] = "1";
+
+	const double wid = GetWindowWidth();
+	const double hei = GetWindowHeight();
+
+	double fH = GetFontHeight();
+	double h = fH * 2;
+	double w = wid / 6;
+	double x = wid / 5;
+	double y = 7 * hei / 8;
+
+
+	SetPenColor("blue");
+	drawLabel(x - fH / 2 - TextStringWidth("人口"), (y -= h * 1.5) + fH * 0.7, "人口");
+	if (textbox(GenUIID(0), x, y, w, h, a, sizeof(a)))
+	{
+		SEIREnterInt(&population, StringInt(a));
+	};
+
+	SetPenColor("red");
+	drawLabel(x - fH / 2 - TextStringWidth("感染者传染率(百分)"), (y -= h * 1.5) + fH * 0.7, "感染者传染率(百分)");
+	if (textbox(GenUIID(0), x, y, w, h, b, sizeof(b)))
+	{
+		SEIREnterDouble(&i_infection_rate, StringDouble(b) / 100);
+	};
+
+	SetPenColor("Gray");
+	drawLabel(x - fH / 2 - TextStringWidth("潜伏者传染率(百分)"), (y -= h * 1.5) + fH * 0.7, "潜伏者传染率(百分)");
+	if (textbox(GenUIID(0), x, y, w, h, c, sizeof(c)))
+	{
+		SEIREnterDouble(&e_infection_rate, StringDouble(c) / 100);
+	}
+
+	SetPenColor("Dark Gray");
+	drawLabel(x - fH / 2 - TextStringWidth("潜感转化率(百分)"), (y -= h * 1.5) + fH * 0.7, "潜感转化率(百分)");
+	if (textbox(GenUIID(0), x, y, w, h, d, sizeof(d)))
+	{
+		SEIREnterDouble(&e_turnto_i, StringDouble(d) / 100);
+	};
+
+	SetPenColor("Magenta");
+	drawLabel(x - fH / 2 - TextStringWidth("感染者接触人数"), (y -= h * 1.5) + fH * 0.7, "感染者接触人数");
+	if (textbox(GenUIID(0), x, y, w, h, e, sizeof(e)))
+	{
+		SEIREnterInt(&i_touch, StringInt(e));
+	};
+
+	SetPenColor("Cyan");
+	drawLabel(x - fH / 2 - TextStringWidth("潜伏者接触人数"), (y -= h * 1.5) + fH * 0.7, "潜伏者接触人数");
+	if (textbox(GenUIID(0), x, y, w, h, f, sizeof(f)))
+	{
+		SEIREnterInt(&e_touch, StringInt(f));
+	};
+
+	SetPenColor("green");
+	drawLabel(x - fH / 2 - TextStringWidth("康复率(百分)"), (y -= h * 1.5) + fH * 0.7, "康复率(百分)");
+	if (textbox(GenUIID(0), x, y, w, h, g, sizeof(g)))
+	{
+		SEIREnterDouble(&recovery_rate, StringDouble(g) / 100);
+	};
+
+	SetPenColor("Black");
+	drawLabel(x - fH / 2 - TextStringWidth("起始月份"), (y -= h * 1.5) + fH * 0.7, "起始月份");
+	if (textbox(GenUIID(0), x, y, w, h, mon, sizeof(mon)))
+	{
+		SEIREnterInt(&SEIRmonth, StringInt(mon));
+	};
+
+	SetPenColor("Black");
+	drawLabel(x - fH / 2 - TextStringWidth("起始日期"), (y -= h * 1.5) + fH * 0.7, "起始日期");
+	if (textbox(GenUIID(0), x, y, w, h, day, sizeof(day)))
+	{
+		SEIREnterInt(&SEIRday, StringInt(day));
+	};
+
 }
