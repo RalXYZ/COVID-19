@@ -140,6 +140,8 @@ void GUIOutputMsg(char* msg)
 	display();
 }
 
+char Highlight[20] = "隐藏高亮光标";
+char MenuDrawPredictionString[20] = "显示预测";
 /*
  * 函数名: DrawMenu
  * -------------------------------------
@@ -148,8 +150,6 @@ void GUIOutputMsg(char* msg)
 static void DrawMenu()
 {
 	static char ChangeThemeLabel[40] = { 0 };
-	static char Highlight[20] = "隐藏高亮光标";
-	static char MenuDrawPrediction[20] = "显示预测";
 
 	static char* MenuFile[] = { "文件",
 		"新建 | Ctrl-N",
@@ -168,12 +168,12 @@ static void DrawMenu()
 
 	static char* MenuDraw[] = { "绘图",
 		"绘制图表",
-		MenuDrawPrediction,
+		MenuDrawPredictionString,
 		Highlight,
 		ChangeThemeLabel };
 
 	static char* MenuHelp[] = { "帮助",
-		"使用帮助",
+		"大程报告",
 		"关于本软件" };
 
 
@@ -244,62 +244,20 @@ static void DrawMenu()
 		const int MenuDrawSelection = MyMenuList(GenUIID(0), MenuSelectionWidth * 2, MenuBarVertical,
 			TextStringWidth(MenuDraw[0]) * 2, TextStringWidth(MenuDraw[4]) * 1.02,
 			MenuButtonHeight, MenuDraw, sizeof(MenuDraw) / sizeof(MenuDraw[0]));
-		if (MenuDrawSelection == 1)
+		switch (MenuDrawSelection)
 		{
-			extern _Bool DisplayLineChart, DisplayFanChart, DisplayBarChart;
-			if (data.BaseDir == nullptr)
-			{
-				MessageBox(graphicsWindow,
-					TEXT("您尚未打开文件。请先打开文件。"),
-					TEXT("提示"), MB_OK | MB_ICONWARNING);
-			}
-			else
-				DisplayLineChart = DisplayFanChart = DisplayBarChart = true;
-		}
-		if (MenuDrawSelection == 2)
-		{
-			if (data.BaseDir == nullptr)
-			{
-				MessageBox(graphicsWindow,
-					TEXT("您尚未打开文件。请先打开文件。"),
-					TEXT("提示"), MB_OK | MB_ICONWARNING);
-			}
-			else
-			{
-				status.DisplayPrediction = !(status.DisplayPrediction);
-
-				if (status.DisplayPrediction)
-					sprintf(MenuDrawPrediction, "隐藏预测");
-				else
-					sprintf(MenuDrawPrediction, "显示预测");
-
-				display();
-			}
-		}
-		else if (MenuDrawSelection == 3)
-		{
-			if (data.BaseDir == nullptr)
-			{
-				MessageBox(graphicsWindow,
-					TEXT("您尚未打开文件。请先打开文件。"),
-					TEXT("提示"), MB_OK | MB_ICONWARNING);
-			}
-
-			else if (!status.HighlightVisible)
-			{
-				sprintf(Highlight, "隐藏高亮光标");
-				status.HighlightVisible = true;
-			}
-			else if (status.HighlightVisible)
-			{
-				sprintf(Highlight, "显示高亮光标");
-				status.HighlightVisible = false;
-			}
-		}
-		else if (MenuDrawSelection == 4)
-		{
-			CurrentTheme = (CurrentTheme + 1) % THEME_NUM;
-			display();
+		case 1:
+			MenuDrawGraph();
+			break;
+		case 2:
+			MenuDrawPrediction();
+			break;
+		case 3:
+			MenuDrawHighlight();
+			break;
+		case 4:
+			MenuDrawChangeTheme();
+			break;
 		}
 	}
 
@@ -311,7 +269,7 @@ static void DrawMenu()
 		if (MenuHelpSelection == 1)  // 使用帮助
 		{
 			// system("start ..\\xxx");  // 将指令传给shell；由于目前还没有帮助文档，这行代码被注释掉
-			MessageBox(graphicsWindow, TEXT("目前帮助文档还不存在，但用于打开帮助文档的代码已写好。"),
+			MessageBox(graphicsWindow, TEXT("目前大程报告还不存在，但用于打开大程报告的代码已写好。"),
 				TEXT("提示"), MB_OK | MB_ICONINFORMATION);
 		}
 		if (MenuHelpSelection == 2)  // 关于本软件

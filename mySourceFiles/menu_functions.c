@@ -21,12 +21,15 @@ extern HWND consoleWindow;    // 终端窗口句柄，在 libgraphics 中声明
 extern DataProperty data;  // 链表相关属性值，在 my_resource.c 中声明
 extern epidemic SentinelNode;  // 哨兵节点，在 my_resource.c 中声明
 extern MyStatus status;  // 当前状态，在 my_resource.c 中定义
+extern int CurrentTheme;  // 当前主题，在 menu_functions.c 
 
 void MenuFileNew()
 {
 	if (data.BaseDir != nullptr)  // 保证这个分支后，data.BaseDir 一定为空
 		MenuFileClose();  // 把旧文件清了
 	FileInputList(NEW_FILE_DIR);
+
+	GUIOutputMsg("新建成功");
 }
 
 void MenuFileOpen()
@@ -73,10 +76,9 @@ void MenuFileSave()
 {
 	if (data.BaseDir == nullptr)  // 若没有打开任何文件
 	{
-		display();
+		GUIOutputMsg("目前未打开文件");
 		MessageBox(graphicsWindow, TEXT("您目前没有新建或打开任何文件，无需保存"),
 			TEXT("提示"), MB_OK | MB_ICONINFORMATION);
-		GUIOutputMsg("目前未打开文件");
 	}
 	else if (!strcmp(data.BaseDir, NEW_FILE_DIR))
 	{
@@ -90,10 +92,9 @@ void MenuFileSave()
 	}
 	else
 	{
-		display();
+		GUIOutputMsg("无需保存");
 		MessageBox(graphicsWindow, TEXT("您的文件已与GUI同步，无需保存"),
 			TEXT("提示"), MB_OK | MB_ICONINFORMATION);
-		GUIOutputMsg("无需保存");
 	}
 	data.HasModified = false;
 }
@@ -141,6 +142,7 @@ void MenuFileClose()
 
 	DesHighlight();
 	FreeEpidemicList(SentinelNode.next);
+	status.DisplayPrediction = false;  // 不显示统计图
 	SentinelNode.next = nullptr;
 	data.BaseDir = nullptr;  // 清空存储当前文件绝对路径的变量
 	GUIOutputMsg("关闭成功");
@@ -181,8 +183,6 @@ void MenuEditChange()
 		return;
 	}
 
-	// PauseDisplay();
-
 	InitConsole();
 
 	while (true)
@@ -212,19 +212,16 @@ void MenuEditChange()
 		}
 	}
 	MyExitConsole();  // 退出终端窗口
-
-	// ContinueDisplay();
 }
 
 void MenuEditFrontInsert()
 {
 	if (data.BaseDir == nullptr)
 	{
-		display();
+		GUIOutputMsg("文件未打开");
 		MessageBox(graphicsWindow,
 			TEXT("您尚未打开文件。请先打开文件。"),
 			TEXT("提示"), MB_OK | MB_ICONWARNING);
-		GUIOutputMsg("文件未打开");
 		return;
 	}
 
@@ -233,7 +230,7 @@ void MenuEditFrontInsert()
 	if (!DateCalculatePro(&NewMonth, &NewDay, -1))
 	{
 		MessageBox(graphicsWindow,
-			TEXT("您要插入的日期已跨年。"),
+			TEXT("您要录入的日期已跨年。"),
 			TEXT("错误"), MB_OK | MB_ICONWARNING);
 		return;
 	}
@@ -255,18 +252,17 @@ void MenuEditFrontInsert()
 	++status.HighlightNum;
 	GetDayNum();
 	GetMaxElement();
-	display();
+	GUIOutputMsg("前置录入成功");
 }
 
 void MenuEditBackInsert()
 {
 	if (data.BaseDir == nullptr)
 	{
-		display();
+		GUIOutputMsg("文件未打开");
 		MessageBox(graphicsWindow,
 			TEXT("您尚未打开文件。请先打开文件。"),
 			TEXT("提示"), MB_OK | MB_ICONWARNING);
-		GUIOutputMsg("文件未打开");
 		return;
 	}
 
@@ -275,7 +271,7 @@ void MenuEditBackInsert()
 	if (!DateCalculatePro(&NewMonth, &NewDay, data.TotalDays))
 	{
 		MessageBox(graphicsWindow,
-			TEXT("您要插入的日期已跨年。"),
+			TEXT("您要录入的日期已跨年。"),
 			TEXT("错误"), MB_OK | MB_ICONWARNING);
 		return;
 	}
@@ -300,7 +296,7 @@ void MenuEditBackInsert()
 	data.HasModified = true;
 	GetDayNum();
 	GetMaxElement();
-	display();
+	GUIOutputMsg("后置录入成功");
 }
 
 // TODO: 在做删除时，一定要注意删除后链表的长度，以及高亮光标所在的节点会不会被删掉
@@ -309,31 +305,25 @@ void MenuEditFrontDelete()
 {
 	if (data.BaseDir == nullptr)
 	{
-		display();
+		GUIOutputMsg("文件未打开");
 		MessageBox(graphicsWindow,
 			TEXT("您尚未打开文件。请先打开文件。"),
 			TEXT("提示"), MB_OK | MB_ICONWARNING);
-		GUIOutputMsg("文件未打开");
 		return;
 	}
 	if (data.TotalDays <= MIN_LIST_LENGTH)
 	{
-		display();
+		GUIOutputMsg("删除未完成");
 		MessageBox(graphicsWindow,
 			TEXT("您的链表已达到最短长度，无法进行删除。"),
 			TEXT("提示"), MB_OK | MB_ICONWARNING);
-		GUIOutputMsg("删除未完成");
 		return;
 	}
 
 	if (status.HighlightNode != SentinelNode.next)  // 如果不是首个数据节点
-	{
 		--status.HighlightNum;
-	}
 	else
-	{
 		status.HighlightNode = SentinelNode.next->next;
-	}
 
 	epidemic* TempNode = SentinelNode.next;
 	SentinelNode.next = SentinelNode.next->next;
@@ -343,27 +333,25 @@ void MenuEditFrontDelete()
 	data.HasModified = true;
 	GetDayNum();
 	GetMaxElement();
-	display();
+	GUIOutputMsg("前置删除成功");
 }
 
 void MenuEditBackDelete()
 {
 	if (data.BaseDir == nullptr)
 	{
-		display();
+		GUIOutputMsg("文件未打开");
 		MessageBox(graphicsWindow,
 			TEXT("您尚未打开文件。请先打开文件。"),
 			TEXT("提示"), MB_OK | MB_ICONWARNING);
-		GUIOutputMsg("文件未打开");
 		return;
 	}
 	if (data.TotalDays <= MIN_LIST_LENGTH)
 	{
-		display();
+		GUIOutputMsg("删除未完成");
 		MessageBox(graphicsWindow,
 			TEXT("您的链表已达到最短长度，无法进行删除。"),
 			TEXT("提示"), MB_OK | MB_ICONWARNING);
-		GUIOutputMsg("删除未完成");
 		return;
 	}
 
@@ -383,5 +371,78 @@ void MenuEditBackDelete()
 	data.HasModified = true;
 	GetDayNum();
 	GetMaxElement();
-	display();
+	GUIOutputMsg("后置删除成功");
+}
+
+/****************************************************************************/
+
+void MenuDrawGraph()
+{
+	extern _Bool DisplayLineChart, DisplayFanChart, DisplayBarChart;
+	if (data.BaseDir == nullptr)
+	{
+		GUIOutputMsg("图标未绘制");
+		MessageBox(graphicsWindow,
+			TEXT("您尚未打开文件。请先打开文件。"),
+			TEXT("提示"), MB_OK | MB_ICONWARNING);
+		return;
+	}
+	DisplayLineChart = DisplayFanChart = DisplayBarChart = true;
+}
+
+void MenuDrawPrediction()
+{
+	extern char MenuDrawPredictionString[20];
+	if (data.BaseDir == nullptr)
+	{
+		GUIOutputMsg("预测未显示");
+		MessageBox(graphicsWindow,
+			TEXT("您尚未打开文件。请先打开文件。"),
+			TEXT("提示"), MB_OK | MB_ICONWARNING);
+		return;
+	}
+
+	status.DisplayPrediction = !(status.DisplayPrediction);
+
+	if (status.DisplayPrediction)
+	{
+		sprintf(MenuDrawPredictionString, "隐藏预测");
+		GUIOutputMsg("已显示预测");
+	}
+
+	else
+	{
+		sprintf(MenuDrawPredictionString, "显示预测");
+		GUIOutputMsg("已隐藏预测");
+	}
+}
+
+void MenuDrawHighlight()
+{
+	extern char Highlight[20];
+	if (data.BaseDir == nullptr)
+	{
+		GUIOutputMsg("高亮光标未显示");
+		MessageBox(graphicsWindow,
+			TEXT("您尚未打开文件。请先打开文件。"),
+			TEXT("提示"), MB_OK | MB_ICONWARNING);
+		return;
+	}
+
+	if (!status.HighlightVisible)
+	{
+		sprintf(Highlight, "隐藏高亮光标");
+		status.HighlightVisible = true;
+	}
+	else if (status.HighlightVisible)
+	{
+		sprintf(Highlight, "显示高亮光标");
+		status.HighlightVisible = false;
+	}
+}
+
+void MenuDrawChangeTheme()
+{
+	CurrentTheme = (CurrentTheme + 1) % THEME_NUM;
+	GUIOutputMsg("切换主题成功");
 }

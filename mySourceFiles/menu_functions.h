@@ -20,4 +20,9 @@ void MenuEditBackInsert();
 void MenuEditFrontDelete();
 void MenuEditBackDelete();
 
+void MenuDrawGraph();
+void MenuDrawPrediction();
+void MenuDrawHighlight();
+void MenuDrawChangeTheme();
+
 #endif
