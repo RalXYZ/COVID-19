@@ -351,7 +351,6 @@ void display()
 	if (status.DisplayPrediction)
 	{
 		PredictionInterface();  //调试用
-		PredictionInterface();
 		PredictionChart();//调试用
 	}
 }
