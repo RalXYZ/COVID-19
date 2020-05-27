@@ -65,7 +65,7 @@ void SEIR(int SEIRmonth, int SEIRday)
 	int K = 0;//循环变量
 	double p = 10000;
 
-	S[0] = population;
+	S[0] = (double)population - ReadEpidemicList(SEIRmonth, SEIRday, Current);
 	E[0] = 0;
 	I[0] = ReadEpidemicList(SEIRmonth, SEIRday, Current);
 	R[0] = 0;
