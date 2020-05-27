@@ -20,6 +20,7 @@
 #include "draw_chart.h"
 #include "my_resource.h"
 #include "menu_functions.h"
+#include "prediction_model.h"
 
 void DisplayClear();  // 定义在 graphics.c
 int CurrentTheme = 3;  // 当前主题序号
@@ -257,14 +258,23 @@ static void DrawMenu()
 		}
 		if (MenuDrawSelection == 2)
 		{
-			status.DisplayPrediction = !(status.DisplayPrediction);
-
-			if (status.DisplayPrediction)
-				sprintf(MenuDrawPrediction, "隐藏预测");
+			if (data.BaseDir == nullptr)
+			{
+				MessageBox(graphicsWindow,
+					TEXT("您尚未打开文件。请先打开文件。"),
+					TEXT("提示"), MB_OK | MB_ICONWARNING);
+			}
 			else
-				sprintf(MenuDrawPrediction, "显示预测");
+			{
+				status.DisplayPrediction = !(status.DisplayPrediction);
 
-			display();
+				if (status.DisplayPrediction)
+					sprintf(MenuDrawPrediction, "隐藏预测");
+				else
+					sprintf(MenuDrawPrediction, "显示预测");
+
+				display();
+			}
 		}
 		else if (MenuDrawSelection == 3)
 		{
@@ -335,11 +345,13 @@ void display()
 
 	DrawMenu();  // 绘制菜单组件
 
-	if (data.BaseDir != nullptr)
+	if (data.BaseDir != nullptr && !status.DisplayPrediction)
 		DrawChart(SentinelNode.next->properties[Month], SentinelNode.next->properties[Day], data.TotalDays);
 
 	if (status.DisplayPrediction)
+	{
 		PredictionInterface();  //调试用
-//	PredictionInterface();
-//	PredictionChart();//调试用
+		PredictionInterface();
+		PredictionChart();//调试用
+	}
 }

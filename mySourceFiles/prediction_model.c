@@ -30,7 +30,7 @@
   * 参数8: mul_2 参数8*参数11
  */
 static double i_infection_rate;
-static double e_infection_rate;
+double e_infection_rate = 0.03;
 static double e_turnto_i;
 static int i_touch;
 static int e_touch;
@@ -214,10 +214,12 @@ void PredictionInterface()
 	{
 		SEIREnterDouble(&e_infection_rate, StringDouble(c) / 100);
 	}
+	/*
 	else
 	{
 		SEIREnterDouble(&e_infection_rate, 0.03);
 	}
+	*/
 
 	SetPenColor("Dark Gray");
 	drawLabel(x - fH / 2 - TextStringWidth("潜感转化率(百分)"), (y -= h * 1.5) + fH * 0.7, "潜感转化率(百分)");
@@ -291,21 +293,21 @@ void PredictionChart()
 {
 	const double wid = GetWindowWidth();
 	const double hei = GetWindowHeight();
-	
+
 	int i;
 	double x = 21 * wid / 48;
 	double y = 7 * hei / 32;
 	double kl = 0.98 * 9 * hei / 16;
 
 	SEIR(SEIRmonth, SEIRday);
-	drawRectangle(5 * wid /12, 3 * hei / 16, 13 * wid /24, 5 * hei / 8, 0);
-	drawRectangle(21 * wid / 48, 7 * hei / 32,  wid / 2, 9 * hei / 16, 0);
+	drawRectangle(5 * wid / 12, 3 * hei / 16, 13 * wid / 24, 5 * hei / 8, 0);
+	drawRectangle(21 * wid / 48, 7 * hei / 32, wid / 2, 9 * hei / 16, 0);
 
 	MovePen(x, y + kl * S[0] / population);
 	SetPenColor("yellow");
 	for (i = 1; i < 50; i++)
 	{
-		DrawLine(wid / 100, kl * (S[i] - S[i - 1])/ population);
+		DrawLine(wid / 100, kl * (S[i] - S[i - 1]) / population);
 	}
 	MovePen(x, y);
 	SetPenColor("Cyan");
