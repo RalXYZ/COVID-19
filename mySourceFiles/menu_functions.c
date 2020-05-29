@@ -67,18 +67,24 @@ void MenuFileOpen()
 	GUIOutputMsg("正在打开");
 
 	if (GetOpenFileName(&ofn) == TRUE)  // ofn.lpstrFile 会被赋上文件的绝对路径，字符串形式
-		FileInputList(ofn.lpstrFile);
+	{
+		if (!FileInputList(ofn.lpstrFile))
+			GUIOutputMsg("打开成功");
+	}
+	else
+		GUIOutputMsg("打开未完成");
 
-	GUIOutputMsg("打开成功");
 }
 
 void MenuFileSave()
 {
 	if (data.BaseDir == nullptr)  // 若没有打开任何文件
 	{
-		GUIOutputMsg("目前未打开文件");
-		MessageBox(graphicsWindow, TEXT("您目前没有新建或打开任何文件，无需保存"),
+		GUIOutputMsg("保存未完成");
+		MessageBox(graphicsWindow,
+			TEXT("您尚未打开文件。请先打开文件。"),
 			TEXT("提示"), MB_OK | MB_ICONINFORMATION);
+		return;
 	}
 	else if (!strcmp(data.BaseDir, NEW_FILE_DIR))
 	{
@@ -116,6 +122,14 @@ void MenuFileSaveAs()
 	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 	ofn.lpstrDefExt = "covid19";
 
+	if (data.BaseDir == nullptr)
+	{
+		GUIOutputMsg("另存未完成");
+		MessageBox(graphicsWindow,
+			TEXT("您尚未打开文件。请先打开文件。"),
+			TEXT("提示"), MB_OK | MB_ICONINFORMATION);
+		return;
+	}
 	if (GetSaveFileName(&ofn))  // 拿到文件保存的目录
 	{
 		FileSave(ofn.lpstrFile);  // 保存文件
@@ -123,10 +137,20 @@ void MenuFileSaveAs()
 		data.HasModified = false;  // 文件已是最新
 		GUIOutputMsg("另存成功");
 	}
+	else
+		GUIOutputMsg("另存未完成");
 }
 
 void MenuFileClose()
 {
+	if (data.BaseDir == nullptr)  // 若没有打开任何文件
+	{
+		GUIOutputMsg("无需关闭");
+		MessageBox(graphicsWindow,
+			TEXT("您尚未打开文件。无需关闭。"),
+			TEXT("提示"), MB_OK | MB_ICONINFORMATION);
+		return;
+	}
 	if (data.HasModified)
 	{
 		display();
@@ -175,11 +199,10 @@ void MenuEditChange()
 {
 	if (data.BaseDir == nullptr)
 	{
-		display();
+		GUIOutputMsg("修改未完成");
 		MessageBox(graphicsWindow,
 			TEXT("您尚未打开文件。请先打开文件。"),
 			TEXT("提示"), MB_OK | MB_ICONWARNING);
-		GUIOutputMsg("修改未完成");
 		return;
 	}
 
@@ -229,6 +252,7 @@ void MenuEditFrontInsert()
 	int NewMonth = SentinelNode.next->properties[Month], NewDay = SentinelNode.next->properties[Day];
 	if (!DateCalculatePro(&NewMonth, &NewDay, -1))
 	{
+		GUIOutputMsg("输入已跨年");
 		MessageBox(graphicsWindow,
 			TEXT("您要录入的日期已跨年。"),
 			TEXT("错误"), MB_OK | MB_ICONWARNING);
@@ -270,6 +294,7 @@ void MenuEditBackInsert()
 	int NewMonth = SentinelNode.next->properties[Month], NewDay = SentinelNode.next->properties[Day];
 	if (!DateCalculatePro(&NewMonth, &NewDay, data.TotalDays))
 	{
+		GUIOutputMsg("输入已跨年");
 		MessageBox(graphicsWindow,
 			TEXT("您要录入的日期已跨年。"),
 			TEXT("错误"), MB_OK | MB_ICONWARNING);
@@ -381,13 +406,14 @@ void MenuDrawGraph()
 	extern _Bool DisplayLineChart, DisplayFanChart, DisplayBarChart;
 	if (data.BaseDir == nullptr)
 	{
-		GUIOutputMsg("图标未绘制");
+		GUIOutputMsg("图表未绘制");
 		MessageBox(graphicsWindow,
 			TEXT("您尚未打开文件。请先打开文件。"),
 			TEXT("提示"), MB_OK | MB_ICONWARNING);
 		return;
 	}
 	DisplayLineChart = DisplayFanChart = DisplayBarChart = true;
+	GUIOutputMsg("图表已绘制");
 }
 
 void MenuDrawPrediction()
@@ -395,7 +421,7 @@ void MenuDrawPrediction()
 	extern char MenuDrawPredictionString[20];
 	if (data.BaseDir == nullptr)
 	{
-		GUIOutputMsg("预测未显示");
+		GUIOutputMsg("文件未打开");
 		MessageBox(graphicsWindow,
 			TEXT("您尚未打开文件。请先打开文件。"),
 			TEXT("提示"), MB_OK | MB_ICONWARNING);
@@ -407,13 +433,13 @@ void MenuDrawPrediction()
 	if (status.DisplayPrediction)
 	{
 		sprintf(MenuDrawPredictionString, "隐藏预测");
-		GUIOutputMsg("已显示预测");
+		GUIOutputMsg("预测已显示");
 	}
 
 	else
 	{
 		sprintf(MenuDrawPredictionString, "显示预测");
-		GUIOutputMsg("已隐藏预测");
+		GUIOutputMsg("预测已隐藏");
 	}
 }
 
@@ -444,5 +470,5 @@ void MenuDrawHighlight()
 void MenuDrawChangeTheme()
 {
 	CurrentTheme = (CurrentTheme + 1) % THEME_NUM;
-	GUIOutputMsg("切换主题成功");
+	GUIOutputMsg("主题已切换");
 }

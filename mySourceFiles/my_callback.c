@@ -38,17 +38,27 @@ void KeyboardEventProcess(int key, int event)
 			{
 				status.HighlightNode = status.HighlightNode->next;
 				++status.HighlightNum;
+				GUIOutputMsg("光标左移");
 			}
 		if (key == VK_LEFT)
 			if (status.HighlightVisible && status.HighlightNode->prev != nullptr)
 			{
 				status.HighlightNode = status.HighlightNode->prev;
 				--status.HighlightNum;
+				GUIOutputMsg("光标右移");
 			}
 		if (key == VK_UP)
-			status.HighlightProperty = UpSelectProperty();
+			if (status.HighlightVisible)
+			{
+				status.HighlightProperty = UpSelectProperty();
+				GUIOutputMsg("光标上移");
+			}
 		if (key == VK_DOWN)
-			status.HighlightProperty = DownSelectProperty();
+			if (status.HighlightVisible)
+			{
+				status.HighlightProperty = DownSelectProperty();
+				GUIOutputMsg("光标下移");
+			}
 	}
 
 	uiGetKeyboard(key, event);
@@ -60,12 +70,6 @@ void MouseEventProcess(int x, int y, int button, int event)
 	if (status.PauseAllProcedure)
 		return;
 
-	if (event == BUTTON_DOWN)  // 目前作调试用，检测后来加上的组件是否会对回调函数产生干扰
-	{
-		if (button == RIGHT_BUTTON)
-			EraseStatus = !EraseStatus;
-	}
-
 	uiGetMouse(x, y, button, event);
 	display();
 }
@@ -75,7 +79,7 @@ void CharEventProcess(char key)
 	if (status.PauseAllProcedure)
 		return;
 	uiGetChar(key); // GUI字符输入
-	display(); 
+	display();
 }
 
 void TimerEventProcess(int timerID)

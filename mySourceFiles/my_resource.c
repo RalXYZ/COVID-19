@@ -15,6 +15,7 @@
 
 #include "my_macro.h"
 #include "my_resource.h"
+#include "my_display.h"
 
 DataProperty data = { 0, 0, nullptr, false };  // 链表相关属性值
 epidemic SentinelNode;  // 哨兵节点
@@ -111,6 +112,7 @@ static void EndFileInputTask(char* reason, epidemic* FirstNode, FILE* fp)
 	extern HWND graphicsWindow;  // GUI窗口句柄，在 libgraphics 里声明
 	FreeEpidemicList(FirstNode);
 	fclose(fp);
+	display();
 	MessageBox(graphicsWindow, TEXT(reason), TEXT("错误"), MB_OK | MB_ICONERROR);
 }
 
@@ -148,6 +150,7 @@ int FileInputList(char* FileName)
 
 		if (SuccessInput >= 0 && SuccessInput < EPIDEMIC_ELEMENT_NUM)
 		{
+			GUIOutputMsg("文件格式有误");
 			EndFileInputTask("资源文件格式可能有误，请校对格式。", TempFirstNode, fp);
 			return 1;
 		}
@@ -158,6 +161,17 @@ int FileInputList(char* FileName)
 		CurrentNode->next = TempNode;
 		TempNode->prev = CurrentNode;
 		CurrentNode = TempNode;
+	}
+
+	/* 检查总天数是否过小 */
+	int TotalDays = 1;
+	for (epidemic* i = TempFirstNode; i->next != nullptr; i = i->next, ++TotalDays)
+		pass;
+	if (TotalDays < MIN_LIST_LENGTH)
+	{
+		GUIOutputMsg("文件天数太少");
+		EndFileInputTask("资源文件中的天数太少。", TempFirstNode, fp);
+		return 2;
 	}
 
 	DesHighlight();

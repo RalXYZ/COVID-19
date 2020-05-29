@@ -262,11 +262,20 @@ void DrawChart(int month, int day, int n)
 	extern int MyButton(int id, double x, double y, double w, double h, char* label);  // 在 imgui.c 中定义
 
 	if (MyButton(GenUIID(0), width / 8, 0.55, width / 6, 3 * height / 32, "折线图"))
+	{
 		DisplayLineChart = !DisplayLineChart;
+		GUIOutputMsg("折线图");
+	}
 	if (MyButton(GenUIID(1), 10 * width / 24, 0.55, width / 6, 3 * height / 32, "柱状图"))
+	{
 		DisplayBarChart = !DisplayBarChart;
+		GUIOutputMsg("柱状图");
+	}
 	if (MyButton(GenUIID(2), 17 * width / 24, 0.55, width / 6, 3 * height / 32, "饼状图"))
+	{
 		DisplayFanChart = !DisplayFanChart;
+		GUIOutputMsg("饼状图");
+	}
 
 	if (DisplayBarChart == 1 && DisplayFanChart == 0 && DisplayLineChart == 0)
 	{
