@@ -20,6 +20,7 @@
 #include "draw_chart.h"
 #include "my_resource.h"
 #include "menu_functions.h"
+#include "my_utilities.h"
 #include "prediction_model.h"
 
 void DisplayClear();  // 定义在 graphics.c
@@ -168,6 +169,7 @@ static void DrawMenu()
 
 	static char* MenuDraw[] = { "绘图",
 		"绘制图表",
+		"按M键放大",
 		MenuDrawPredictionString,
 		Highlight,
 		ChangeThemeLabel };
@@ -242,7 +244,7 @@ static void DrawMenu()
 	// 绘图
 	{
 		const int MenuDrawSelection = MyMenuList(GenUIID(0), MenuSelectionWidth * 2, MenuBarVertical,
-			TextStringWidth(MenuDraw[0]) * 2, TextStringWidth(MenuDraw[4]) * 1.02,
+			TextStringWidth(MenuDraw[0]) * 2, TextStringWidth(MenuDraw[5]) * 1.02,
 			MenuButtonHeight, MenuDraw, sizeof(MenuDraw) / sizeof(MenuDraw[0]));
 		switch (MenuDrawSelection)
 		{
@@ -250,12 +252,15 @@ static void DrawMenu()
 			MenuDrawGraph();
 			break;
 		case 2:
-			MenuDrawPrediction();
+			MenuDrawZoom();
 			break;
 		case 3:
-			MenuDrawHighlight();
+			MenuDrawPrediction();
 			break;
 		case 4:
+			MenuDrawHighlight();
+			break;
+		case 5:
 			MenuDrawChangeTheme();
 			break;
 		}
@@ -304,7 +309,17 @@ void display()
 	DrawMenu();  // 绘制菜单组件
 
 	if (data.BaseDir != nullptr && !status.DisplayPrediction)
-		DrawChart(SentinelNode.next->properties[Month], SentinelNode.next->properties[Day], data.TotalDays);
+	{
+		if (!status.ZoomIn)
+			DrawChart(SentinelNode.next->properties[Month], SentinelNode.next->properties[Day], data.TotalDays);
+		else
+		{
+			int month = status.HighlightNode->properties[Month];
+			int day = status.HighlightNode->properties[Day];
+			const int step = CalculateZoomDate(&month, &day);
+			DrawChart(month, day, step);
+		}
+	}
 
 	if (status.DisplayPrediction)
 	{

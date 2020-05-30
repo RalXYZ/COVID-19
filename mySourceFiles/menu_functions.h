@@ -21,6 +21,7 @@ void MenuEditFrontDelete();
 void MenuEditBackDelete();
 
 void MenuDrawGraph();
+void MenuDrawZoom();
 void MenuDrawPrediction();
 void MenuDrawHighlight();
 void MenuDrawChangeTheme();

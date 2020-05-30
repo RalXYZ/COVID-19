@@ -416,6 +416,23 @@ void MenuDrawGraph()
 	GUIOutputMsg("图表已绘制");
 }
 
+void MenuDrawZoom()
+{
+	if (status.HighlightVisible)
+	{
+		status.ZoomIn = !status.ZoomIn;
+		if (status.ZoomIn)
+		{
+			GUIOutputMsg("放大模式已进入");
+			MessageBox(graphicsWindow,
+				TEXT("您已进入放大模式。按M退出放大模式。\n其他操作均无效。"),
+				TEXT("提示"), MB_OK | MB_ICONINFORMATION);
+		}
+		if (!status.ZoomIn)
+			GUIOutputMsg("放大模式已退出");
+	}
+}
+
 void MenuDrawPrediction()
 {
 	extern char MenuDrawPredictionString[20];

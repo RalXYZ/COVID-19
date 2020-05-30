@@ -76,4 +76,14 @@ char* PropertyMeaning(int property);
  */
 int DateCalculatePro(int* month, int* day, int step);
 
+/*
+ * 函数名: CalculateZoomDate
+ * 参数1: month  传入光标所在月份，传出放大开始月份
+ * 参数2: day    传入光标所在日，传出放大开始日
+ * 返回值: 放大状态下跨越的时常
+ * ------------------------------------
+ * 用于放大模式相关数据的计算
+ */
+int CalculateZoomDate(int* month, int* day);
+
 #endif

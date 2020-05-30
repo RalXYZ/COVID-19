@@ -19,6 +19,7 @@
 #include "my_resource.h"
 
 extern MyStatus status;  // 当前状态，在 my_resource.c 中定义
+extern epidemic SentinelNode;  // 哨兵节点，在 my_resource.c 中声明
 
 // 用于交换两个变量的宏函数
 #define SWAP(x, y) (x)^=(y); (y)^=(x); (x)^=(y);
@@ -54,12 +55,12 @@ void MyExitConsole() {
 
 void PauseDisplay() {
 	display();                   // GUI刷新一次
-	status.PauseAllProcedure = true;    // 停止所有GUI行为
+	status.ZoomIn = true;    // 停止所有GUI行为
 }
 
 void ContinueDisplay() {
 	startTimer(TIME_ELAPSE_1, TIME_ELAPSE_1);     // 重置计时器
-	status.PauseAllProcedure = false;   // 取消禁止所有GUI行为
+	status.ZoomIn = false;   // 取消禁止所有GUI行为
 }
 
 int SafeNNegIntInput(int digits) {
@@ -205,4 +206,25 @@ int DateCalculatePro(int* month, int* day, int step)
 	}
 	*month = TempMonth, * day = TempDay;
 	return 1;
+}
+
+int CalculateZoomDate(int* month, int* day)
+{
+	int front = 0, back = 0;
+
+	for (epidemic* TempNode = SentinelNode.next;
+		TempNode != status.HighlightNode;
+		TempNode = TempNode->next, ++front)
+		;
+
+	for (epidemic* TempNode = status.HighlightNode;
+		TempNode != nullptr;
+		TempNode = TempNode->next, ++back)
+		;
+
+	front /= 2, back /= 2;
+
+	DateCalculatePro(month, day, -front);
+
+	return front + back;
 }

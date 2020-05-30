@@ -14,18 +14,24 @@
 
 #include "my_macro.h"
 #include "my_callback.h"
+
+#include "menu_functions.h"
 #include "my_display.h"
 #include "my_resource.h"
 #include "my_utilities.h"
 
- //bool PauseAllProcedure = false;  // 记录是否要暂停所有回调函数的功能，用于弹出对话框时的阻塞
+ //bool ZoomIn = false;  // 记录是否要暂停所有回调函数的功能，用于弹出对话框时的阻塞
 
 extern bool EraseStatus;  // 定义在 my_display.c
 extern MyStatus status;  // 当前状态，在 my_resource.c 中定义
 
 void KeyboardEventProcess(int key, int event)
 {
-	if (status.PauseAllProcedure)
+	if (event == KEY_DOWN && key == 'M')
+	{
+		MenuDrawZoom();
+	}
+	if (status.ZoomIn)
 		return;
 
 	if (event == KEY_DOWN)  // 目前作调试用，检测后来加上的组件是否会对回调函数产生干扰
@@ -67,7 +73,7 @@ void KeyboardEventProcess(int key, int event)
 
 void MouseEventProcess(int x, int y, int button, int event)
 {
-	if (status.PauseAllProcedure)
+	if (status.ZoomIn)
 		return;
 
 	uiGetMouse(x, y, button, event);
@@ -76,7 +82,7 @@ void MouseEventProcess(int x, int y, int button, int event)
 
 void CharEventProcess(char key)
 {
-	if (status.PauseAllProcedure)
+	if (status.ZoomIn)
 		return;
 	uiGetChar(key); // GUI字符输入
 	display();
@@ -84,7 +90,7 @@ void CharEventProcess(char key)
 
 void TimerEventProcess(int timerID)
 {
-	if (status.PauseAllProcedure)
+	if (status.ZoomIn)
 		return;
 
 	if (timerID == TIME_ELAPSE_1)  // 目前作调试用，检测后来加上的组件是否会对回调函数产生干扰

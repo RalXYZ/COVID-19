@@ -69,7 +69,7 @@ typedef struct MyStatus
 	epidemic* HighlightNode;  // 当前高亮的节点
 	EpidemicProperty HighlightProperty;  // 当前高亮的项目，注意，不从0开始！！！
 	int HighlightNum;  // 目前高亮的是链表中的第几个
-	_Bool PauseAllProcedure;
+	_Bool ZoomIn;
 	_Bool DisplayPrediction;
 } MyStatus;
 
