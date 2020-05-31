@@ -32,8 +32,8 @@
 double i_infection_rate = 0.03;
 double e_infection_rate = 0.03;
 double e_turnto_i = 0.1;
-int i_touch = 20;
-int e_touch = 20;
+int i_touch = 15;
+int e_touch = 15;
 double recovery_rate = 0.01;
 double mul_1, mul_2;
 int population = 10000;
@@ -63,7 +63,7 @@ void SEIREnterDouble(double* variable, double value)
 void SEIR(int SEIRmonth, int SEIRday)
 {
 	int K = 0;//循环变量
-	double p = 10000;
+	int p = population;
 
 	S[0] = (double)population - ReadEpidemicList(SEIRmonth, SEIRday, Current);
 	E[0] = 0;
@@ -169,9 +169,9 @@ void PredictionInterface()
 	static char b[2] = "3";
 	static char c[2] = "3";
 	static char d[3] = "1";
-	static char e[3] = "20";
-	static char f[3] = "20";
-	static char g[10] = "1";
+	static char e[3] = "15";
+	static char f[3] = "15";
+	static char g[3] = "1";
 
 	static char mon[3] = "3";
 	static char day[3] = "1";
@@ -265,6 +265,11 @@ void PredictionChart()
 	drawRectangle(5 * wid / 12, 3 * hei / 16, 13 * wid / 24, 5 * hei / 8, 0);
 	drawRectangle(21 * wid / 48, 7 * hei / 32, wid / 2, 9 * hei / 16, 0);
 
+	MovePen(x, 15 * hei / 16 - 0.2);
+	DrawTextString("考虑实际，感染/潜伏者平均接触人数不超过20");
+	MovePen(x, 15 * hei / 16 - GetFontHeight() - 0.2);
+	DrawTextString("请勿输入不符合实际的数据，使模型预测失效");
+	
 	MovePen(x, y + kl * S[0] / population);
 	SetPenColor("yellow");
 	for (i = 1; i < 50; i++)
