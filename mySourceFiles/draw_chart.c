@@ -321,3 +321,83 @@ void DrawChart(int month, int day, int n)
 
 	DisplayStatistics();  // 绘制右下角的统计数据
 }
+
+void NowChart(double x, double y, double n)//绘制图表图标,x,y从底线最左开始
+{
+	MovePen(x, y);
+	DrawLine(n, 0);
+	MovePen(x + n / 7, y);
+	drawRectangle(x + n / 7, y, n / 7, 3 * n / 7, 1);
+	drawRectangle(x + 3 * n / 7, y, n / 7, 4 * n / 7, 1);
+	drawRectangle(x + 5 * n / 7, y, n / 7, 2 * n / 7, 1);
+}
+
+void EditChart(double x, double y, double n)//编辑图标,x,y从笔杆右下开始
+{
+	MovePen(x, y);
+	DrawLine(-n, -1.166 * n);
+	DrawLine(0, 1.5 * n);
+	DrawLine(n, 3 * n);
+	DrawLine(n, -0.333 * n);
+	DrawLine(-n, -3 * n);
+	DrawLine(-n, 0.333 * n);
+	DrawLine(0.333 * n, -0.111 * n);
+	DrawLine(n, 3 * n);
+	DrawLine(0.333 * n, -0.111 * n);
+	DrawLine(-n, -3 * n);
+	DrawLine(-0.666 * n, 0.222 * n);
+	DrawLine(0, -n);
+	DrawLine(n / 3, -n / 9);
+}
+
+void OpenChart(double x, double y, double n)//打开图标，x,y从最左边左上点开始 
+{
+	MovePen(x, y);
+	DrawLine(n / 3, 0);
+	DrawLine(0, n / 3);
+	DrawLine(n / 3, 0);
+	DrawLine(0, -n / 3);
+	DrawLine(n / 3, 0);
+	DrawLine(0, -n / 3);
+	DrawLine(-n / 3, 0);
+	DrawLine(0, -n / 3);
+	DrawLine(-n / 3, 0);
+	DrawLine(0, n / 3);
+	DrawLine(-n / 3, 0);
+	DrawLine(0, n / 3);
+}
+
+void CloseChart(double x, double y, double n)//关闭图标，x,y从最左上点开始 
+{
+	MovePen(x, y);
+	DrawLine(2 * n, -2 * n);
+	MovePen(x, y - 2 * n);
+	DrawLine(2 * n, 2 * n);
+}
+
+void PredictChart(double x, double y, double n)//预测图标，x,y从最左侧开始
+{
+	MovePen(x, y);
+	DrawLine(2.55 * n, 0);
+	MovePen(x + 0.5 * n, y - 0.5 * n);
+	DrawLine(0, 2.5 * n);
+	MovePen(x + 0.5 * n, y);
+	DrawLine(n / 4, n / 2);
+	DrawLine(n / 2, 5.5 * n / 4);
+	DrawLine(n / 4, n / 8);
+	DrawLine(n / 4, -n / 8);
+	DrawLine(n / 2, -5.5 * n / 4);
+	DrawLine(n / 4, -n / 2);
+}
+
+void ColorChart(double x, double y, double n)//调色图标，x+n,y为圆心
+{
+	MovePen(x + n, y);
+	DrawArc(n, 0, 360);
+	MovePen(x - 5 * n / 16, y);
+	DrawArc(n / 4, 0, 360);
+	MovePen(x + n / 8, y + 5 * n / 8);
+	DrawArc(n / 4, 0, 360);
+	MovePen(x + 7 * n / 8, y + n / 8);
+	DrawArc(n / 4, 0, 360);
+}
