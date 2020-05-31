@@ -67,14 +67,14 @@ int StringInt(char* p);
 /*
  * 函数名: PredictionInterface
  * -------------------------------------
- * 本函数提供进行疫情预测的界面
+ * 本函数显示进行疫情预测的输入界面
  *
  */
 void PredictionInterface();
 /*
  * 函数名: PredictionChart
  * -------------------------------------
- * 本函数显示进行疫情预测的折线图表
+ * 本函数显示进行疫情预测的图表
  *
  */
 void PredictionChart();
