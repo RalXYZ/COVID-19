@@ -61,7 +61,7 @@ void MenuFileOpen()
 	ofn.nFilterIndex = 1;
 	ofn.lpstrFileTitle = NULL;
 	ofn.nMaxFileTitle = 0;
-	ofn.lpstrInitialDir = "..\\myResourceFiles";  // 默认目录
+	ofn.lpstrInitialDir = ".";  // 默认目录
 	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;  // 目录和文件必须存在，否则弹出警告对话框
 
 	GUIOutputMsg("正在打开");

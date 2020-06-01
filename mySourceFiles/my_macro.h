@@ -13,7 +13,7 @@
 #define WINDOW_WIDTH 8
 #define WINDOW_HEIGHT 6
 
-#define NEW_FILE_DIR "../myResourceFiles/new.covid19"
+#define NEW_FILE_DIR ".\\new.covid19"
 
 /* 输入数据的十进制最大值，这个值如果超过32位int的十进制位数，可能导致溢出 */
 #define MAX_DIGIT 7

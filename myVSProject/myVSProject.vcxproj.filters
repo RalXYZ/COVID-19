@@ -125,13 +125,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\README.md" />
-    <None Include="..\myResourceFiles\statistic_error.covid19">
+    <None Include="new.covid19">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\myResourceFiles\statistic1.covid19">
+    <None Include="statistic_error.covid19">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\myResourceFiles\statistic2.covid19">
+    <None Include="statistic1.covid19">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="statistic2.covid19">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
