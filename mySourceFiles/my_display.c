@@ -141,6 +141,117 @@ void GUIOutputMsg(char* msg)
 	display();
 }
 
+/***********************************************************/
+
+static void IconOpen(double x, double y, double n)//打开图标，x,y从最左边左上点开始 
+{
+	MovePen(x, y);
+	DrawLine(n / 3, 0);
+	DrawLine(0, n / 3);
+	DrawLine(n / 3, 0);
+	DrawLine(0, -n / 3);
+	DrawLine(n / 3, 0);
+	DrawLine(0, -n / 3);
+	DrawLine(-n / 3, 0);
+	DrawLine(0, -n / 3);
+	DrawLine(-n / 3, 0);
+	DrawLine(0, n / 3);
+	DrawLine(-n / 3, 0);
+	DrawLine(0, n / 3);
+}
+
+static void IconClose(double x, double y, double n)//关闭图标，x,y从最左上点开始 
+{
+	MovePen(x, y);
+	DrawLine(2 * n, -2 * n);
+	MovePen(x, y - 2 * n);
+	DrawLine(2 * n, 2 * n);
+}
+
+static void IconDrawGraph(double x, double y, double n)//绘制图表图标,x,y从底线最左开始
+{
+	MovePen(x, y);
+	DrawLine(n, 0);
+	MovePen(x + n / 7, y);
+	drawRectangle(x + n / 7, y, n / 7, 3 * n / 7, 0);
+	drawRectangle(x + 3 * n / 7, y, n / 7, 4 * n / 7, 0);
+	drawRectangle(x + 5 * n / 7, y, n / 7, 2 * n / 7, 0);
+}
+
+static void IconEdit(double x, double y, double n)//编辑图标,x,y从笔杆右下开始
+{
+	MovePen(x, y);
+	DrawLine(-n, -1.166 * n);
+	DrawLine(0, 1.5 * n);
+	DrawLine(n, 3 * n);
+	DrawLine(n, -0.333 * n);
+	DrawLine(-n, -3 * n);
+	DrawLine(-n, 0.333 * n);
+	DrawLine(0.333 * n, -0.111 * n);
+	DrawLine(n, 3 * n);
+	DrawLine(0.333 * n, -0.111 * n);
+	DrawLine(-n, -3 * n);
+	DrawLine(-0.666 * n, 0.222 * n);
+	DrawLine(0, -n);
+	DrawLine(n / 3, -n / 9);
+}
+
+static void IconPredict(double x, double y, double n)//预测图标，x,y从最左侧开始
+{
+	MovePen(x, y);
+	DrawLine(2.55 * n, 0);
+	MovePen(x + 0.5 * n, y - 0.5 * n);
+	DrawLine(0, 2.5 * n);
+	MovePen(x + 0.5 * n, y);
+	DrawLine(n / 4, n / 2);
+	DrawLine(n / 2, 5.5 * n / 4);
+	DrawLine(n / 4, n / 8);
+	DrawLine(n / 4, -n / 8);
+	DrawLine(n / 2, -5.5 * n / 4);
+	DrawLine(n / 4, -n / 2);
+}
+
+static void IconColor(double x, double y, double n)//调色图标，x+n,y为圆心
+{
+	MovePen(x + n, y);
+	DrawArc(n, 0, 360);
+	MovePen(x - 5 * n / 16, y);
+	DrawArc(n / 4, 0, 360);
+	MovePen(x + n / 8, y + 5 * n / 8);
+	DrawArc(n / 4, 0, 360);
+	MovePen(x + 7 * n / 8, y + n / 8);
+	DrawArc(n / 4, 0, 360);
+}
+
+static void DrawToolBar()
+{
+#define ICON_BLOCK .4
+
+	extern int MyButton(int id, double x, double y, double w, double h, char* label);  // 在 imgui.c 中定义
+
+	IconOpen(5.7, 5.83, .2);
+	IconClose(6.1, 5.89, .1);
+	IconDrawGraph(6.48, 5.73, .25);
+	IconEdit(7.01, 5.75, .05);
+	IconPredict(7.28, 5.73, .1);
+	IconColor(7.803, 5.792, .12);
+
+	if (MyButton(GenUIID(0), WINDOW_WIDTH - 6 * ICON_BLOCK, WINDOW_HEIGHT - ICON_BLOCK, ICON_BLOCK, ICON_BLOCK, ""))
+		MenuFileOpen();
+	if (MyButton(GenUIID(0), WINDOW_WIDTH - 5 * ICON_BLOCK, WINDOW_HEIGHT - ICON_BLOCK, ICON_BLOCK, ICON_BLOCK, ""))
+		MenuFileClose();
+	if (MyButton(GenUIID(0), WINDOW_WIDTH - 4 * ICON_BLOCK, WINDOW_HEIGHT - ICON_BLOCK, ICON_BLOCK, ICON_BLOCK, ""))
+		MenuDrawGraph();
+	if (MyButton(GenUIID(0), WINDOW_WIDTH - 3 * ICON_BLOCK, WINDOW_HEIGHT - ICON_BLOCK, ICON_BLOCK, ICON_BLOCK, ""))
+		MenuEditChange();
+	if (MyButton(GenUIID(0), WINDOW_WIDTH - 2 * ICON_BLOCK, WINDOW_HEIGHT - ICON_BLOCK, ICON_BLOCK, ICON_BLOCK, ""))
+		MenuDrawPrediction();
+	if (MyButton(GenUIID(0), WINDOW_WIDTH - 1 * ICON_BLOCK, WINDOW_HEIGHT - ICON_BLOCK, ICON_BLOCK, ICON_BLOCK, ""))
+		MenuDrawChangeTheme();
+}
+
+/*************************************************************/
+
 char Highlight[20] = "隐藏高亮光标";
 char MenuDrawPredictionString[20] = "显示预测";
 /*
@@ -307,6 +418,8 @@ void display()
 	SetEraseMode(false);
 
 	DrawMenu();  // 绘制菜单组件
+
+	DrawToolBar();  ///////////////////////////////////////////////
 
 	if (data.BaseDir != nullptr && !status.DisplayPrediction)
 	{

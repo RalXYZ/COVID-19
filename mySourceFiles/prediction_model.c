@@ -17,6 +17,10 @@
 #include "my_display.h"
 #include "my_resource.h"
 #include "prediction_model.h"
+
+extern int CurrentTheme;  // 当前主题，在 menu_functions.c
+extern theme MyThemes[THEME_NUM];  // 存储主题的数组，在 my_display.c 中声明
+
  /*
   * SEIR相关函数集中注释
   * -------------------------------------
@@ -220,28 +224,28 @@ void PredictionInterface()
 	{
 		SEIREnterInt(&i_touch, StringInt(e));
 	};
-	
+
 	SetPenColor("Cyan");
 	drawLabel(x - fH / 2 - TextStringWidth("潜伏者接触人数"), (y -= h * 1.5) + fH * 0.7, "潜伏者接触人数");
 	if (textbox(GenUIID(0), x, y, w, h, f, sizeof(f)))
 	{
 		SEIREnterInt(&e_touch, StringInt(f));
 	};
-	
+
 	SetPenColor("green");
 	drawLabel(x - fH / 2 - TextStringWidth("康复率(百分)"), (y -= h * 1.5) + fH * 0.7, "康复率(百分)");
 	if (textbox(GenUIID(0), x, y, w, h, g, sizeof(g)))
 	{
 		SEIREnterDouble(&recovery_rate, StringDouble(g) / 100);
 	};
-	
+
 	SetPenColor("Black");
 	drawLabel(x - fH / 2 - TextStringWidth("起始月份"), (y -= h * 1.5) + fH * 0.7, "起始月份");
 	if (textbox(GenUIID(0), x, y, w, h, mon, sizeof(mon)))
 	{
 		SEIREnterInt(&SEIRmonth, StringInt(mon));
 	};
-	
+
 	SetPenColor("Black");
 	drawLabel(x - fH / 2 - TextStringWidth("起始日期"), (y -= h * 1.5) + fH * 0.7, "起始日期");
 	if (textbox(GenUIID(0), x, y, w, h, day, sizeof(day)))
@@ -261,15 +265,17 @@ void PredictionChart()
 	double y = 7 * hei / 32;
 	double kl = 0.98 * 9 * hei / 16;
 
+	SetPenColor(MyThemes[CurrentTheme].foreground);
+
 	SEIR(SEIRmonth, SEIRday);
 	drawRectangle(5 * wid / 12, 3 * hei / 16, 13 * wid / 24, 5 * hei / 8, 0);
 	drawRectangle(21 * wid / 48, 7 * hei / 32, wid / 2, 9 * hei / 16, 0);
 
-	MovePen(x, 15 * hei / 16 - 0.2);
+	MovePen(x, 15 * hei / 16 - 0.3);
 	DrawTextString("考虑实际，感染/潜伏者平均接触人数不超过20");
-	MovePen(x, 15 * hei / 16 - GetFontHeight() - 0.2);
+	MovePen(x, 15 * hei / 16 - GetFontHeight() - 0.3);
 	DrawTextString("请勿输入不符合实际的数据，使模型预测失效");
-	
+
 	MovePen(x, y + kl * S[0] / population);
 	SetPenColor("yellow");
 	for (i = 1; i < 50; i++)

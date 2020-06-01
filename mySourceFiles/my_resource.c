@@ -36,7 +36,7 @@ void FreeEpidemicList(epidemic* node)
 		free(CurrentNode);
 		CurrentNode = TempNode;
 	}
-	SentinelNode.next = nullptr;  // 恢复为默认值
+	//SentinelNode.next = nullptr;  // 恢复为默认值
 }
 
 void InitHighlight()
@@ -112,7 +112,6 @@ static void EndFileInputTask(char* reason, epidemic* FirstNode, FILE* fp)
 	extern HWND graphicsWindow;  // GUI窗口句柄，在 libgraphics 里声明
 	FreeEpidemicList(FirstNode);
 	fclose(fp);
-	display();
 	MessageBox(graphicsWindow, TEXT(reason), TEXT("错误"), MB_OK | MB_ICONERROR);
 }
 
