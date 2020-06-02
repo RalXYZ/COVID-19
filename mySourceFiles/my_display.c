@@ -24,7 +24,7 @@
 #include "prediction_model.h"
 
 void DisplayClear();  // 定义在 graphics.c
-int CurrentTheme = 3;  // 当前主题序号
+int CurrentTheme = 4;  // 当前主题序号
 theme MyThemes[THEME_NUM];  // 建立存储数量为 THEME_NUM 个主题的字符数组
 char* DisplayMessage = "";
 
@@ -45,7 +45,8 @@ extern MyStatus status;  // 当前状态，在 my_resource.c 中定义
  * 这不符合通用规范。
  * 本函数实现通过十六进制颜色码值定义新颜色。
  */
-static void HexDefineColor(string name, int value) {
+static void HexDefineColor(string name, int value)
+{
 #define DEC_TO_REAL(input) ((input)/256.0)
 	int DecValue[3];
 	for (int i = 2; i >= 0; i--) {
@@ -67,11 +68,12 @@ static void HexDefineColor(string name, int value) {
  * 参数7: CuredColorHex       治愈色十六进制颜色码值
  * 参数8: DeadColorHex        死亡色十六进制颜色码值
  * -------------------------------------
- * 输入一组（3个）有序的十六进制颜色码，将它们存储在给定的位置上
+ * 输入一组（8个）有序的十六进制颜色码，将它们存储在给定的位置上
  */
 static void InputMyColors(int position, char* name,
 	int BackgroundColorHex, int ForegroundColorHex, int AccentColorHex,
-	int CurrentColorHex, int TotalColorHex, int CuredColorHex, int DeadColorHex) {
+	int CurrentColorHex, int TotalColorHex, int CuredColorHex, int DeadColorHex)
+{
 	MyThemes[position].name = name;
 
 	MyThemes[position].background = IntegerToString(BackgroundColorHex);
@@ -97,7 +99,8 @@ static void InputMyColors(int position, char* name,
 }
 
 // 注意：更改这个函数的同时也要更改 THEME_NUM 宏
-void InitColor() {
+void InitColor()
+{
 	InputMyColors(0, "苍松", 0x203227, 0x637B6D, 0x9CC2AD, 0x8EAC4A, 0xCFDB35, 0x10D296, 0xC0C0C0);
 	InputMyColors(1, "红豆", 0xB9B2B4, 0x1B121F, 0x7A0B0E, 0x9A5C5C, 0xCF4141, 0x6AA40C, 0x4B4B4B);
 	InputMyColors(2, "蔷薇", 0x312E31, 0xFFB6B9, 0xFF5F7F, 0xEF8D8D, 0xC20A0A, 0xAFCF0F, 0xB4B4B4);
@@ -223,6 +226,11 @@ static void IconColor(double x, double y, double n)//调色图标，x+n,y为圆�
 	DrawArc(n / 4, 0, 360);
 }
 
+/*
+ * 函数名: DrawToolBar
+ * -------------------------------------
+ * 绘制图标工具栏
+ */
 static void DrawToolBar()
 {
 #define ICON_BLOCK .4
@@ -257,7 +265,7 @@ char MenuDrawPredictionString[20] = "显示预测";
 /*
  * 函数名: DrawMenu
  * -------------------------------------
- * 这个函数定义和绘制了菜单（目前未完成“绘制”）
+ * 这个函数定义和绘制了菜单栏
  */
 static void DrawMenu()
 {

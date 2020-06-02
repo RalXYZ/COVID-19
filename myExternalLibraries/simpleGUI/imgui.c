@@ -637,6 +637,92 @@ int MyButton(int id, double x, double y, double w, double h, char* label)
 	return 0;
 }
 
+int MyTextBox(int id, double x, double y, double w, double h, char textbuf[], int buflen)
+{
+	char* frameColor = MyThemes[CurrentTheme].foreground;
+	char* labelColor = MyThemes[CurrentTheme].foreground;
+	int textChanged = 0;
+	int len = strlen(textbuf);
+	double indent = GetFontAscent() / 2;
+	double textPosY = y + h / 2 - GetFontAscent() / 2;
+
+	if (notInMenu(gs_UIState.mousex, gs_UIState.mousey) &&
+		inBox(gs_UIState.mousex, gs_UIState.mousey, x, x + w, y, y + h))
+	{
+		frameColor = MyThemes[CurrentTheme].accent;
+		labelColor = MyThemes[CurrentTheme].accent;
+		gs_UIState.actingMenu = 0; // menu lose focus
+		if (gs_UIState.mousedown) {
+			gs_UIState.clickedItem = id;
+		}
+	}
+
+	// If no widget has keyboard focus, take it
+	if (gs_UIState.kbdItem == 0)
+		gs_UIState.kbdItem = id;
+
+	if (gs_UIState.kbdItem == id)
+		labelColor = MyThemes[CurrentTheme].accent;
+
+	// Render the text box
+	mySetPenColor(frameColor);
+	drawRectangle(x, y, w, h, 0);
+	// show text
+	mySetPenColor(labelColor);
+	MovePen(x + indent, textPosY);
+	DrawTextString(textbuf);
+	// add cursor if we have keyboard focus
+	if (gs_UIState.kbdItem == id && (clock() >> 8) & 1)
+	{
+		//MovePen(x+indent+TextStringWidth(textbuf), textPosY);
+		DrawTextString("_");
+	}
+
+	// If we have keyboard focus, we'll need to process the keys
+	if (gs_UIState.kbdItem == id)
+	{
+		switch (gs_UIState.keyPress)
+		{
+		case VK_RETURN:
+		case VK_TAB:
+			// lose keyboard focus.
+			gs_UIState.kbdItem = 0;
+			// If shift was also pressed, we want to move focus
+			// to the previous widget instead.
+			if (gs_UIState.keyModifiers & KMOD_SHIFT)
+				gs_UIState.kbdItem = gs_UIState.lastItem;
+			// Also clear the key so that next widget won't process it
+			gs_UIState.keyPress = 0;
+			break;
+		case VK_BACK:
+			if (len > 0) {
+				textbuf[--len] = 0;
+				textChanged = 1;
+			}
+			gs_UIState.keyPress = 0;
+			break;
+		}
+		// char input
+		if (gs_UIState.charInput >= 32 && gs_UIState.charInput < 127 && len + 1 < buflen) {
+			textbuf[len] = gs_UIState.charInput;
+			textbuf[++len] = 0;
+			gs_UIState.charInput = 0;
+			textChanged = 1;
+		}
+	}
+
+	gs_UIState.lastItem = id;
+
+	if (gs_UIState.clickedItem == id && // must be clicked before
+		!gs_UIState.mousedown)     // but now mouse button is up
+	{
+		gs_UIState.clickedItem = 0;
+		gs_UIState.kbdItem = id;
+	}
+
+	return textChanged;
+}
+
 /*****************************以上区域为学生个人对库的修改*********************************/
 /*************************************************************************************/
 

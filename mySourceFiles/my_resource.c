@@ -78,9 +78,8 @@ int ReadEpidemicList(int month, int date, EpidemicProperty type)
 
 /*
  * 函数名: SafeFOpen
- * 参数1: fpp       指向文件指针的指针
- * 参数2: FileName  文件名
- * 参数3: mode      打开文件的模式
+ * 参数1: FileName  文件名
+ * 参数2: mode      打开文件的模式
  * ------------------------------------
  * 这个函数给文件指针正确赋值；如果发生异常，在
  * 终端显示错误信息。

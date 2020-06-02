@@ -47,23 +47,27 @@ static void ArraySort(int* array, int* partner, int length)
 	}
 }
 
-void MyExitConsole() {
+void MyExitConsole()
+{
 	FreeConsole();                  // 该函数在 wincon.h 声明  
-	freopen("NUL", "r+t", stdin);   // 将stdin重定向到默认位置 
-	freopen("NUL", "w+t", stdout);  // 将stdout重定向到默认位置 
+	freopen("NUL", "r+t", stdin);   // 将stdin重定向到空设备 
+	freopen("NUL", "w+t", stdout);  // 将stdout重定向到空设备 
 }
 
-void PauseDisplay() {
+void PauseDisplay()
+{
 	display();                   // GUI刷新一次
 	status.ZoomIn = true;    // 停止所有GUI行为
 }
 
-void ContinueDisplay() {
+void ContinueDisplay()
+{
 	startTimer(TIME_ELAPSE_1, TIME_ELAPSE_1);     // 重置计时器
 	status.ZoomIn = false;   // 取消禁止所有GUI行为
 }
 
-int SafeNNegIntInput(int digits) {
+int SafeNNegIntInput(int digits)
+{
 	// TODO: 当第一个字符即为空格时，goto到此函数开头
 	int sum = 0;
 	for (int i = 0; i <= digits; i++) {
@@ -80,7 +84,7 @@ int SafeNNegIntInput(int digits) {
 		sum += input - '0';
 	}
 	while (getchar() != '\n')  // 清空键盘缓冲区；不能使用 fflush() 代替，否则会出现UB
-		;
+		pass;
 	return -2;  // 超过位数限制
 }
 
@@ -215,12 +219,12 @@ int CalculateZoomDate(int* month, int* day)
 	for (epidemic* TempNode = SentinelNode.next;
 		TempNode != status.HighlightNode;
 		TempNode = TempNode->next, ++front)
-		;
+		pass;
 
 	for (epidemic* TempNode = status.HighlightNode;
 		TempNode != nullptr;
 		TempNode = TempNode->next, ++back)
-		;
+		pass;
 
 	front /= 2, back /= 2;
 

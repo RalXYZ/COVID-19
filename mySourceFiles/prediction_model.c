@@ -189,66 +189,67 @@ void PredictionInterface()
 	double x = wid / 5;
 	double y = 7 * hei / 8;
 
+	extern int MyTextBox(int id, double x, double y, double w, double h, char textbuf[], int buflen);
 
-	SetPenColor("blue");
+	SetPenColor(MyThemes[CurrentTheme].foreground);
 	drawLabel(x - fH / 2 - TextStringWidth("人口"), (y -= h * 1.5) + fH * 0.7, "人口");
-	if (textbox(GenUIID(0), x, y, w, h, a, sizeof(a)))
+	if (MyTextBox(GenUIID(0), x, y, w, h, a, sizeof(a)))
 	{
 		SEIREnterInt(&population, StringInt(a));
 	};
 
-	SetPenColor("red");
+	SetPenColor(MyThemes[CurrentTheme].total);
 	drawLabel(x - fH / 2 - TextStringWidth("感染者传染率(百分)"), (y -= h * 1.5) + fH * 0.7, "感染者传染率(百分)");
-	if (textbox(GenUIID(0), x, y, w, h, b, sizeof(b)))
+	if (MyTextBox(GenUIID(0), x, y, w, h, b, sizeof(b)))
 	{
 		SEIREnterDouble(&i_infection_rate, StringDouble(b) / 100);
 	};
 
-	SetPenColor("Gray");
+	SetPenColor(MyThemes[CurrentTheme].current);
 	drawLabel(x - fH / 2 - TextStringWidth("潜伏者传染率(百分)"), (y -= h * 1.5) + fH * 0.7, "潜伏者传染率(百分)");
-	if (textbox(GenUIID(0), x, y, w, h, c, sizeof(c)))
+	if (MyTextBox(GenUIID(0), x, y, w, h, c, sizeof(c)))
 	{
 		SEIREnterDouble(&e_infection_rate, StringDouble(c) / 100);
 	};
 
-	SetPenColor("Dark Gray");
+	SetPenColor(MyThemes[CurrentTheme].current);
 	drawLabel(x - fH / 2 - TextStringWidth("潜感转化率(百分)"), (y -= h * 1.5) + fH * 0.7, "潜感转化率(百分)");
-	if (textbox(GenUIID(0), x, y, w, h, d, sizeof(d)))
+	if (MyTextBox(GenUIID(0), x, y, w, h, d, sizeof(d)))
 	{
 		SEIREnterDouble(&e_turnto_i, StringDouble(d) / 100);
 	};
 
-	SetPenColor("Magenta");
+	SetPenColor(MyThemes[CurrentTheme].total);
 	drawLabel(x - fH / 2 - TextStringWidth("感染者接触人数"), (y -= h * 1.5) + fH * 0.7, "感染者接触人数");
-	if (textbox(GenUIID(0), x, y, w, h, e, sizeof(e)))
+	if (MyTextBox(GenUIID(0), x, y, w, h, e, sizeof(e)))
 	{
 		SEIREnterInt(&i_touch, StringInt(e));
 	};
 
-	SetPenColor("Cyan");
+	SetPenColor(MyThemes[CurrentTheme].current);
 	drawLabel(x - fH / 2 - TextStringWidth("潜伏者接触人数"), (y -= h * 1.5) + fH * 0.7, "潜伏者接触人数");
-	if (textbox(GenUIID(0), x, y, w, h, f, sizeof(f)))
+	if (MyTextBox(GenUIID(0), x, y, w, h, f, sizeof(f)))
 	{
 		SEIREnterInt(&e_touch, StringInt(f));
 	};
 
-	SetPenColor("green");
+	SetPenColor(MyThemes[CurrentTheme].cured);
 	drawLabel(x - fH / 2 - TextStringWidth("康复率(百分)"), (y -= h * 1.5) + fH * 0.7, "康复率(百分)");
-	if (textbox(GenUIID(0), x, y, w, h, g, sizeof(g)))
+	if (MyTextBox(GenUIID(0), x, y, w, h, g, sizeof(g)))
 	{
 		SEIREnterDouble(&recovery_rate, StringDouble(g) / 100);
 	};
 
-	SetPenColor("Black");
+	SetPenColor(MyThemes[CurrentTheme].foreground);
 	drawLabel(x - fH / 2 - TextStringWidth("起始月份"), (y -= h * 1.5) + fH * 0.7, "起始月份");
-	if (textbox(GenUIID(0), x, y, w, h, mon, sizeof(mon)))
+	if (MyTextBox(GenUIID(0), x, y, w, h, mon, sizeof(mon)))
 	{
 		SEIREnterInt(&SEIRmonth, StringInt(mon));
 	};
 
-	SetPenColor("Black");
+	SetPenColor(MyThemes[CurrentTheme].foreground);
 	drawLabel(x - fH / 2 - TextStringWidth("起始日期"), (y -= h * 1.5) + fH * 0.7, "起始日期");
-	if (textbox(GenUIID(0), x, y, w, h, day, sizeof(day)))
+	if (MyTextBox(GenUIID(0), x, y, w, h, day, sizeof(day)))
 	{
 		SEIREnterInt(&SEIRday, StringInt(day));
 	};
@@ -268,8 +269,6 @@ void PredictionChart()
 	SetPenColor(MyThemes[CurrentTheme].foreground);
 
 	SEIR(SEIRmonth, SEIRday);
-	drawRectangle(5 * wid / 12, 3 * hei / 16, 13 * wid / 24, 5 * hei / 8, 0);
-	drawRectangle(21 * wid / 48, 7 * hei / 32, wid / 2, 9 * hei / 16, 0);
 
 	MovePen(x, 15 * hei / 16 - 0.3);
 	DrawTextString("考虑实际，感染/潜伏者平均接触人数不超过20");
@@ -277,27 +276,32 @@ void PredictionChart()
 	DrawTextString("请勿输入不符合实际的数据，使模型预测失效");
 
 	MovePen(x, y + kl * S[0] / population);
-	SetPenColor("yellow");
+	SetPenColor(MyThemes[CurrentTheme].dead);  // 易感人数
 	for (i = 1; i < 50; i++)
 	{
 		DrawLine(wid / 100, kl * (S[i] - S[i - 1]) / population);
 	}
 	MovePen(x, y);
-	SetPenColor("Cyan");
+	SetPenColor(MyThemes[CurrentTheme].current);  // 潜伏者
 	for (i = 1; i < 50; i++)
 	{
 		DrawLine(wid / 100, kl * (E[i] - E[i - 1]) / population);
 	}
 	MovePen(x, y);
-	SetPenColor("red");
+	SetPenColor(MyThemes[CurrentTheme].total);  // 感染者
 	for (i = 1; i < 50; i++)
 	{
 		DrawLine(wid / 100, kl * (I[i] - I[i - 1]) / population);
 	}
 	MovePen(x, y);
-	SetPenColor("green");
+	SetPenColor(MyThemes[CurrentTheme].cured);  // 治愈者
 	for (i = 1; i < 50; i++)
 	{
 		DrawLine(wid / 100, kl * (R[i] - R[i - 1]) / population);
 	}
+
+	SetPenColor(MyThemes[CurrentTheme].foreground);
+
+	drawRectangle(5 * wid / 12, 3 * hei / 16, 13 * wid / 24, 5 * hei / 8, 0);
+	drawRectangle(21 * wid / 48, 7 * hei / 32, wid / 2, 9 * hei / 16, 0);
 }

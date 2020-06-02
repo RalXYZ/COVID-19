@@ -37,7 +37,7 @@ void InitColor();
 
 /*
  * 函数名: GetEpidemicColor
- * 参数1: property  EpidemicProperty枚举值
+ * 参数: property  EpidemicProperty枚举值
  * -------------------------------------
  * 传入一个枚举值，传出这个枚举值当前的颜色
  */
@@ -62,8 +62,8 @@ void StretchDrawLine(double StartX, double StartY, double StretchX, double Stret
  * 参数3: EndX    线段的终止位置的横坐标
  * 参数4: EndY    线段的终止位置的纵坐标
  * -------------------------------------
- * 按有向线段的逻辑绘制线段，需要给出有向线段的
- * 起始点坐标和两个方向上的分量
+ * 按线段的逻辑绘制，需要给出线段的
+ * 起始点坐标和终止点坐标
  */
 void PointDrawLine(double StartX, double StartY, double EndX, double EndY);
 
