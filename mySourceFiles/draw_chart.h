@@ -29,7 +29,7 @@
  * ------------------------------------
  * 绘制折线图
  */
-void LineChart(double x, double y, double w, double h);
+void LineChart(double x, double y, double w, double h, int month, int day, int n);
 
 /*
  * 函数名: DataProportion

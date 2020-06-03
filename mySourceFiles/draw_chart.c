@@ -109,7 +109,7 @@ static void Highlight(double x, double y, double w, double h)
 {
 	const double LineChatHeight = h - 2 * PADDING;
 	const double HeightInGraph = 1.0 * status.HighlightNode->properties[status.HighlightProperty];
-	double WidthInGraph = 1.0 * status.HighlightNum * (w - 2 * PADDING) / (data.TotalDays - 1);
+	double WidthInGraph = 1.0 * status.HighlightNum * (w - 2 * PADDING) / (data.TotalDays * 1.0 - 1);
 
 	SetPenSize(1);
 	SetPenColor(MyThemes[CurrentTheme].accent);
@@ -131,9 +131,15 @@ static void Highlight(double x, double y, double w, double h)
  * -------------------------------------
  * 绘制折线
  */
-static void DrawBrokenLine(double x, double y, double w, double h, int type)
+static void DrawBrokenLine(double x, double y, double w, double h, int month, int day, int n, int type)
 {
-	int start = 0, end = data.TotalDays - 1;  // 测试用，最终实现与此不同
+	int start = 0;
+	int end;  // 测试用，最终实现与此不同
+	if (status.ZoomIn)
+		end = n;
+	else
+		end = n - 1;
+
 	if (end - start <= 0)  // TODO 并未完全解决问题，应当妥善使用异常处理，而不是简单地退出函数
 		return;
 
@@ -141,10 +147,14 @@ static void DrawBrokenLine(double x, double y, double w, double h, int type)
 	const double LineChatHeight = h - 2 * PADDING;  // 折线图高度
 	int count = 0;  // 计数器
 
+	epidemic* StartNode = SentinelNode.next;
+	while (StartNode->properties[Day] != day || StartNode->properties[Month] != month)
+		StartNode = StartNode->next;
+
 	if (type == status.HighlightProperty)
 		SetPenSize(2);
 	SetPenColor(GetEpidemicColor(type));
-	for (epidemic* i = SentinelNode.next; i != nullptr && i->next != nullptr; i = i->next)  // 循环画割线
+	for (epidemic* i = StartNode; count < n && i->next != nullptr; i = i->next)  // 循环画割线
 	{
 		PointDrawLine(x + PADDING + step * (count - start),
 			y + PADDING + LineChatHeight * (1.0 * i->properties[type] / data.MaxElement),
@@ -155,12 +165,12 @@ static void DrawBrokenLine(double x, double y, double w, double h, int type)
 	SetPenSize(1);  // 将笔触宽度恢复到初始状态
 }
 
-void LineChart(double x, double y, double w, double h)
+void LineChart(double x, double y, double w, double h, int month, int day, int n)
 {
-	DrawBrokenLine(x, y, w, h, Current);
-	DrawBrokenLine(x, y, w, h, Total);
-	DrawBrokenLine(x, y, w, h, Cured);
-	DrawBrokenLine(x, y, w, h, Dead);
+	DrawBrokenLine(x, y, w, h, month, day, n, Current);
+	DrawBrokenLine(x, y, w, h, month, day, n, Total);
+	DrawBrokenLine(x, y, w, h, month, day, n, Cured);
+	DrawBrokenLine(x, y, w, h, month, day, n, Dead);
 
 	DrawLineChartFrame(x, y, w, h);
 
@@ -302,7 +312,7 @@ void DrawChart(int month, int day, int n)
 	}
 	else if (DisplayBarChart == 0 && DisplayFanChart == 0 && DisplayLineChart == 1)
 	{
-		LineChart(width / 12, height / 4, 5 * width / 6, 5 * height / 8);
+		LineChart(width / 12, height / 4, 5 * width / 6, 5 * height / 8, month, day, n);
 	}
 	else if (DisplayBarChart == 1 && DisplayFanChart == 1 && DisplayLineChart == 0)
 	{
@@ -314,14 +324,14 @@ void DrawChart(int month, int day, int n)
 	else if (DisplayBarChart == 1 && DisplayFanChart == 0 && DisplayLineChart == 1)
 	{
 		BarChart(width / 12, height / 4, 5 * width / 6, 5 * height / 16, month, day, n);
-		LineChart(width / 12, 9 * height / 16, 5 * width / 6, 5 * height / 16);
+		LineChart(width / 12, 9 * height / 16, 5 * width / 6, 5 * height / 16, month, day, n);
 	}
 	else if (DisplayBarChart == 0 && DisplayFanChart == 1 && DisplayLineChart == 1)
 	{
 		SetPenColor(MyThemes[CurrentTheme].foreground);
 		drawRectangle(16 * width / 24, height / 4, width / 4, 5 * height / 8, 0);
 		FanChart(19 * width / 24, 9 * height / 16, 5 * width / 48);
-		LineChart(width / 12, height / 4, 7 * width / 12, 5 * height / 8);
+		LineChart(width / 12, height / 4, 7 * width / 12, 5 * height / 8, month, day, n);
 	}
 	else if (DisplayBarChart == 1 && DisplayFanChart == 1 && DisplayLineChart == 1)
 	{
@@ -329,7 +339,7 @@ void DrawChart(int month, int day, int n)
 		SetPenColor(MyThemes[CurrentTheme].foreground);
 		drawRectangle(16 * width / 24, height / 4, width / 4, 5 * height / 8, 0);
 		FanChart(19 * width / 24, 9 * height / 16, 5 * width / 48);
-		LineChart(width / 12, 9 * height / 16, 7 * width / 12, 5 * height / 16);
+		LineChart(width / 12, 9 * height / 16, 7 * width / 12, 5 * height / 16, month, day, n);
 	}
 
 	DisplayStatistics();  // 绘制右下角的统计数据
