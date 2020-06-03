@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <math.h>
+#include "strlib.h"
 #include "graphics.h"
 #include "extgraph.h"
 #include "imgui.h"
@@ -275,26 +276,37 @@ void PredictionChart()
 	MovePen(x, 15 * hei / 16 - GetFontHeight() - 0.3);
 	DrawTextString("请勿输入不符合实际的数据，使模型预测失效");
 
-	MovePen(x, y + kl * S[0] / population);
 	SetPenColor(MyThemes[CurrentTheme].dead);  // 易感人数
+	MovePen(41 * wid / 96, 5 * hei / 32);
+	DrawTextString("易感人数");
+	MovePen(x, y + kl * S[0] / population);
 	for (i = 1; i < 50; i++)
 	{
 		DrawLine(wid / 100, kl * (S[i] - S[i - 1]) / population);
 	}
-	MovePen(x, y);
+	
 	SetPenColor(MyThemes[CurrentTheme].current);  // 潜伏者
+	MovePen(41 * wid / 96 + wid / 8, 5 * hei / 32);
+	DrawTextString("潜伏人数");
+	MovePen(x, y);
 	for (i = 1; i < 50; i++)
 	{
 		DrawLine(wid / 100, kl * (E[i] - E[i - 1]) / population);
 	}
-	MovePen(x, y);
+	
 	SetPenColor(MyThemes[CurrentTheme].total);  // 感染者
+	MovePen(41 * wid / 96 + wid / 4, 5 * hei / 32);
+	DrawTextString("感染人数");
+	MovePen(x, y);
 	for (i = 1; i < 50; i++)
 	{
 		DrawLine(wid / 100, kl * (I[i] - I[i - 1]) / population);
 	}
-	MovePen(x, y);
+	
 	SetPenColor(MyThemes[CurrentTheme].cured);  // 治愈者
+	MovePen(41 * wid / 96 + 3 * wid / 8, 5 * hei / 32);
+	DrawTextString("治愈人数");
+	MovePen(x, y);
 	for (i = 1; i < 50; i++)
 	{
 		DrawLine(wid / 100, kl * (R[i] - R[i - 1]) / population);
@@ -304,4 +316,20 @@ void PredictionChart()
 
 	drawRectangle(5 * wid / 12, 3 * hei / 16, 13 * wid / 24, 5 * hei / 8, 0);
 	drawRectangle(21 * wid / 48, 7 * hei / 32, wid / 2, 9 * hei / 16, 0);
+
+	for (i = 0; i < 6; i++)//绘制横坐标表示天数
+	{
+		MovePen(41 * wid / 96 + i * wid / 10, 7 * hei / 32 - GetFontHeight());
+		char* p = NULL;
+		p = IntegerToString(i * 10);
+		DrawTextString(p);
+	}
+
+	for (i = 1; i < 6; i++)//绘制纵坐标表示人数
+	{
+		MovePen(21 * wid / 48, 7 * hei / 32 - GetFontHeight() + i * 9.0 * hei / 80);
+		char* p1 = NULL;
+		p1 = IntegerToString(i * population / 5);
+		DrawTextString(p1);
+	}
 }

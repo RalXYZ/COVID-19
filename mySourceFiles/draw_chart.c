@@ -261,8 +261,8 @@ static void BarChart(double x, double y, double w, double h, int month, int day,
 		else
 			SetPenColor(GetEpidemicColor(status.HighlightProperty));
 		double pro = ReadEpidemicList(NeedMonth, NeedDay, status.HighlightProperty) / (1.0 * data.MaxElement);
-		drawRectangle(xt + wt / (2 * n + 1), yt, wt / (2 * n + 1), 1.0 * ht * pro, 1);
-		xt += 2 * wt / (2 * n + 1);
+		drawRectangle(xt + wt / (2.0 * n + 1), yt, wt / (2.0 * n + 1), 1.0 * ht * pro, 1);
+		xt += 2 * wt / (2.0 * n + 1);
 	}
 
 	DrawLineChartFrame(x, y, w, h);
