@@ -294,7 +294,7 @@ static void DrawMenu()
 		ChangeThemeLabel };
 
 	static char* MenuHelp[] = { "帮助",
-		"大程报告",
+		"使用方法",
 		"关于本软件" };
 
 
