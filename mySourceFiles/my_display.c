@@ -115,7 +115,7 @@ char* GetEpidemicColor(int property)
 	{
 	case Current:
 		return MyThemes[CurrentTheme].current;
-	case Total:
+	case New:
 		return MyThemes[CurrentTheme].total;
 	case Cured:
 		return MyThemes[CurrentTheme].cured;

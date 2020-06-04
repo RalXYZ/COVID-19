@@ -102,7 +102,7 @@ double EpidemicInflectionPoint(double Arr[])
 	int i, j;
 	for (i = 1; i < 100; i++)
 	{
-		t = C[i];
+		t = (int)C[i];
 		for (j = i; j > 0 && t > C[j - 1]; j--)
 			C[j] = C[j - 1];
 		C[j] = t;
@@ -284,7 +284,7 @@ void PredictionChart()
 	{
 		DrawLine(wid / 100, kl * (S[i] - S[i - 1]) / population);
 	}
-	
+
 	SetPenColor(MyThemes[CurrentTheme].current);  // 潜伏者
 	MovePen(41 * wid / 96 + wid / 8, 5 * hei / 32);
 	DrawTextString("潜伏人数");
@@ -293,7 +293,7 @@ void PredictionChart()
 	{
 		DrawLine(wid / 100, kl * (E[i] - E[i - 1]) / population);
 	}
-	
+
 	SetPenColor(MyThemes[CurrentTheme].total);  // 感染者
 	MovePen(41 * wid / 96 + wid / 4, 5 * hei / 32);
 	DrawTextString("感染人数");
@@ -302,7 +302,7 @@ void PredictionChart()
 	{
 		DrawLine(wid / 100, kl * (I[i] - I[i - 1]) / population);
 	}
-	
+
 	SetPenColor(MyThemes[CurrentTheme].cured);  // 治愈者
 	MovePen(41 * wid / 96 + 3 * wid / 8, 5 * hei / 32);
 	DrawTextString("治愈人数");

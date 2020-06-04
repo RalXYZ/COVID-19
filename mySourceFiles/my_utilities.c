@@ -148,10 +148,10 @@ char* PropertyMeaning(int property)
 		return "月";
 	case Day:
 		return "日";
+	case New:
+		return "新增确诊";
 	case Current:
-		return "当前确诊";
-	case Total:
-		return "累计确诊";
+		return "现有确诊";
 	case Cured:
 		return "累计治愈";
 	case Dead:

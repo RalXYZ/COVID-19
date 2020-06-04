@@ -18,6 +18,7 @@
 #include "draw_chart.h"
 #include "my_display.h"
 #include "my_resource.h"
+#include "my_utilities.h"
 #include "prediction_model.h"
 
 extern int NeedMonth;//需求月份
@@ -68,7 +69,7 @@ static void DisplayStatistics()
 		status.HighlightNode->properties[Month],
 		status.HighlightNode->properties[Day]);
 
-	MovePen(2.8, 0.05);
+	MovePen(2.5, 0.05);
 	DrawTextString(date);
 	for (int i = EPIDEMIC_PROPERTY_START; i < EPIDEMIC_ELEMENT_NUM; i++)
 	{
@@ -78,20 +79,20 @@ static void DisplayStatistics()
 			SetStyle(1);  // 粗体
 		switch (i)
 		{
+		case New:
+			sprintf(property, "%s%d人 ", PropertyMeaning(New),
+				status.HighlightNode->properties[New]);
+			break;
 		case Current:
-			sprintf(property, "当前感染%d人 ",
+			sprintf(property, "%s%d人 ", PropertyMeaning(Current),
 				status.HighlightNode->properties[Current]);
 			break;
-		case Total:
-			sprintf(property, "累计感染%d人 ",
-				status.HighlightNode->properties[Total]);
-			break;
 		case Cured:
-			sprintf(property, "累计治愈%d人 ",
+			sprintf(property, "%s%d人 ", PropertyMeaning(Cured),
 				status.HighlightNode->properties[Cured]);
 			break;
 		case Dead:
-			sprintf(property, "累计死亡%d人",
+			sprintf(property, "%s%d人", PropertyMeaning(Dead),
 				status.HighlightNode->properties[Dead]);
 			break;
 		}
@@ -168,7 +169,7 @@ static void DrawBrokenLine(double x, double y, double w, double h, int month, in
 void LineChart(double x, double y, double w, double h, int month, int day, int n)
 {
 	DrawBrokenLine(x, y, w, h, month, day, n, Current);
-	DrawBrokenLine(x, y, w, h, month, day, n, Total);
+	DrawBrokenLine(x, y, w, h, month, day, n, New);
 	DrawBrokenLine(x, y, w, h, month, day, n, Cured);
 	DrawBrokenLine(x, y, w, h, month, day, n, Dead);
 

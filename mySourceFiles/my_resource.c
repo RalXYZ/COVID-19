@@ -142,7 +142,7 @@ int FileInputList(char* FileName)
 	{
 		const int SuccessInput = fscanf(fp, "%d-%d%d%d%d%d",
 			&CurrentNode->properties[Month], &CurrentNode->properties[Day],
-			&CurrentNode->properties[Current], &CurrentNode->properties[Total],
+			&CurrentNode->properties[Current], &CurrentNode->properties[New],
 			&CurrentNode->properties[Cured], &CurrentNode->properties[Dead]);
 		CurrentNode->next = nullptr;  // 将当前节点的指向后一个节点的指针默认设为空
 
@@ -194,7 +194,7 @@ int FileSave(char* FileName)
 	{
 		fprintf(fp, "%d-%d %d %d %d %d",
 			i->properties[Month], i->properties[Day],
-			i->properties[Current], i->properties[Total],
+			i->properties[Current], i->properties[New],
 			i->properties[Cured], i->properties[Dead]);
 
 		if (i != nullptr && i->next != nullptr)  // 最后行末尾不换行

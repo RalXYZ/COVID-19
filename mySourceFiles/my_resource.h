@@ -31,18 +31,18 @@ typedef struct DataProperty
 /*
  * 枚举名: EpidemicProperty
  * 常量1: Month    月份
- * 常量2: Day     日期
- * 常量3: Current  当前感染人数
- * 常量4: Total    总感染人数
- * 常量5: Cured    治愈人数
- * 常量6: Dead     死亡人数
+ * 常量2: Day      日期
+ * 常量3: New      新增确诊
+ * 常量4: Current  现有确诊
+ * 常量5: Cured    累计治愈
+ * 常量6: Dead     累计死亡
  * ------------------------------------
  * 这个结构对节点里数组的下标与存储内容构建了对应关系
  */
 typedef enum EpidemicProperty
 {
 	Month, Day,
-	Current, Total, Cured, Dead
+	New, Current, Cured, Dead
 } EpidemicProperty;
 
 

@@ -264,7 +264,7 @@ void MenuEditFrontInsert()
 	NewNode->properties[Month] = NewMonth;
 	NewNode->properties[Day] = NewDay;
 	NewNode->properties[Current] = 0;
-	NewNode->properties[Total] = 0;
+	NewNode->properties[New] = 0;
 	NewNode->properties[Cured] = 0;
 	NewNode->properties[Dead] = 0;
 	NewNode->prev = nullptr;
@@ -306,7 +306,7 @@ void MenuEditBackInsert()
 	NewNode->properties[Month] = NewMonth;
 	NewNode->properties[Day] = NewDay;
 	NewNode->properties[Current] = 0;
-	NewNode->properties[Total] = 0;
+	NewNode->properties[New] = 0;
 	NewNode->properties[Cured] = 0;
 	NewNode->properties[Dead] = 0;
 
