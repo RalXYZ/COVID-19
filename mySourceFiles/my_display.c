@@ -88,8 +88,8 @@ static void InputMyColors(int position, char* name,
 	MyThemes[position].current = IntegerToString(CurrentColorHex);
 	HexDefineColor(MyThemes[position].current, CurrentColorHex);
 
-	MyThemes[position].total = IntegerToString(TotalColorHex);
-	HexDefineColor(MyThemes[position].total, TotalColorHex);
+	MyThemes[position].new = IntegerToString(TotalColorHex);
+	HexDefineColor(MyThemes[position].new, TotalColorHex);
 
 	MyThemes[position].cured = IntegerToString(CuredColorHex);
 	HexDefineColor(MyThemes[position].cured, CuredColorHex);
@@ -116,7 +116,7 @@ char* GetEpidemicColor(int property)
 	case Current:
 		return MyThemes[CurrentTheme].current;
 	case New:
-		return MyThemes[CurrentTheme].total;
+		return MyThemes[CurrentTheme].new;
 	case Cured:
 		return MyThemes[CurrentTheme].cured;
 	case Dead:

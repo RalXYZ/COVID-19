@@ -22,7 +22,7 @@ typedef struct theme {
 	char* foreground;  // 前景色
 	char* accent;      // 强调色
 	char* current;
-	char* total;
+	char* new;
 	char* cured;
 	char* dead;
 } theme;

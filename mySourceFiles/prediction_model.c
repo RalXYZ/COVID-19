@@ -199,7 +199,7 @@ void PredictionInterface()
 		SEIREnterInt(&population, StringInt(a));
 	};
 
-	SetPenColor(MyThemes[CurrentTheme].total);
+	SetPenColor(MyThemes[CurrentTheme].new);
 	drawLabel(x - fH / 2 - TextStringWidth("感染者传染率(百分)"), (y -= h * 1.5) + fH * 0.7, "感染者传染率(百分)");
 	if (MyTextBox(GenUIID(0), x, y, w, h, b, sizeof(b)))
 	{
@@ -220,7 +220,7 @@ void PredictionInterface()
 		SEIREnterDouble(&e_turnto_i, StringDouble(d) / 100);
 	};
 
-	SetPenColor(MyThemes[CurrentTheme].total);
+	SetPenColor(MyThemes[CurrentTheme].new);
 	drawLabel(x - fH / 2 - TextStringWidth("感染者接触人数"), (y -= h * 1.5) + fH * 0.7, "感染者接触人数");
 	if (MyTextBox(GenUIID(0), x, y, w, h, e, sizeof(e)))
 	{
@@ -294,7 +294,7 @@ void PredictionChart()
 		DrawLine(wid / 100, kl * (E[i] - E[i - 1]) / population);
 	}
 
-	SetPenColor(MyThemes[CurrentTheme].total);  // 感染者
+	SetPenColor(MyThemes[CurrentTheme].new);  // 感染者
 	MovePen(41 * wid / 96 + wid / 4, 5 * hei / 32);
 	DrawTextString("感染人数");
 	MovePen(x, y + kl * I[0] / population);
