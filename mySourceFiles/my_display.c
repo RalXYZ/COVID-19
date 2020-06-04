@@ -427,7 +427,7 @@ void display()
 
 	DrawMenu();  // 绘制菜单组件
 
-	DrawToolBar();  ///////////////////////////////////////////////
+	DrawToolBar();
 
 	if (data.BaseDir != nullptr && !status.DisplayPrediction)
 	{
@@ -444,7 +444,7 @@ void display()
 
 	if (status.DisplayPrediction)
 	{
-		PredictionInterface();  //调试用
-		PredictionChart();//调试用
+		PredictionInterface();
+		PredictionChart();
 	}
 }

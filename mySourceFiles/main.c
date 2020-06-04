@@ -5,8 +5,6 @@
  *
  */
 
-#pragma comment(lib, "winmm.lib")  // 链接 Windows multi media 动态链接库，用于播放背景音乐
-
 #include <Windows.h>
 
 #include "graphics.h"

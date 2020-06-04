@@ -68,12 +68,24 @@ void MenuFileOpen()
 
 	if (GetOpenFileName(&ofn) == TRUE)  // ofn.lpstrFile 会被赋上文件的绝对路径，字符串形式
 	{
+		if (strlen(ofn.lpstrFile) >= 11)
+		{
+			size_t length = strlen(ofn.lpstrFile);
+			if (ofn.lpstrFile[length - 11] == 'n'
+				&& ofn.lpstrFile[length - 10] == 'e'
+				&& ofn.lpstrFile[length - 9] == 'w')
+			{
+				GUIOutputMsg("打开未完成");
+				MessageBox(graphicsWindow, TEXT("您没有打开此文件的权限。"),
+					TEXT("错误"), MB_OK | MB_ICONERROR);
+				return;
+			}
+		}
 		if (!FileInputList(ofn.lpstrFile))
 			GUIOutputMsg("打开成功");
 	}
 	else
 		GUIOutputMsg("打开未完成");
-
 }
 
 void MenuFileSave()
