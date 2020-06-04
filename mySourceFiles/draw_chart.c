@@ -212,7 +212,8 @@ static void FanChart(double centerX, double centerY, double radius)
 		return;
 	}
 
-	for (int i = 0; i < 3; i++)//循环次数即显示参数数，每次执行一次画弧和一次画线
+	//循环次数即显示参数数，每次执行一次画弧和一次画线
+	for (int i = 0; i < 3; i++)
 	{
 		MovePen(centerX, centerY);
 		switch (i)
@@ -264,6 +265,7 @@ static void BarChart(double x, double y, double w, double h, int month, int day,
 	const int CurrentMonth = status.HighlightNode->properties[Month];
 	const int CurrentDay = status.HighlightNode->properties[Day];
 
+	//采用逐段画矩形的方式绘制柱状图
 	for (i = 0; i < n; i++)
 	{
 		DateCalculate(month, day, i);
@@ -285,6 +287,7 @@ void DrawChart(int month, int day, int n)
 	const double height = GetWindowHeight();
 	extern int MyButton(int id, double x, double y, double w, double h, char* label);  // 在 imgui.c 中定义
 
+	//绘制按钮部分
 	if (MyButton(GenUIID(0), width / 8, 0.55, width / 6, 3 * height / 32, "折线图"))
 	{
 		DisplayLineChart = !DisplayLineChart;
@@ -301,6 +304,7 @@ void DrawChart(int month, int day, int n)
 		GUIOutputMsg("饼状图");
 	}
 
+	//穷举所有按钮情况，并给出对应显示
 	if (DisplayBarChart == 1 && DisplayFanChart == 0 && DisplayLineChart == 0)
 	{
 		BarChart(width / 12, height / 4, 5 * width / 6, 5 * height / 8, month, day, n);

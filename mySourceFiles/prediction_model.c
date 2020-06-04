@@ -75,6 +75,7 @@ void SEIR(int SEIRmonth, int SEIRday)
 	I[0] = ReadEpidemicList(SEIRmonth, SEIRday, Current);
 	R[0] = 0;
 
+	//SEIR预测模型对应算法，具体说明冗长，参考有关资料即可
 	for (K = 1; K < 100; K++)
 	{
 		mul_1 = i_infection_rate * i_touch * I[K - 1];
@@ -138,17 +139,19 @@ void DateCalculate(int month, int day, int n)
 		sum += mon[k];
 		if (sum >= day + sum1 + n)
 		{
-			NeedMonth = k + 1;
+			NeedMonth = k + 1;//给出月份
 			break;
 		}
 		t = sum;
 	}
-	NeedDay = sum1 + day + n - t;
+	NeedDay = sum1 + day + n - t;//给出日期
 }
 
 double StringDouble(char* p)
 {
 	double temp = 0;
+
+	//将字符串转化为double变量
 	while (*p)
 	{
 		temp = temp * 10 + *p - '0';
@@ -160,6 +163,8 @@ double StringDouble(char* p)
 int StringInt(char* p)
 {
 	int temp = 0;
+
+	//将字符串转化为int变量
 	while (*p)
 	{
 		temp = temp * 10 + *p - '0';
@@ -170,6 +175,7 @@ int StringInt(char* p)
 
 void PredictionInterface()
 {
+	//疫情数据输入框，预置了初值
 	static char a[10] = "10000";
 	static char b[2] = "3";
 	static char c[2] = "3";
@@ -177,7 +183,7 @@ void PredictionInterface()
 	static char e[3] = "15";
 	static char f[3] = "15";
 	static char g[3] = "1";
-
+	//存储日期的输入框
 	static char mon[3] = "3";
 	static char day[3] = "1";
 
@@ -191,6 +197,8 @@ void PredictionInterface()
 	double y = 7 * hei / 8;
 
 	extern int MyTextBox(int id, double x, double y, double w, double h, char textbuf[], int buflen);
+
+	//以下均为输入框的本体
 
 	SetPenColor(MyThemes[CurrentTheme].foreground);
 	drawLabel(x - fH / 2 - TextStringWidth("人口"), (y -= h * 1.5) + fH * 0.7, "人口");
@@ -269,12 +277,15 @@ void PredictionChart()
 
 	SetPenColor(MyThemes[CurrentTheme].foreground);
 
+	//调用预测函数
 	SEIR(SEIRmonth, SEIRday);
 
 	MovePen(x, 15 * hei / 16 - 0.3);
 	DrawTextString("考虑实际，感染/潜伏者平均接触人数不超过20");
 	MovePen(x, 15 * hei / 16 - GetFontHeight() - 0.3);
 	DrawTextString("请勿输入不符合实际的数据，使模型预测失效");
+
+	//以下均为绘图部分，采用逐段画线的方式绘制
 
 	SetPenColor(MyThemes[CurrentTheme].dead);  // 易感人数
 	MovePen(41 * wid / 96, 5 * hei / 32);
