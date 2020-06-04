@@ -297,7 +297,7 @@ void PredictionChart()
 	SetPenColor(MyThemes[CurrentTheme].total);  // 感染者
 	MovePen(41 * wid / 96 + wid / 4, 5 * hei / 32);
 	DrawTextString("感染人数");
-	MovePen(x, y);
+	MovePen(x, y + kl * I[0] / population);
 	for (i = 1; i < 50; i++)
 	{
 		DrawLine(wid / 100, kl * (I[i] - I[i - 1]) / population);
@@ -306,7 +306,7 @@ void PredictionChart()
 	SetPenColor(MyThemes[CurrentTheme].cured);  // 治愈者
 	MovePen(41 * wid / 96 + 3 * wid / 8, 5 * hei / 32);
 	DrawTextString("治愈人数");
-	MovePen(x, y);
+	MovePen(x, y + kl * ReadEpidemicList(SEIRmonth, SEIRday, Cured) / population);
 	for (i = 1; i < 50; i++)
 	{
 		DrawLine(wid / 100, kl * (R[i] - R[i - 1]) / population);
