@@ -77,7 +77,7 @@ int SafeNNegIntInput(int digits)
 		else if (!(isdigit(input)))  // 如果不是数字
 		{
 			while (getchar() != '\n')  // 清空键盘缓冲区；不能使用 fflush() 代替，否则会出现UB
-				;
+				pass;
 			return -1;  // 出现非法符号
 		}
 		sum *= 10;

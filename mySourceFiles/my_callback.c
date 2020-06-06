@@ -44,14 +44,14 @@ void KeyboardEventProcess(int key, int event)
 			{
 				status.HighlightNode = status.HighlightNode->next;
 				++status.HighlightNum;
-				GUIOutputMsg("光标左移");
+				GUIOutputMsg("光标右移");
 			}
 		if (key == VK_LEFT)
 			if (status.HighlightVisible && status.HighlightNode->prev != nullptr)
 			{
 				status.HighlightNode = status.HighlightNode->prev;
 				--status.HighlightNum;
-				GUIOutputMsg("光标右移");
+				GUIOutputMsg("光标左移");
 			}
 		if (key == VK_UP)
 			if (status.HighlightVisible)

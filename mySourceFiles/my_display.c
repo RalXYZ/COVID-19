@@ -63,8 +63,8 @@ static void HexDefineColor(string name, int value)
  * 参数2: BackgroundColorHex  背景色十六进制颜色码值
  * 参数3: ForegroundColorHex  前景色十六进制颜色码值
  * 参数4: AccentColorHex      强调色十六进制颜色码值
- * 参数5: CurrentColorHex     当前感染色十六进制颜色码值
- * 参数6: TotalColorHex       总感染色十六进制颜色码值
+ * 参数5: NewColorHex     当前感染色十六进制颜色码值
+ * 参数6: CurrentColorHex       总感染色十六进制颜色码值
  * 参数7: CuredColorHex       治愈色十六进制颜色码值
  * 参数8: DeadColorHex        死亡色十六进制颜色码值
  * -------------------------------------
@@ -72,7 +72,7 @@ static void HexDefineColor(string name, int value)
  */
 static void InputMyColors(int position, char* name,
 	int BackgroundColorHex, int ForegroundColorHex, int AccentColorHex,
-	int CurrentColorHex, int TotalColorHex, int CuredColorHex, int DeadColorHex)
+	int NewColorHex, int CurrentColorHex, int CuredColorHex, int DeadColorHex)
 {
 	MyThemes[position].name = name;
 
@@ -85,11 +85,11 @@ static void InputMyColors(int position, char* name,
 	MyThemes[position].accent = IntegerToString(AccentColorHex);
 	HexDefineColor(MyThemes[position].accent, AccentColorHex);
 
+	MyThemes[position].new = IntegerToString(NewColorHex);
+	HexDefineColor(MyThemes[position].new, NewColorHex);
+
 	MyThemes[position].current = IntegerToString(CurrentColorHex);
 	HexDefineColor(MyThemes[position].current, CurrentColorHex);
-
-	MyThemes[position].new = IntegerToString(TotalColorHex);
-	HexDefineColor(MyThemes[position].new, TotalColorHex);
 
 	MyThemes[position].cured = IntegerToString(CuredColorHex);
 	HexDefineColor(MyThemes[position].cured, CuredColorHex);
@@ -113,10 +113,10 @@ char* GetEpidemicColor(int property)
 {
 	switch (property)
 	{
-	case Current:
-		return MyThemes[CurrentTheme].current;
 	case New:
 		return MyThemes[CurrentTheme].new;
+	case Current:
+		return MyThemes[CurrentTheme].current;
 	case Cured:
 		return MyThemes[CurrentTheme].cured;
 	case Dead:

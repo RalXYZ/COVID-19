@@ -21,8 +21,8 @@ typedef struct theme {
 	char* background;  // 背景色
 	char* foreground;  // 前景色
 	char* accent;      // 强调色
-	char* current;
 	char* new;
+	char* current;
 	char* cured;
 	char* dead;
 } theme;

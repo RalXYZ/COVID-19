@@ -64,7 +64,7 @@ static void DrawLineChartFrame(double x, double y, double w, double h)
 static void DisplayStatistics()
 {
 	char date[20] = "";
-	SetPenColor(MyThemes[CurrentTheme].foreground);
+	SetPenColor(MyThemes[CurrentTheme].accent);
 	sprintf(date, "%d月%d日：",
 		status.HighlightNode->properties[Month],
 		status.HighlightNode->properties[Day]);
@@ -196,7 +196,7 @@ static void FanChart(double centerX, double centerY, double radius)
 {
 	const int month = status.HighlightNode->properties[Month];
 	const int day = status.HighlightNode->properties[Day];
-	double now[3] = { ReadEpidemicList(month, day, Current), ReadEpidemicList(month, day, Cured), ReadEpidemicList(month, day, Dead) };
+	double now[3] = { ReadEpidemicList(month, day, Dead), ReadEpidemicList(month, day, Cured), ReadEpidemicList(month, day, Current) };
 
 	double AngleSum = 0;//记录转过角度
 
@@ -218,13 +218,13 @@ static void FanChart(double centerX, double centerY, double radius)
 		switch (i)
 		{
 		case 0:
-			SetPenColor(GetEpidemicColor(Current));
+			SetPenColor(GetEpidemicColor(Dead));
 			break;
 		case 1:
 			SetPenColor(GetEpidemicColor(Cured));
 			break;
 		case 2:
-			SetPenColor(GetEpidemicColor(Dead));
+			SetPenColor(GetEpidemicColor(Current));
 			break;
 		}
 		StartFilledRegion(1);
