@@ -237,6 +237,8 @@ static void DrawToolBar()
 
 	extern int MyButton(int id, double x, double y, double w, double h, char* label);  // 在 imgui.c 中定义
 
+	SetPenColor(MyThemes[CurrentTheme].foreground);
+
 	IconOpen(5.7, 5.83, .2);
 	IconClose(6.1, 5.89, .1);
 	IconDrawGraph(6.48, 5.73, .25);

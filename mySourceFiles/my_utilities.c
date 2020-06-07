@@ -169,8 +169,8 @@ int DateCalculatePro(int* month, int* day, int step)
 		return 1;
 	else if (step > 0)
 	{
-		TempDay = 1;                               // 将日期重置到该月第一天
 		step += (TempDay - 1);                     // 那么步长也需要修改
+		TempDay = 1;                               // 将日期重置到该月第一天
 		while (true)
 		{
 			if (step >= months[TempMonth - 1])     // 跨月

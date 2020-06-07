@@ -43,7 +43,7 @@ void InitHighlight()
 {
 	status.HighlightVisible = true;
 	status.HighlightNode = SentinelNode.next;
-	status.HighlightProperty = EPIDEMIC_PROPERTY_START;
+	status.HighlightProperty = EPIDEMIC_PROPERTY_START + 1;  // 从“现有确诊”开始
 	status.HighlightNum = 0;
 }
 
@@ -194,7 +194,7 @@ int FileSave(char* FileName)
 	{
 		fprintf(fp, "%d-%d %d %d %d %d",
 			i->properties[Month], i->properties[Day],
-			i->properties[Current], i->properties[New],
+			i->properties[New], i->properties[Current],
 			i->properties[Cured], i->properties[Dead]);
 
 		if (i != nullptr && i->next != nullptr)  // 最后行末尾不换行

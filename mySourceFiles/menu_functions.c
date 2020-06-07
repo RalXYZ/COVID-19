@@ -424,6 +424,7 @@ void MenuDrawGraph()
 			TEXT("提示"), MB_OK | MB_ICONWARNING);
 		return;
 	}
+	status.DisplayPrediction ? status.DisplayPrediction = false : pass;
 	DisplayLineChart = DisplayFanChart = DisplayBarChart = true;
 	GUIOutputMsg("图表已绘制");
 }
