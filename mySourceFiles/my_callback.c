@@ -20,8 +20,6 @@
 #include "my_resource.h"
 #include "my_utilities.h"
 
- //bool ZoomIn = false;  // 记录是否要暂停所有回调函数的功能，用于弹出对话框时的阻塞
-
 extern bool EraseStatus;  // 定义在 my_display.c
 extern MyStatus status;  // 当前状态，在 my_resource.c 中定义
 
@@ -34,7 +32,7 @@ void KeyboardEventProcess(int key, int event)
 	if (status.ZoomIn)
 		return;
 
-	if (event == KEY_DOWN)  // 目前作调试用，检测后来加上的组件是否会对回调函数产生干扰
+	if (event == KEY_DOWN)
 		EraseStatus = !EraseStatus;
 
 	if (event == KEY_DOWN)
@@ -93,7 +91,7 @@ void TimerEventProcess(int timerID)
 	if (status.ZoomIn)
 		return;
 
-	if (timerID == TIME_ELAPSE_1)  // 目前作调试用，检测后来加上的组件是否会对回调函数产生干扰
+	if (timerID == TIME_ELAPSE_1)
 		EraseStatus = !EraseStatus;
 	display();
 }

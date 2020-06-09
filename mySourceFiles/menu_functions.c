@@ -185,6 +185,7 @@ void MenuFileClose()
 	status.DisplayPrediction = false;  // 不显示统计图
 	SentinelNode.next = nullptr;
 	data.BaseDir = nullptr;  // 清空存储当前文件绝对路径的变量
+	data.HasModified = false;
 	GUIOutputMsg("关闭成功");
 }
 
@@ -232,12 +233,7 @@ void MenuEditChange()
 		printf("请输入您想更改为的值，要求为不超过%d位的十进制非负数: ", MAX_DIGIT);
 		int input = SafeNNegIntInput(MAX_DIGIT);
 		if (input == -1)
-		{
 			printf("您的输入有非法字符，请重新输入。\n");
-			//printf("按任意键继续\n");
-			//if (_getch() == -32);
-			// TODO: 这边的阻塞有点问题，注释掉了，可以考虑看看是为啥
-		}
 		else if (input == -2)
 			printf("您的输入超出了范围，请重新输入。\n");
 		else
@@ -339,8 +335,6 @@ void MenuEditBackInsert()
 	GetMaxElement();
 	GUIOutputMsg("后置录入成功");
 }
-
-// TODO: 在做删除时，一定要注意删除后链表的长度，以及高亮光标所在的节点会不会被删掉
 
 void MenuEditFrontDelete()
 {

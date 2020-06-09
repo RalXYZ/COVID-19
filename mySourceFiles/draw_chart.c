@@ -108,6 +108,9 @@ static void DisplayStatistics()
  */
 static void Highlight(double x, double y, double w, double h)
 {
+	if (status.ZoomIn)  // 如果处于放大模式
+		return;
+
 	const double LineChatHeight = h - 2 * PADDING;
 	const double HeightInGraph = 1.0 * status.HighlightNode->properties[status.HighlightProperty];
 	double WidthInGraph = 1.0 * status.HighlightNum * (w - 2 * PADDING) / (data.TotalDays * 1.0 - 1);
@@ -135,13 +138,13 @@ static void Highlight(double x, double y, double w, double h)
 static void DrawBrokenLine(double x, double y, double w, double h, int month, int day, int n, int type)
 {
 	int start = 0;
-	int end;  // 测试用，最终实现与此不同
+	int end;
 	if (status.ZoomIn)
 		end = n;
 	else
 		end = n - 1;
 
-	if (end - start <= 0)  // TODO 并未完全解决问题，应当妥善使用异常处理，而不是简单地退出函数
+	if (end - start <= 0)
 		return;
 
 	const double step = (w - 2 * PADDING) / (end - start);  // 步长，要求 start 大于 end

@@ -297,7 +297,8 @@ static void DrawMenu()
 
 	static char* MenuHelp[] = { "帮助",
 		"使用方法",
-		"关于本软件" };
+		"关于本软件",
+		"致哀" };
 
 
 	const double MenuSelectionWidth = TextStringWidth(MenuFile[0]) * 2;  // 菜单栏选项都是两个中文字
@@ -394,12 +395,13 @@ static void DrawMenu()
 			MenuButtonHeight, MenuHelp, sizeof(MenuHelp) / sizeof(MenuHelp[0]));
 		if (MenuHelpSelection == 1)  // 使用帮助
 		{
-			// system("start ..\\xxx");  // 将指令传给shell；由于目前还没有帮助文档，这行代码被注释掉
-			MessageBox(graphicsWindow, TEXT("目前大程报告还不存在，但用于打开大程报告的代码已写好。"),
+			display();
+			MessageBox(graphicsWindow, TEXT("详情请见大程报告 4.3使用操作"),
 				TEXT("提示"), MB_OK | MB_ICONINFORMATION);
 		}
 		if (MenuHelpSelection == 2)  // 关于本软件
 		{
+			display();
 			MessageBox(graphicsWindow, TEXT("本软件不是开源软件。\n\
 本软件是2019学年春夏学期“程序设计专题”大作业。\n\
 本软件之权利与使用范畴受到课程规则的约束。\n\
@@ -409,6 +411,16 @@ static void DrawMenu()
 本软件的所有开发工作完全由组内成员完成。\n\
 凡借助外部资料完成的工作均已在原处注明资料来源。"),
 TEXT("关于本软件"), MB_OK | MB_ICONINFORMATION);
+		}
+		if (MenuHelpSelection == 3)  // 致哀
+		{
+			display();
+			MessageBox(graphicsWindow, TEXT("在此，我们向新冠疫情中的逝者致哀。\n\
+我们不会遗忘逝去的、鲜活的生命，它们永远不是冰冷的数字；\
+而在困厄中深省、从悲痛中奋起，就是对他们最好的告慰。\n\
+本程序默认使用暗色主题，因为死亡的色彩从不是明快的。\n\
+愿疫情早日消逝。愿逝者安息。"),
+TEXT("致哀"), MB_OK | MB_ICONINFORMATION);
 		}
 	}
 
@@ -426,10 +438,6 @@ void display()
 		SetPenColor(MyThemes[CurrentTheme].accent);
 	DrawTextString(DisplayMessage);  // 画操作信息
 	SetEraseMode(false);
-
-	DrawMenu();  // 绘制菜单组件
-
-	DrawToolBar();
 
 	if (data.BaseDir != nullptr && !status.DisplayPrediction)
 	{
@@ -449,4 +457,9 @@ void display()
 		PredictionInterface();
 		PredictionChart();
 	}
+
+	DrawMenu();  // 绘制菜单组件
+
+	DrawToolBar();
+
 }
