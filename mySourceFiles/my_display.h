@@ -47,8 +47,8 @@ char* GetEpidemicColor(int property);
  * 函数名: StretchDrawLine
  * 参数1: StartX    有向线段的起始位置的横坐标
  * 参数2: StartY    有向线段的起始位置的纵坐标
- * 参数3: StretchX  有向线段的横向份量
- * 参数4: StretchY  有向线段的纵向份量
+ * 参数3: StretchX  有向线段的横向分量
+ * 参数4: StretchY  有向线段的纵向分量
  * -------------------------------------
  * 按有向线段的逻辑绘制线段，需要给出有向线段的
  * 起始点坐标和两个方向上的分量

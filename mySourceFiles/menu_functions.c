@@ -46,7 +46,9 @@ void MenuFileOpen()
 			return;
 		}
 	}
+
 	/*以下代码的实现部分参考了 StackOverflow 论坛*/
+
 	OPENFILENAME ofn;
 	static TCHAR szFile[MAX_PATH] = { 0 };
 
@@ -119,6 +121,8 @@ void MenuFileSave()
 
 void MenuFileSaveAs()
 {
+	/*以下代码的实现部分参考了 StackOverflow 论坛*/
+
 	OPENFILENAME ofn;
 	static char szFileName[MAX_PATH] = "Untitled.covid19";  // 默认文件名，将存储文件路径
 
