@@ -262,6 +262,7 @@ static void DrawToolBar()
 
 /*************************************************************/
 
+char compare[20] = "对比...";
 char Highlight[20] = "隐藏高亮光标";
 char MenuDrawPredictionString[20] = "显示预测";
 /*
@@ -278,6 +279,7 @@ static void DrawMenu()
 		"打开 | Ctrl-O",
 		"保存 | Ctrl-S",
 		"另存为",
+		compare,
 		"关闭 | Ctrl-W",
 		"退出 | Ctrl-Q" };
 
@@ -312,8 +314,10 @@ static void DrawMenu()
 	// 文件
 	{
 		const int MenuFileSelection = MyMenuList(GenUIID(0), 0, MenuBarVertical,
-			MenuSelectionWidth, TextStringWidth(MenuFile[1]) * 1.2,
+			MenuSelectionWidth, TextStringWidth(MenuFile[1]) * 1.4,
 			MenuButtonHeight, MenuFile, sizeof(MenuFile) / sizeof(MenuFile[0]));
+
+		status.CompareMode ? sprintf(compare, "退出对比模式") : sprintf(compare, "对比...");
 
 		switch (MenuFileSelection)
 		{
@@ -329,10 +333,13 @@ static void DrawMenu()
 		case 4:  // 另存为
 			MenuFileSaveAs();
 			break;
-		case 5:  // 关闭
+		case 5:
+			status.CompareMode ? MenuFileCompareClose() : MenuFileCompareOpen();
+			break;
+		case 6:  // 关闭
 			MenuFileClose();
 			break;
-		case 6:  // 退出
+		case 7:  // 退出
 			MenuFileExit();
 			break;
 		}

@@ -25,6 +25,17 @@ typedef struct DataProperty
 	_Bool HasModified;  // 相比于输入的文件，链表是否被修改过
 } DataProperty;
 
+/*
+ * 结构名: CompareDataProperty
+ * ------------------------------------
+ * 这个结构体里的变量是 辅助链表 中数据的一些属性
+ */
+typedef struct CompareDataProperty
+{
+	int MaxAllElement;  // 主链表和辅助链表里初日期外的最大数据，用于缩放统计图
+	char* BaseDir;  // 当前文件的绝对路径
+} CompareDataProperty;
+
 #define EPIDEMIC_ELEMENT_NUM 6
 #define EPIDEMIC_PROPERTY_START 2
 #define EPIDEMIC_STATISTIC_NUM (EPIDEMIC_ELEMENT_NUM - EPIDEMIC_PROPERTY_START)
@@ -71,6 +82,7 @@ typedef struct MyStatus
 	int HighlightNum;  // 目前高亮的是链表中的第几个
 	_Bool ZoomIn;
 	_Bool DisplayPrediction;
+	_Bool CompareMode;
 } MyStatus;
 
 
@@ -139,6 +151,15 @@ void GetMaxElement();
  * 这个函数将资源文件里的数据输入到链表中。
  */
 int FileInputList(char* FileName);
+
+/*
+ * 函数名: FileInputCompareList
+ * 参数: FileName  资源文件的文件名
+ * 返回值: 0代表无异常，1代表有异常
+ * ------------------------------------
+ * 这个函数将资源文件里的数据输入到辅助链表中。
+ */
+int FileInputCompareList(char* FileName);
 
 /*
  * 函数名: FileSave

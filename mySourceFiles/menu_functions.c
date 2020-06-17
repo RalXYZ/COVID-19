@@ -19,7 +19,9 @@
 extern HWND graphicsWindow;     // GUI窗口句柄，在 libgraphics 中声明
 extern HWND consoleWindow;    // 终端窗口句柄，在 libgraphics 中声明
 extern DataProperty data;  // 链表相关属性值，在 my_resource.c 中声明
+extern CompareDataProperty CompareData;
 extern epidemic SentinelNode;  // 哨兵节点，在 my_resource.c 中声明
+extern epidemic CompareSentinelNode;  // 辅助链表的哨兵节点，用于对比，在 my_resource.c 中声明
 extern MyStatus status;  // 当前状态，在 my_resource.c 中定义
 extern int CurrentTheme;  // 当前主题，在 menu_functions.c 
 
@@ -157,6 +159,76 @@ void MenuFileSaveAs()
 		GUIOutputMsg("另存未完成");
 }
 
+void MenuFileCompareOpen()
+{
+	// my_display.h 中的 switch 语句应当保证：当且仅当 status.CompareMode 为 false 时，这个函数被调用
+
+	if (data.BaseDir == nullptr)
+	{
+		display();
+		const int selection = MessageBox(graphicsWindow,
+			TEXT("您还未打开文件，无法进行对比。"),
+			TEXT("提示"), MB_OKCANCEL | MB_ICONINFORMATION);
+		return;
+	}
+
+	/*以下代码的实现部分参考了 StackOverflow 论坛*/
+
+	OPENFILENAME ofn;
+	static TCHAR szFile[MAX_PATH] = { 0 };
+
+	ZeroMemory(&ofn, sizeof(ofn));  // 将ofn所在内存区域清零
+
+	/*为 ofn 赋初始值*/
+	ofn.lStructSize = sizeof(ofn);
+	ofn.hwndOwner = graphicsWindow;  // 传入窗口句柄
+	ofn.lpstrFile = szFile;
+	ofn.nMaxFile = sizeof(szFile);
+	ofn.lpstrFilter = "COVID19 FILES\0*.COVID19\0";  // 支持打开的文件类型
+	ofn.nFilterIndex = 1;
+	ofn.lpstrFileTitle = NULL;
+	ofn.nMaxFileTitle = 0;
+	ofn.lpstrInitialDir = ".";  // 默认目录
+	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;  // 目录和文件必须存在，否则弹出警告对话框
+
+	GUIOutputMsg("正在打开");
+
+	if (GetOpenFileName(&ofn) == TRUE)  // ofn.lpstrFile 会被赋上文件的绝对路径，字符串形式
+	{
+		if (strlen(ofn.lpstrFile) >= 11)
+		{
+			size_t length = strlen(ofn.lpstrFile);
+			if (ofn.lpstrFile[length - 11] == 'n'
+				&& ofn.lpstrFile[length - 10] == 'e'
+				&& ofn.lpstrFile[length - 9] == 'w')
+			{
+				GUIOutputMsg("打开未完成");
+				MessageBox(graphicsWindow, TEXT("您没有打开此文件的权限。"),
+					TEXT("错误"), MB_OK | MB_ICONERROR);
+				return;
+			}
+		}
+		if (!FileInputCompareList(ofn.lpstrFile))
+		{
+			GUIOutputMsg("打开成功");
+			status.CompareMode = true;  // 进入对比模式
+		}
+	}
+	else
+		GUIOutputMsg("打开未完成");
+}
+
+void MenuFileCompareClose()
+{
+	// my_display.h 中的 switch 语句应当保证：当且仅当 status.CompareMode 为 true 时，这个函数被调用
+
+	FreeEpidemicList(CompareSentinelNode.next);
+	status.CompareMode = false;
+	CompareSentinelNode.next = nullptr;
+	CompareData.BaseDir = nullptr;
+	GUIOutputMsg("退出成功");
+}
+
 void MenuFileClose()
 {
 	if (data.BaseDir == nullptr)  // 若没有打开任何文件
@@ -182,9 +254,13 @@ void MenuFileClose()
 
 	DesHighlight();
 	FreeEpidemicList(SentinelNode.next);
+	FreeEpidemicList(CompareSentinelNode.next);
 	status.DisplayPrediction = false;  // 不显示统计图
+	status.CompareMode = false;
 	SentinelNode.next = nullptr;
+	CompareSentinelNode.next = nullptr;
 	data.BaseDir = nullptr;  // 清空存储当前文件绝对路径的变量
+	CompareData.BaseDir = nullptr;
 	data.HasModified = false;
 	GUIOutputMsg("关闭成功");
 }

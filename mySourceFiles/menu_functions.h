@@ -11,6 +11,8 @@ void MenuFileNew();
 void MenuFileOpen();
 void MenuFileSave();
 void MenuFileSaveAs();
+void MenuFileCompareOpen();
+void MenuFileCompareClose();
 void MenuFileClose();
 void MenuFileExit();
 

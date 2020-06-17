@@ -18,8 +18,11 @@
 #include "my_display.h"
 
 DataProperty data = { 0, 0, nullptr, false };  // 链表相关属性值
+CompareDataProperty CompareData = { 0, nullptr };
 epidemic SentinelNode;  // 哨兵节点
-MyStatus status = { false, nullptr, 0, 0 , false , false };  // 当前状态
+epidemic CompareSentinelNode;  // 辅助链表的哨兵节点，用于对比
+MyStatus status = { false, nullptr, 0, 0 ,
+				  false , false , false };  // 当前状态
 
 void InitEpidemicList(epidemic* node)
 {
@@ -131,6 +134,21 @@ void GetMaxElement()
 	}
 }
 
+/*
+ * 函数名: GetCompareMaxElement
+ * ------------------------------------
+ * 取得主链表和辅助链表中 除日期外的最大元素
+ */
+void GetCompareMaxElement()
+{
+	CompareData.MaxAllElement = data.MaxElement;  // 至少是原链表的最大值
+	for (EpidemicProperty i = EPIDEMIC_PROPERTY_START; i < EPIDEMIC_ELEMENT_NUM; i++)
+	{
+		for (epidemic* j = CompareSentinelNode.next; j != nullptr; j = j->next)
+			CompareData.MaxAllElement < j->properties[i] ? CompareData.MaxAllElement = j->properties[i] : pass;
+	}
+}
+
 int FileInputList(char* FileName)
 {
 	FILE* fp = SafeFOpen(FileName, "r");
@@ -183,6 +201,59 @@ int FileInputList(char* FileName)
 	data.HasModified = false;
 	GetDayNum();
 	GetMaxElement();
+
+	return 0;  // 无异常
+}
+
+int FileInputCompareList(char* FileName)
+{
+	FILE* fp = SafeFOpen(FileName, "r");
+
+	epidemic* TempFirstNode = (epidemic*)malloc(sizeof(epidemic));
+	epidemic* CurrentNode = TempFirstNode;
+
+	for (int i = 0; ; i++)
+	{
+		const int SuccessInput = fscanf(fp, "%d-%d%d%d%d%d",
+			&CurrentNode->properties[Month], &CurrentNode->properties[Day],
+			&CurrentNode->properties[New], &CurrentNode->properties[Current],
+			&CurrentNode->properties[Cured], &CurrentNode->properties[Dead]);
+		CurrentNode->next = nullptr;  // 将当前节点的指向后一个节点的指针默认设为空
+
+		if (SuccessInput >= 0 && SuccessInput < EPIDEMIC_ELEMENT_NUM)
+		{
+			GUIOutputMsg("文件格式有误");
+			EndFileInputTask("资源文件格式可能有误，请校对格式。", TempFirstNode, fp);
+			return 1;
+		}
+		if (feof(fp))  // 资源文件已经到达了末尾
+			break;
+
+		epidemic* TempNode = (epidemic*)malloc(sizeof(epidemic));
+		CurrentNode->next = TempNode;
+		TempNode->prev = CurrentNode;
+		CurrentNode = TempNode;
+	}
+
+	/* 检查总天数是否过小 */
+	int TotalDays = 1;
+	for (epidemic* i = TempFirstNode; i->next != nullptr; i = i->next, ++TotalDays)
+		pass;
+	if (TotalDays < MIN_LIST_LENGTH)
+	{
+		GUIOutputMsg("文件天数太少");
+		EndFileInputTask("资源文件中的天数太少。", TempFirstNode, fp);
+		return 2;
+	}
+
+	FreeEpidemicList(CompareSentinelNode.next);  // 释放旧链表
+	CompareSentinelNode.next = TempFirstNode;  // 哨兵节点与新链表连接
+	CompareSentinelNode.next->prev = nullptr;  // 新链表无法返回哨兵节点
+	fclose(fp);
+
+	InitHighlight();
+	CompareData.BaseDir = FileName;
+	GetCompareMaxElement();
 
 	return 0;  // 无异常
 }
