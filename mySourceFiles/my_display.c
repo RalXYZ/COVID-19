@@ -333,7 +333,7 @@ static void DrawMenu()
 		case 4:  // 另存为
 			MenuFileSaveAs();
 			break;
-		case 5:
+		case 5:  // 对比
 			status.CompareMode ? MenuFileCompareClose() : MenuFileCompareOpen();
 			break;
 		case 6:  // 关闭

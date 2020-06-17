@@ -79,6 +79,27 @@ int ReadEpidemicList(int month, int date, EpidemicProperty type)
 	return -1;  // 如果找不到日期，则返回-1
 }
 
+int ReadEpidemicCompareList(int month, int date, EpidemicProperty type)
+{
+	if (0 <= type && type < EPIDEMIC_ELEMENT_NUM)
+	{
+		for (epidemic* i = CompareSentinelNode.next; i != nullptr; i = i->next)
+		{
+			if (date == i->properties[Day] && month == i->properties[Month])
+				return i->properties[type];
+		}
+	}
+	else
+	{
+		InitConsole();
+		printf("在 ReadEpidemicList 函数中，错误参数 type: %d\n\
+它应该大于等于0，小于宏 EPIDEMIC_ELEMENT_NUM 。此错误与用户行为无关，只与开发者有关。", type);
+		_getch();  // 阻塞
+		// 这个分支的返回值未定义。如果程序进入了这个分支，一定是开发者的代码出了问题，请立即debug。
+	}
+	return -1;  // 如果找不到日期，则返回-1
+}
+
 /*
  * 函数名: SafeFOpen
  * 参数1: FileName  文件名

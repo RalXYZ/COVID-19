@@ -125,9 +125,20 @@ void DesHighlight();
  * 参数3: type   想获得的类别具体是哪一种，参见 my_resource.h 中的 EpidemicProperty 枚举
  * 返回值: 在该日期下的 想获取的类别 的值；如果返回值是 -1 ，代表未找到日期
  * ------------------------------------
- * 这个函数的目的是取一个特定日期中的特定值。
+ * 取主链表中一个特定日期中的特定值。
  */
 int ReadEpidemicList(int month, int date, EpidemicProperty type);
+
+/*
+ * 函数名: ReadEpidemicCompareList
+ * 参数1: month  想获取的数据的月份
+ * 参数2: date   想获得的数据的日期
+ * 参数3: type   想获得的类别具体是哪一种，参见 my_resource.h 中的 EpidemicProperty 枚举
+ * 返回值: 在该日期下的 想获取的类别 的值；如果返回值是 -1 ，代表未找到日期
+ * ------------------------------------
+ * 取辅助链表中一个特定日期中的特定值。
+ */
+int ReadEpidemicCompareList(int month, int date, EpidemicProperty type);
 
 /*
  * 函数名: GetDayNum
