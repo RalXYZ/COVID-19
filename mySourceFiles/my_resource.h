@@ -32,7 +32,7 @@ typedef struct DataProperty
  */
 typedef struct CompareDataProperty
 {
-	int MaxAllElement;  // 主链表和辅助链表里初日期外的最大数据，用于缩放统计图
+	int MaxAllElement;  // 主链表和辅助链表里除日期外的最大数据，用于缩放统计图
 	char* BaseDir;  // 当前文件的绝对路径
 } CompareDataProperty;
 
@@ -125,7 +125,7 @@ void DesHighlight();
  * 参数3: type   想获得的类别具体是哪一种，参见 my_resource.h 中的 EpidemicProperty 枚举
  * 返回值: 在该日期下的 想获取的类别 的值；如果返回值是 -1 ，代表未找到日期
  * ------------------------------------
- * 取主链表中一个特定日期中的特定值。
+ * 读取主链表中一个特定日期中的特定值。
  */
 int ReadEpidemicList(int month, int date, EpidemicProperty type);
 
@@ -136,7 +136,7 @@ int ReadEpidemicList(int month, int date, EpidemicProperty type);
  * 参数3: type   想获得的类别具体是哪一种，参见 my_resource.h 中的 EpidemicProperty 枚举
  * 返回值: 在该日期下的 想获取的类别 的值；如果返回值是 -1 ，代表未找到日期
  * ------------------------------------
- * 取辅助链表中一个特定日期中的特定值。
+ * 读取辅助链表中一个特定日期中的特定值。
  */
 int ReadEpidemicCompareList(int month, int date, EpidemicProperty type);
 
