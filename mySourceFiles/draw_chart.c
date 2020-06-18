@@ -34,7 +34,8 @@ extern theme MyThemes[THEME_NUM];  // 存储主题的数组，在 my_display.c �
 extern DataProperty data;  // 链表相关属性值，在 my_resource.c 中声明
 extern CompareDataProperty CompareData;
 extern MyStatus status;  // 当前状态，在 my_resource.c 中定义
-
+extern CompareDataProperty CompareData;
+extern MyStatus status;
 /*
  * 函数名: DrawLineChartFrame
  * -------------------------------------
@@ -256,11 +257,23 @@ double DataProportion(double x)//计算占比函数，饼状图使用
  * ------------------------------------
  * 绘制饼状图，表示当天数据占比分布
  */
-static void FanChart(double centerX, double centerY, double radius)
+static void FanChart(double centerX, double centerY, double radius, int Mode)
 {
 	const int month = status.HighlightNode->properties[Month];
 	const int day = status.HighlightNode->properties[Day];
-	double now[3] = { ReadEpidemicList(month, day, Dead), ReadEpidemicList(month, day, Cured), ReadEpidemicList(month, day, Current) };
+	double now[3];
+	if (Mode == 0)
+	{
+		now[0] = ReadEpidemicList(month, day, Dead);
+		now[1] = ReadEpidemicList(month, day, Cured);
+		now[2] = ReadEpidemicList(month, day, Current);
+	}
+	else if (Mode == 1)
+	{
+		now[0] = ReadEpidemicCompareList(month, day, Dead);
+		now[1] = ReadEpidemicCompareList(month, day, Cured);
+		now[2] = ReadEpidemicCompareList(month, day, Current);
+	}
 
 	double AngleSum = 0;//记录转过角度
 
@@ -330,19 +343,51 @@ static void BarChart(double x, double y, double w, double h, int month, int day,
 	const int CurrentDay = status.HighlightNode->properties[Day];
 
 	//采用逐段画矩形的方式绘制柱状图
-	for (i = 0; i < n; i++)
+	if (status.CompareMode == 0)
 	{
-		DateCalculate(month, day, i);
-		if (NeedDay == CurrentDay && NeedMonth == CurrentMonth)
-			SetPenColor(MyThemes[CurrentTheme].accent);  // 临时
-		else
-			SetPenColor(GetEpidemicColor(status.HighlightProperty));
-		double pro = ReadEpidemicList(NeedMonth, NeedDay, status.HighlightProperty) / (1.0 * data.MaxElement);
-		drawRectangle(xt + wt / (2.0 * n + 1), yt, wt / (2.0 * n + 1), 1.0 * ht * pro, 1);
-		xt += 2 * wt / (2.0 * n + 1);
+		for (i = 0; i < n; i++)
+		{
+			DateCalculate(month, day, i);
+			if (NeedDay == CurrentDay && NeedMonth == CurrentMonth)
+				SetPenColor(MyThemes[CurrentTheme].accent);  // 临时
+			else
+				SetPenColor(GetEpidemicColor(status.HighlightProperty));
+			double pro = ReadEpidemicList(NeedMonth, NeedDay, status.HighlightProperty) / (1.0 * data.MaxElement);
+			drawRectangle(xt + wt / (2.0 * n + 1), yt, wt / (2.0 * n + 1), 1.0 * ht * pro, 1);
+			xt += 2 * wt / (2.0 * n + 1);
+		}
 	}
-
-	DrawLineChartFrame(x, y, w, h);
+	else if (status.CompareMode == 1)
+	{
+		double pro1,pro2;
+		for (i = 0; i < n; i++)
+		{
+			DateCalculate(month, day, i);
+			if (NeedDay == CurrentDay && NeedMonth == CurrentMonth)
+				SetPenColor(MyThemes[CurrentTheme].accent);  // 临时
+			else
+				SetPenColor(GetEpidemicColor(status.HighlightProperty));
+			
+			if (ReadEpidemicCompareList(NeedMonth, NeedDay, status.HighlightProperty) <= ReadEpidemicList(NeedMonth, NeedDay, status.HighlightProperty))
+			{
+				SetPenColor("blue");
+				pro1 = ReadEpidemicCompareList(NeedMonth, NeedDay, status.HighlightProperty) / (1.0 * CompareData.MaxAllElement);
+				drawRectangle(xt + wt / (2.0 * n + 1), yt, wt / (2.0 * n + 1), 1.0 * ht * pro1, 1);
+				SetPenColor(GetEpidemicColor(status.HighlightProperty));
+				pro2 = ReadEpidemicList(NeedMonth, NeedDay, status.HighlightProperty) / (1.0 * CompareData.MaxAllElement);
+				drawRectangle(xt + wt / (2.0 * n + 1), yt + 1.0 * ht * pro1, wt / (2.0 * n + 1), 1.0 * ht * (pro2 - pro1), 1);
+			}
+			else
+			{
+				pro2 = ReadEpidemicList(NeedMonth, NeedDay, status.HighlightProperty) / (1.0 * CompareData.MaxAllElement);
+				drawRectangle(xt + wt / (2.0 * n + 1), yt, wt / (2.0 * n + 1), 1.0 * ht * pro2, 1);
+				SetPenColor("blue");
+				pro1 = ReadEpidemicCompareList(NeedMonth, NeedDay, status.HighlightProperty) / (1.0 * CompareData.MaxAllElement);
+				drawRectangle(xt + wt / (2.0 * n + 1), yt + 1.0 * ht * pro2, wt / (2.0 * n + 1), 1.0 * ht * (pro1 - pro2), 1);
+			}
+			xt += 2 * wt / (2.0 * n + 1);
+		}
+	}
 }
 
 void DrawChart(int month, int day, int n)
@@ -369,46 +414,98 @@ void DrawChart(int month, int day, int n)
 	}
 
 	//穷举所有按钮情况，并给出对应显示
-	if (DisplayBarChart == 1 && DisplayFanChart == 0 && DisplayLineChart == 0)
+	if (status.CompareMode == 0)
 	{
-		BarChart(width / 12, height / 4, 5 * width / 6, 5 * height / 8, month, day, n);
+		if (DisplayBarChart == 1 && DisplayFanChart == 0 && DisplayLineChart == 0)
+		{
+			BarChart(width / 12, height / 4, 5 * width / 6, 5 * height / 8, month, day, n);
+		}
+		else if (DisplayBarChart == 0 && DisplayFanChart == 1 && DisplayLineChart == 0)
+		{
+			SetPenColor(MyThemes[CurrentTheme].foreground);
+			drawRectangle(7 * width / 24, height / 4, 5 * width / 12, 5 * height / 8, 0);
+			FanChart(width / 2, 9 * height / 16, width / 6, 0);
+		}
+		else if (DisplayBarChart == 0 && DisplayFanChart == 0 && DisplayLineChart == 1)
+		{
+			LineChart(width / 12, height / 4, 5 * width / 6, 5 * height / 8, month, day, n);
+		}
+		else if (DisplayBarChart == 1 && DisplayFanChart == 1 && DisplayLineChart == 0)
+		{
+			BarChart(width / 12, height / 4, 7 * width / 12, 5 * height / 8, month, day, n);
+			SetPenColor(MyThemes[CurrentTheme].foreground);
+			drawRectangle(16 * width / 24, height / 4, width / 4, 5 * height / 8, 0);
+			FanChart(19 * width / 24, 9 * height / 16, 5 * width / 48, 0);
+		}
+		else if (DisplayBarChart == 1 && DisplayFanChart == 0 && DisplayLineChart == 1)
+		{
+			BarChart(width / 12, height / 4, 5 * width / 6, 5 * height / 16, month, day, n);
+			LineChart(width / 12, 9 * height / 16, 5 * width / 6, 5 * height / 16, month, day, n);
+		}
+		else if (DisplayBarChart == 0 && DisplayFanChart == 1 && DisplayLineChart == 1)
+		{
+			SetPenColor(MyThemes[CurrentTheme].foreground);
+			drawRectangle(16 * width / 24, height / 4, width / 4, 5 * height / 8, 0);
+			FanChart(19 * width / 24, 9 * height / 16, 5 * width / 48, 0);
+			LineChart(width / 12, height / 4, 7 * width / 12, 5 * height / 8, month, day, n);
+		}
+		else if (DisplayBarChart == 1 && DisplayFanChart == 1 && DisplayLineChart == 1)
+		{
+			BarChart(width / 12, height / 4, 7 * width / 12, 5 * height / 16, month, day, n);
+			SetPenColor(MyThemes[CurrentTheme].foreground);
+			drawRectangle(16 * width / 24, height / 4, width / 4, 5 * height / 8, 0);
+			FanChart(19 * width / 24, 9 * height / 16, 5 * width / 48, 0);
+			LineChart(width / 12, 9 * height / 16, 7 * width / 12, 5 * height / 16, month, day, n);
+		}
 	}
-	else if (DisplayBarChart == 0 && DisplayFanChart == 1 && DisplayLineChart == 0)
+	else if (status.CompareMode == 1)
 	{
-		SetPenColor(MyThemes[CurrentTheme].foreground);
-		drawRectangle(7 * width / 24, height / 4, 5 * width / 12, 5 * height / 8, 0);
-		FanChart(width / 2, 9 * height / 16, width / 6);
-	}
-	else if (DisplayBarChart == 0 && DisplayFanChart == 0 && DisplayLineChart == 1)
-	{
-		LineChart(width / 12, height / 4, 5 * width / 6, 5 * height / 8, month, day, n);
-	}
-	else if (DisplayBarChart == 1 && DisplayFanChart == 1 && DisplayLineChart == 0)
-	{
-		BarChart(width / 12, height / 4, 7 * width / 12, 5 * height / 8, month, day, n);
-		SetPenColor(MyThemes[CurrentTheme].foreground);
-		drawRectangle(16 * width / 24, height / 4, width / 4, 5 * height / 8, 0);
-		FanChart(19 * width / 24, 9 * height / 16, 5 * width / 48);
-	}
-	else if (DisplayBarChart == 1 && DisplayFanChart == 0 && DisplayLineChart == 1)
-	{
-		BarChart(width / 12, height / 4, 5 * width / 6, 5 * height / 16, month, day, n);
-		LineChart(width / 12, 9 * height / 16, 5 * width / 6, 5 * height / 16, month, day, n);
-	}
-	else if (DisplayBarChart == 0 && DisplayFanChart == 1 && DisplayLineChart == 1)
-	{
-		SetPenColor(MyThemes[CurrentTheme].foreground);
-		drawRectangle(16 * width / 24, height / 4, width / 4, 5 * height / 8, 0);
-		FanChart(19 * width / 24, 9 * height / 16, 5 * width / 48);
-		LineChart(width / 12, height / 4, 7 * width / 12, 5 * height / 8, month, day, n);
-	}
-	else if (DisplayBarChart == 1 && DisplayFanChart == 1 && DisplayLineChart == 1)
-	{
-		BarChart(width / 12, height / 4, 7 * width / 12, 5 * height / 16, month, day, n);
-		SetPenColor(MyThemes[CurrentTheme].foreground);
-		drawRectangle(16 * width / 24, height / 4, width / 4, 5 * height / 8, 0);
-		FanChart(19 * width / 24, 9 * height / 16, 5 * width / 48);
-		LineChart(width / 12, 9 * height / 16, 7 * width / 12, 5 * height / 16, month, day, n);
+		if (DisplayBarChart == 1 && DisplayFanChart == 0 && DisplayLineChart == 0)
+		{
+			BarChart(width / 12, height / 4, 5 * width / 6, 5 * height / 8, month, day, n);
+		}
+		else if (DisplayBarChart == 0 && DisplayFanChart == 1 && DisplayLineChart == 0)
+		{
+			SetPenColor(MyThemes[CurrentTheme].foreground);
+			drawRectangle(2 * width / 24, height / 4, 5 * width / 12, 5 * height / 8, 0);
+			drawRectangle(width / 2, height / 4, 5 * width / 12, 5 * height / 8, 0);
+			FanChart(7 * width / 24, 9 * height / 16, width / 6, 0);
+			FanChart(17 * width / 24, 9 * height / 16, width / 6, 1);
+		}
+		else if (DisplayBarChart == 0 && DisplayFanChart == 0 && DisplayLineChart == 1)
+		{
+			LineChart(width / 12, height / 4, 5 * width / 6, 5 * height / 8, month, day, n);
+		}
+		else if (DisplayBarChart == 1 && DisplayFanChart == 1 && DisplayLineChart == 0)
+		{
+			BarChart(width / 12, height / 4, 7 * width / 12, 5 * height / 8, month, day, n);
+			SetPenColor(MyThemes[CurrentTheme].foreground);
+			drawRectangle(16 * width / 24, height / 4, width / 4, 5 * height / 8, 0);
+			FanChart(19 * width / 24, 13 * height / 32, width / 12, 1);
+			FanChart(19 * width / 24, 23 * height / 32, width / 12, 0);
+		}
+		else if (DisplayBarChart == 1 && DisplayFanChart == 0 && DisplayLineChart == 1)
+		{
+			BarChart(width / 12, height / 4, 5 * width / 6, 5 * height / 16, month, day, n);
+			LineChart(width / 12, 9 * height / 16, 5 * width / 6, 5 * height / 16, month, day, n);
+		}
+		else if (DisplayBarChart == 0 && DisplayFanChart == 1 && DisplayLineChart == 1)
+		{
+			SetPenColor(MyThemes[CurrentTheme].foreground);
+			drawRectangle(16 * width / 24, height / 4, width / 4, 5 * height / 8, 0);
+			FanChart(19 * width / 24, 13 * height / 32, width / 12, 1);
+			FanChart(19 * width / 24, 23 * height / 32, width / 12, 0);
+			LineChart(width / 12, height / 4, 7 * width / 12, 5 * height / 8, month, day, n);
+		}
+		else if (DisplayBarChart == 1 && DisplayFanChart == 1 && DisplayLineChart == 1)
+		{
+			BarChart(width / 12, height / 4, 7 * width / 12, 5 * height / 16, month, day, n);
+			SetPenColor(MyThemes[CurrentTheme].foreground);
+			drawRectangle(16 * width / 24, height / 4, width / 4, 5 * height / 8, 0);
+			FanChart(19 * width / 24, 13 * height / 32, width / 12, 1);
+			FanChart(19 * width / 24, 23 * height / 32, width / 12, 0);
+			LineChart(width / 12, 9 * height / 16, 7 * width / 12, 5 * height / 16, month, day, n);
+		}
 	}
 
 	DisplayStatistics();  // 绘制右下角的统计数据
