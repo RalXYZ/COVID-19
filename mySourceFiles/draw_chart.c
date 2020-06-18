@@ -183,22 +183,12 @@ void LineChart(double x, double y, double w, double h, int month, int day, int n
 		Highlight(x, y, w, h);
 }
 
-double DataProportion(double x, int Mode)//计算占比函数，饼状图使用
+double DataProportion(double x)//计算占比函数，饼状图使用
 {
 	const int month = status.HighlightNode->properties[Month];
 	const int day = status.HighlightNode->properties[Day];
-
-	if (Mode == 0)
-	{
-		double sum = (double)ReadEpidemicList(month, day, Current) + (double)ReadEpidemicList(month, day, Cured) + (double)ReadEpidemicList(month, day, Dead);
-		return x / sum * 360;
-	}
-	else if (Mode == 1)
-	{
-		double sum = (double)ReadEpidemicCompareList(month, day, Current) + (double)ReadEpidemicCompareList(month, day, Cured) + (double)ReadEpidemicCompareList(month, day, Dead);
-		return x / sum * 360;
-	}
-
+	double sum = (double)ReadEpidemicList(month, day, Current) + (double)ReadEpidemicList(month, day, Cured) + (double)ReadEpidemicList(month, day, Dead);
+	return x / sum * 360;
 }
 
 /*
@@ -211,8 +201,6 @@ static void FanChart(double centerX, double centerY, double radius, int Mode)
 	const int month = status.HighlightNode->properties[Month];
 	const int day = status.HighlightNode->properties[Day];
 	double now[3];
-	memset(now, 0, sizeof(double) * 3);
-
 	if (Mode == 0)
 	{
 		now[0] = ReadEpidemicList(month, day, Dead);
@@ -258,8 +246,8 @@ static void FanChart(double centerX, double centerY, double radius, int Mode)
 		}
 		StartFilledRegion(1);
 		DrawLine(VectorX, VectorY);
-		DrawArc(radius, AngleSum, DataProportion(now[i], Mode));
-		AngleSum = AngleSum + DataProportion(now[i], Mode);
+		DrawArc(radius, AngleSum, DataProportion(now[i]));
+		AngleSum = AngleSum + DataProportion(now[i]);
 		VectorX = GetCurrentX() - centerX;
 		VectorY = GetCurrentY() - centerY;
 		DrawLine(-VectorX, -VectorY);
