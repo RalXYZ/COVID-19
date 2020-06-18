@@ -33,6 +33,7 @@ bool EraseStatus = false;  // 记录文字擦除状态，目前作调试用，�
 extern bool PauseAllProcedure;  // 定义在 my_callback.c
 extern HWND graphicsWindow;     // GUI窗口句柄，在 libgraphics 中声明
 extern DataProperty data;  // 链表相关属性值，在 my_resource.c 中声明
+extern CompareDataProperty CompareData;
 extern epidemic SentinelNode;  // 哨兵节点，在 my_resource.c 中声明
 extern MyStatus status;  // 当前状态，在 my_resource.c 中定义
 
@@ -445,6 +446,31 @@ void display()
 		SetPenColor(MyThemes[CurrentTheme].accent);
 	DrawTextString(DisplayMessage);  // 画操作信息
 	SetEraseMode(false);
+
+	/* 显示当前地区 */
+	if (status.CompareMode)
+	{
+		char FileName[MAX_FILE_NAME_LENGTH] = { 0 };
+		char CompareFileName[MAX_FILE_NAME_LENGTH] = { 0 };
+		GetFileName(FileName, data.BaseDir);
+		GetFileName(CompareFileName, CompareData.BaseDir);
+
+		MovePen((WINDOW_WIDTH - TextStringWidth(FileName) - TextStringWidth(CompareFileName)) / 2.0, WINDOW_HEIGHT - 0.4);
+		SetPenColor(MyThemes[CurrentTheme].accent);
+		DrawTextString(FileName);
+		DrawTextString(" ");
+		SetPenColor(COMPARE_COLOR);
+		DrawTextString(CompareFileName);
+	}
+	else if (data.BaseDir != nullptr)
+	{
+		char FileName[MAX_FILE_NAME_LENGTH] = { 0 };
+		GetFileName(FileName, data.BaseDir);
+
+		MovePen((WINDOW_WIDTH - TextStringWidth(FileName)) / 2.0, WINDOW_HEIGHT - 0.44);
+		SetPenColor(MyThemes[CurrentTheme].accent);
+		DrawTextString(FileName);
+	}
 
 	if (data.BaseDir != nullptr && !status.DisplayPrediction)
 	{

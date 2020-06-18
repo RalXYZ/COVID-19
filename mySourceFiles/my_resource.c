@@ -58,6 +58,31 @@ void DesHighlight()
 	status.HighlightNum = 0;
 }
 
+void GetFileName(char dest[MAX_FILE_NAME_LENGTH], char* dir)
+{
+	if (dir == nullptr)
+	{
+		dest[0] = '\0';
+		return;
+	}
+
+	size_t back = strlen(dir);
+
+	while (dir[back] != '.')
+		--back;
+
+	size_t start = back;
+
+	while (dir[start - 1] != '\\')
+		--start;
+
+	size_t i = start;
+	for (; i < back; i++)
+		dest[i - start] = dir[i];
+
+	dest[i - start] = '\0';  // 保证字符串结尾是0
+}
+
 int ReadEpidemicList(int month, int date, EpidemicProperty type)
 {
 	if (0 <= type && type < EPIDEMIC_ELEMENT_NUM)

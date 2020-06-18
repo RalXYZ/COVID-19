@@ -13,7 +13,14 @@
 #define WINDOW_WIDTH 8
 #define WINDOW_HEIGHT 6
 
+/* “新建”功能的文件目录 */
 #define NEW_FILE_DIR ".\\new.covid19"
+
+/* 对比模式下，对比数据的配色 */
+#define COMPARE_COLOR "Orange"
+
+/* 文件名最大长度 */
+#define MAX_FILE_NAME_LENGTH 20
 
 /* 输入数据的十进制最大值，这个值如果超过32位int的十进制位数，可能导致溢出 */
 #define MAX_DIGIT 7

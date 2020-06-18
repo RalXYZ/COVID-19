@@ -119,9 +119,12 @@ static void Highlight(double x, double y, double w, double h)
 	SetPenSize(1);
 	SetPenColor(MyThemes[CurrentTheme].accent);
 
-	StretchDrawLine(x + PADDING,  // 画横向
-		y + PADDING + LineChatHeight * (HeightInGraph / data.MaxElement),
-		w - 2 * PADDING, 0);
+	if (!status.CompareMode)
+	{
+		StretchDrawLine(x + PADDING,  // 画横向
+			y + PADDING + LineChatHeight * (HeightInGraph / data.MaxElement),
+			w - 2 * PADDING, 0);
+	}
 	StretchDrawLine(x + PADDING + WidthInGraph,  // 画纵向
 		y + PADDING, 0, h - 2 * PADDING);
 }
@@ -209,7 +212,7 @@ static void DrawCompareBrokenLine(double x, double y, double w, double h, int mo
 
 	// if (type == status.HighlightProperty)
 		// SetPenSize(2);
-	sentinel == &SentinelNode ? SetPenColor(GetEpidemicColor(type)) : SetPenColor("Blue");
+	sentinel == &SentinelNode ? SetPenColor(GetEpidemicColor(type)) : SetPenColor(COMPARE_COLOR);
 	for (epidemic* i = StartNode; count < n && i->next != nullptr; i = i->next)  // 循环画割线
 	{
 		PointDrawLine(x + PADDING + step * (count - start),
@@ -227,6 +230,7 @@ void LineChart(double x, double y, double w, double h, int month, int day, int n
 	{
 		DrawCompareBrokenLine(x, y, w, h, month, day, n, &CompareSentinelNode);
 		DrawCompareBrokenLine(x, y, w, h, month, day, n, &SentinelNode);
+		Highlight(x, y, w, h);
 	}
 	else
 	{
@@ -373,28 +377,35 @@ static void BarChart(double x, double y, double w, double h, int month, int day,
 		for (i = 0; i < n; i++)
 		{
 			DateCalculate(month, day, i);
-			if (NeedDay == CurrentDay && NeedMonth == CurrentMonth)
-				SetPenColor(MyThemes[CurrentTheme].accent);  // 临时
-			else
-				SetPenColor(GetEpidemicColor(status.HighlightProperty));
 
-			if (ReadEpidemicCompareList(NeedMonth, NeedDay, status.HighlightProperty) <= ReadEpidemicList(NeedMonth, NeedDay, status.HighlightProperty))
+			const int ListAmount = ReadEpidemicList(NeedMonth, NeedDay, status.HighlightProperty);
+			const int CompareListAmount = ReadEpidemicCompareList(NeedMonth, NeedDay, status.HighlightProperty);
+
+			if (CompareListAmount <= ListAmount)
 			{
-				SetPenColor("blue");
-				pro1 = ReadEpidemicCompareList(NeedMonth, NeedDay, status.HighlightProperty) / (1.0 * CompareData.MaxAllElement);
+				SetPenColor(COMPARE_COLOR);
+				pro1 = CompareListAmount / (1.0 * CompareData.MaxAllElement);
 				drawRectangle(xt + wt / (2.0 * n + 1), yt, wt / (2.0 * n + 1), 1.0 * ht * pro1, 1);
 				SetPenColor(GetEpidemicColor(status.HighlightProperty));
-				pro2 = ReadEpidemicList(NeedMonth, NeedDay, status.HighlightProperty) / (1.0 * CompareData.MaxAllElement);
+				pro2 = ListAmount / (1.0 * CompareData.MaxAllElement);
 				drawRectangle(xt + wt / (2.0 * n + 1), yt + 1.0 * ht * pro1, wt / (2.0 * n + 1), 1.0 * ht * (pro2 - pro1), 1);
 			}
 			else
 			{
-				pro2 = ReadEpidemicList(NeedMonth, NeedDay, status.HighlightProperty) / (1.0 * CompareData.MaxAllElement);
+				SetPenColor(GetEpidemicColor(status.HighlightProperty));
+				pro2 = ListAmount / (1.0 * CompareData.MaxAllElement);
 				drawRectangle(xt + wt / (2.0 * n + 1), yt, wt / (2.0 * n + 1), 1.0 * ht * pro2, 1);
-				SetPenColor("blue");
-				pro1 = ReadEpidemicCompareList(NeedMonth, NeedDay, status.HighlightProperty) / (1.0 * CompareData.MaxAllElement);
+				SetPenColor(COMPARE_COLOR);
+				pro1 = CompareListAmount / (1.0 * CompareData.MaxAllElement);
 				drawRectangle(xt + wt / (2.0 * n + 1), yt + 1.0 * ht * pro2, wt / (2.0 * n + 1), 1.0 * ht * (pro1 - pro2), 1);
 			}
+			if (NeedDay == CurrentDay && NeedMonth == CurrentMonth)
+			{
+				SetPenColor(MyThemes[CurrentTheme].accent);
+				const double pro = (CompareListAmount > ListAmount ? CompareListAmount : ListAmount) / (1.0 * CompareData.MaxAllElement);
+				drawRectangle(xt + wt / (2.0 * n + 1), yt, wt / (2.0 * n + 1), 1.0 * ht * pro, 0);
+			}
+
 			xt += 2 * wt / (2.0 * n + 1);
 		}
 	}
@@ -428,6 +439,7 @@ void DrawChart(int month, int day, int n)
 	//穷举所有按钮情况，并给出对应显示
 	if (status.CompareMode == 0)
 	{
+
 		if (DisplayBarChart == 1 && DisplayFanChart == 0 && DisplayLineChart == 0)
 		{
 			BarChart(width / 12, height / 4, 5 * width / 6, 5 * height / 8, month, day, n);

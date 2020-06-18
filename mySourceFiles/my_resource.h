@@ -130,6 +130,15 @@ void DesHighlight();
 int ReadEpidemicList(int month, int date, EpidemicProperty type);
 
 /*
+ * 函数名: GetFileName
+ * 参数1: dest  目标数组
+ * 参数2: dir   文件路径
+ * ------------------------------------
+ * 从文件路径中取出文件名
+ */
+void GetFileName(char dest[MAX_FILE_NAME_LENGTH], char* dir);
+
+/*
  * 函数名: ReadEpidemicCompareList
  * 参数1: month  想获取的数据的月份
  * 参数2: date   想获得的数据的日期
