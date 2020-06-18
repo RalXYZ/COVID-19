@@ -34,8 +34,6 @@ extern theme MyThemes[THEME_NUM];  // 存储主题的数组，在 my_display.c �
 extern DataProperty data;  // 链表相关属性值，在 my_resource.c 中声明
 extern CompareDataProperty CompareData;
 extern MyStatus status;  // 当前状态，在 my_resource.c 中定义
-extern CompareDataProperty CompareData;
-extern MyStatus status;
 /*
  * 函数名: DrawLineChartFrame
  * -------------------------------------
@@ -359,7 +357,7 @@ static void BarChart(double x, double y, double w, double h, int month, int day,
 	}
 	else if (status.CompareMode == 1)
 	{
-		double pro1,pro2;
+		double pro1, pro2;
 		for (i = 0; i < n; i++)
 		{
 			DateCalculate(month, day, i);
@@ -367,7 +365,7 @@ static void BarChart(double x, double y, double w, double h, int month, int day,
 				SetPenColor(MyThemes[CurrentTheme].accent);  // 临时
 			else
 				SetPenColor(GetEpidemicColor(status.HighlightProperty));
-			
+
 			if (ReadEpidemicCompareList(NeedMonth, NeedDay, status.HighlightProperty) <= ReadEpidemicList(NeedMonth, NeedDay, status.HighlightProperty))
 			{
 				SetPenColor("blue");
@@ -388,6 +386,8 @@ static void BarChart(double x, double y, double w, double h, int month, int day,
 			xt += 2 * wt / (2.0 * n + 1);
 		}
 	}
+
+	DrawLineChartFrame(x, y, w, h);
 }
 
 void DrawChart(int month, int day, int n)
