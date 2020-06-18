@@ -32,7 +32,8 @@ extern epidemic SentinelNode;  // 哨兵节点，在 my_resource.c 中声明
 extern theme MyThemes[THEME_NUM];  // 存储主题的数组，在 my_display.c 中声明
 extern DataProperty data;  // 链表相关属性值，在 my_resource.c 中声明
 extern MyStatus status;  // 当前状态，在 my_resource.c 中定义
-
+extern CompareDataProperty CompareData;
+extern MyStatus status;
 /*
  * 函数名: DrawLineChartFrame
  * -------------------------------------
@@ -269,19 +270,51 @@ static void BarChart(double x, double y, double w, double h, int month, int day,
 	const int CurrentDay = status.HighlightNode->properties[Day];
 
 	//采用逐段画矩形的方式绘制柱状图
-	for (i = 0; i < n; i++)
+	if (status.CompareMode == 0)
 	{
-		DateCalculate(month, day, i);
-		if (NeedDay == CurrentDay && NeedMonth == CurrentMonth)
-			SetPenColor(MyThemes[CurrentTheme].accent);  // 临时
-		else
-			SetPenColor(GetEpidemicColor(status.HighlightProperty));
-		double pro = ReadEpidemicList(NeedMonth, NeedDay, status.HighlightProperty) / (1.0 * data.MaxElement);
-		drawRectangle(xt + wt / (2.0 * n + 1), yt, wt / (2.0 * n + 1), 1.0 * ht * pro, 1);
-		xt += 2 * wt / (2.0 * n + 1);
+		for (i = 0; i < n; i++)
+		{
+			DateCalculate(month, day, i);
+			if (NeedDay == CurrentDay && NeedMonth == CurrentMonth)
+				SetPenColor(MyThemes[CurrentTheme].accent);  // 临时
+			else
+				SetPenColor(GetEpidemicColor(status.HighlightProperty));
+			double pro = ReadEpidemicList(NeedMonth, NeedDay, status.HighlightProperty) / (1.0 * data.MaxElement);
+			drawRectangle(xt + wt / (2.0 * n + 1), yt, wt / (2.0 * n + 1), 1.0 * ht * pro, 1);
+			xt += 2 * wt / (2.0 * n + 1);
+		}
 	}
-
-	DrawLineChartFrame(x, y, w, h);
+	else if (status.CompareMode == 1)
+	{
+		double pro1,pro2;
+		for (i = 0; i < n; i++)
+		{
+			DateCalculate(month, day, i);
+			if (NeedDay == CurrentDay && NeedMonth == CurrentMonth)
+				SetPenColor(MyThemes[CurrentTheme].accent);  // 临时
+			else
+				SetPenColor(GetEpidemicColor(status.HighlightProperty));
+			
+			if (ReadEpidemicCompareList(NeedMonth, NeedDay, status.HighlightProperty) <= ReadEpidemicList(NeedMonth, NeedDay, status.HighlightProperty))
+			{
+				SetPenColor("blue");
+				pro1 = ReadEpidemicCompareList(NeedMonth, NeedDay, status.HighlightProperty) / (1.0 * CompareData.MaxAllElement);
+				drawRectangle(xt + wt / (2.0 * n + 1), yt, wt / (2.0 * n + 1), 1.0 * ht * pro1, 1);
+				SetPenColor(GetEpidemicColor(status.HighlightProperty));
+				pro2 = ReadEpidemicList(NeedMonth, NeedDay, status.HighlightProperty) / (1.0 * CompareData.MaxAllElement);
+				drawRectangle(xt + wt / (2.0 * n + 1), yt + 1.0 * ht * pro1, wt / (2.0 * n + 1), 1.0 * ht * (pro2 - pro1), 1);
+			}
+			else
+			{
+				pro2 = ReadEpidemicList(NeedMonth, NeedDay, status.HighlightProperty) / (1.0 * CompareData.MaxAllElement);
+				drawRectangle(xt + wt / (2.0 * n + 1), yt, wt / (2.0 * n + 1), 1.0 * ht * pro2, 1);
+				SetPenColor("blue");
+				pro1 = ReadEpidemicCompareList(NeedMonth, NeedDay, status.HighlightProperty) / (1.0 * CompareData.MaxAllElement);
+				drawRectangle(xt + wt / (2.0 * n + 1), yt + 1.0 * ht * pro2, wt / (2.0 * n + 1), 1.0 * ht * (pro1 - pro2), 1);
+			}
+			xt += 2 * wt / (2.0 * n + 1);
+		}
+	}
 }
 
 void DrawChart(int month, int day, int n)
