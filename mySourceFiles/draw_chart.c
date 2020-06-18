@@ -29,8 +29,10 @@ _Bool DisplayBarChart = false;  //柱状图标志
 
 extern int CurrentTheme;  // 当前主题序号，在 my_display.c 中定义
 extern epidemic SentinelNode;  // 哨兵节点，在 my_resource.c 中声明
+epidemic CompareSentinelNode;  // 辅助链表的哨兵节点，用于对比
 extern theme MyThemes[THEME_NUM];  // 存储主题的数组，在 my_display.c 中声明
 extern DataProperty data;  // 链表相关属性值，在 my_resource.c 中声明
+extern CompareDataProperty CompareData;
 extern MyStatus status;  // 当前状态，在 my_resource.c 中定义
 
 /*
@@ -131,7 +133,10 @@ static void Highlight(double x, double y, double w, double h)
  * 参数2: y 矩形框y坐标
  * 参数3: w 矩形框宽度
  * 参数4: h 矩形框高度
- * 参数5: type  选择想要显示哪一个属性的折线图，建议使用EpidemicProperty枚举量
+ * 参数5: month 月
+ * 参数6: day 日
+ * 参数7: n 显示几天
+ * 参数8: type  选择想要显示哪一个属性的折线图，建议使用EpidemicProperty枚举量
  * -------------------------------------
  * 绘制折线
  */
@@ -169,17 +174,73 @@ static void DrawBrokenLine(double x, double y, double w, double h, int month, in
 	SetPenSize(1);  // 将笔触宽度恢复到初始状态
 }
 
+/*
+ * 函数名: DrawCompareBrokenLine
+ * 参数1: x 矩形框x坐标
+ * 参数2: y 矩形框y坐标
+ * 参数3: w 矩形框宽度
+ * 参数4: h 矩形框高度
+ * 参数5: month 月
+ * 参数6: day 日
+ * 参数7: n 显示几天
+ * 参数8: sentinel 要从哪个哨兵节点开始显示
+ * -------------------------------------
+ * 绘制折线，专门为对比模式设计
+ */
+static void DrawCompareBrokenLine(double x, double y, double w, double h, int month, int day, int n, epidemic* sentinel)
+{
+	const EpidemicProperty type = status.HighlightProperty;
+	int start = 0;
+	int end;
+	if (status.ZoomIn)
+		end = n;
+	else
+		end = n - 1;
+
+	if (end - start <= 0)
+		return;
+
+	const double step = (w - 2 * PADDING) / (end - start);  // 步长，要求 start 大于 end
+	const double LineChatHeight = h - 2 * PADDING;  // 折线图高度
+	int count = 0;  // 计数器
+
+	epidemic* StartNode = sentinel->next;
+	while (StartNode->properties[Day] != day || StartNode->properties[Month] != month)
+		StartNode = StartNode->next;
+
+	// if (type == status.HighlightProperty)
+		// SetPenSize(2);
+	sentinel == &SentinelNode ? SetPenColor(GetEpidemicColor(type)) : SetPenColor("Blue");
+	for (epidemic* i = StartNode; count < n && i->next != nullptr; i = i->next)  // 循环画割线
+	{
+		PointDrawLine(x + PADDING + step * (count - start),
+			y + PADDING + LineChatHeight * (1.0 * i->properties[type] / CompareData.MaxAllElement),
+			x + PADDING + step * (count + 1 - start),
+			y + PADDING + LineChatHeight * (1.0 * i->next->properties[type] / CompareData.MaxAllElement));
+		++count;
+	}
+	// SetPenSize(1);  // 将笔触宽度恢复到初始状态
+}
+
 void LineChart(double x, double y, double w, double h, int month, int day, int n)
 {
-	DrawBrokenLine(x, y, w, h, month, day, n, Current);
-	DrawBrokenLine(x, y, w, h, month, day, n, New);
-	DrawBrokenLine(x, y, w, h, month, day, n, Cured);
-	DrawBrokenLine(x, y, w, h, month, day, n, Dead);
+	if (status.CompareMode)
+	{
+		DrawCompareBrokenLine(x, y, w, h, month, day, n, &CompareSentinelNode);
+		DrawCompareBrokenLine(x, y, w, h, month, day, n, &SentinelNode);
+	}
+	else
+	{
+		DrawBrokenLine(x, y, w, h, month, day, n, Current);
+		DrawBrokenLine(x, y, w, h, month, day, n, New);
+		DrawBrokenLine(x, y, w, h, month, day, n, Cured);
+		DrawBrokenLine(x, y, w, h, month, day, n, Dead);
+
+		if (status.HighlightVisible)
+			Highlight(x, y, w, h);
+	}
 
 	DrawLineChartFrame(x, y, w, h);
-
-	if (status.HighlightVisible)
-		Highlight(x, y, w, h);
 }
 
 double DataProportion(double x)//计算占比函数，饼状图使用
