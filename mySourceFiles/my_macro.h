@@ -17,7 +17,7 @@
 #define NEW_FILE_DIR ".\\new.covid19"
 
 /* 对比模式下，对比数据的配色 */
-#define COMPARE_COLOR "Orange"
+#define COMPARE_COLOR "15763017"  //警告：请保证 0xF08649 颜色已被定义。该颜色为饱和度稍低的橙色。
 
 /* 文件名最大长度 */
 #define MAX_FILE_NAME_LENGTH 20
