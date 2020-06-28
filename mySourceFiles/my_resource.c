@@ -180,11 +180,6 @@ void GetMaxElement()
 	}
 }
 
-/*
- * 函数名: GetCompareMaxElement
- * ------------------------------------
- * 取得主链表和辅助链表中 除日期外的最大元素
- */
 void GetCompareMaxElement()
 {
 	CompareData.MaxAllElement = data.MaxElement;  // 至少是原链表的最大值

@@ -317,6 +317,7 @@ void MenuEditChange()
 			data.HasModified = true;
 			status.HighlightNode->properties[status.HighlightProperty] = input;
 			GetMaxElement();
+			status.CompareMode ? GetCompareMaxElement() : pass;
 			display();
 			GUIOutputMsg("修改完成");
 			break;

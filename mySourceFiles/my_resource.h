@@ -164,6 +164,13 @@ void GetDayNum();
 void GetMaxElement();
 
 /*
+ * 函数名: GetCompareMaxElement
+ * ------------------------------------
+ * 取得主链表和辅助链表中 除日期外的最大元素
+ */
+void GetCompareMaxElement();
+
+/*
  * 函数名: FileInputList
  * 参数: FileName  资源文件的文件名
  * 返回值: 0代表无异常，1代表有异常
