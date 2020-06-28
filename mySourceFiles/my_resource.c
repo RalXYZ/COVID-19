@@ -281,15 +281,25 @@ int FileInputCompareList(char* FileName)
 		CurrentNode = TempNode;
 	}
 
-	/* 检查总天数是否过小 */
+	/* 检查总天数 */
 	int TotalDays = 1;
 	for (epidemic* i = TempFirstNode; i->next != nullptr; i = i->next, ++TotalDays)
 		pass;
+
 	if (TotalDays < MIN_LIST_LENGTH)
 	{
 		GUIOutputMsg("文件天数太少");
 		EndFileInputTask("资源文件中的天数太少。", TempFirstNode, fp);
 		return 2;
+	}
+
+	if (TotalDays != data.TotalDays ||
+		TempFirstNode->properties[Day] != SentinelNode.next->properties[Day] ||
+		TempFirstNode->properties[Month] != SentinelNode.next->properties[Month])
+	{
+		GUIOutputMsg("时间不匹配");
+		EndFileInputTask("起止时间不匹配，无法进行对比。", TempFirstNode, fp);
+		return 3;
 	}
 
 	FreeEpidemicList(CompareSentinelNode.next);  // 释放旧链表
