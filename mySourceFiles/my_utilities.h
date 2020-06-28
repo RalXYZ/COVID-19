@@ -86,4 +86,13 @@ int DateCalculatePro(int* month, int* day, int step);
  */
 int CalculateZoomDate(int* month, int* day);
 
+/*
+ * 函数名: NNegIntegerDigit
+ * 参数: n  输入的整数
+ * ------------------------------------
+ * 指出一个非负整数有几位。记0为一位。
+ * 若输入为负数，则返回0
+ */
+int NNegIntegerDigit(int n);
+
 #endif

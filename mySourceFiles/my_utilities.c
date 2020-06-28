@@ -9,14 +9,17 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <stdbool.h>
+#include <math.h>
 
 #include "graphics.h"
+#include "extgraph.h"
 #include "imgui.h"
 
 #include "my_macro.h"
 #include "my_callback.h"
 #include "my_display.h"
 #include "my_resource.h"
+#include "draw_chart.h"
 
 extern MyStatus status;  // 当前状态，在 my_resource.c 中定义
 extern epidemic SentinelNode;  // 哨兵节点，在 my_resource.c 中声明
@@ -231,4 +234,16 @@ int CalculateZoomDate(int* month, int* day)
 	DateCalculatePro(month, day, -front);
 
 	return front + back;
+}
+
+int NNegIntegerDigit(int n)
+{
+	if (n < 0)
+		return 0;  // 异常
+
+	int output;
+	for (output = 1; n >= 10; output++, n /= 10)
+		pass;
+
+	return output;
 }

@@ -8,6 +8,7 @@
 #include <Windows.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <math.h>
 
 #include "graphics.h"
 #include "extgraph.h"
@@ -100,6 +101,39 @@ static void DisplayStatistics()
 		DrawTextString(property);
 		SetStyle(0);  // 恢复字体样式为正常状态
 	}
+}
+
+/*
+ * 函数名: YAxisIndex
+ * 参数1: max  最大值
+ * 参数2: x    横坐标值
+ * 参数3: y    纵坐标值
+ * 参数4: h    图表高度
+ * ------------------------------------
+ * 显示y轴上的数据
+ */
+static void YAxisIndex(const int max, const double x, const double y, const double h)
+{
+#define Y_STEP_OVER 1
+	const int scale = (int)pow(10, NNegIntegerDigit(max) - 1);
+	const double RealHeight = h - 2 * PADDING;
+	const double step = 1.0 / max * scale * RealHeight * Y_STEP_OVER;
+
+	SetPenColor(MyThemes[CurrentTheme].foreground);
+	double CurrentHeight = 0;
+	for (int i = 0; CurrentHeight < RealHeight; i += Y_STEP_OVER)
+	{
+		MovePen(x + PADDING / 3.0, CurrentHeight + y + PADDING);
+		CurrentHeight += step;
+		char output[2] = { '\0' };
+		sprintf(output, "%d", i);
+		DrawTextString(output);
+	}
+
+	MovePen(x + PADDING / 3.0, y + h - PADDING / 1.2);
+	char output[MAX_DIGIT + 2] = { '\0' };
+	sprintf(output, "x%d", scale);
+	DrawTextString(output);
 }
 
 /*
@@ -231,6 +265,8 @@ void LineChart(double x, double y, double w, double h, int month, int day, int n
 		DrawCompareBrokenLine(x, y, w, h, month, day, n, &CompareSentinelNode);
 		DrawCompareBrokenLine(x, y, w, h, month, day, n, &SentinelNode);
 		Highlight(x, y, w, h);
+
+		YAxisIndex(CompareData.MaxAllElement, x, y, h);
 	}
 	else
 	{
@@ -241,6 +277,8 @@ void LineChart(double x, double y, double w, double h, int month, int day, int n
 
 		if (status.HighlightVisible)
 			Highlight(x, y, w, h);
+
+		YAxisIndex(data.MaxElement, x, y, h);
 	}
 
 	DrawLineChartFrame(x, y, w, h);
@@ -363,13 +401,26 @@ static void BarChart(double x, double y, double w, double h, int month, int day,
 		{
 			DateCalculate(month, day, i);
 			if (NeedDay == CurrentDay && NeedMonth == CurrentMonth)
-				SetPenColor(MyThemes[CurrentTheme].accent);  // 临时
+				SetPenColor(MyThemes[CurrentTheme].accent);
 			else
 				SetPenColor(GetEpidemicColor(status.HighlightProperty));
 			double pro = ReadEpidemicList(NeedMonth, NeedDay, status.HighlightProperty) / (1.0 * data.MaxElement);
 			drawRectangle(xt + wt / (2.0 * n + 1), yt, wt / (2.0 * n + 1), 1.0 * ht * pro, 1);
+
+			if (NeedDay % 4 == 0)
+			{
+				char output[6] = { '\0' };
+				sprintf(output, "%d.%d", NeedMonth, NeedDay);
+
+				MovePen(xt + 1.5 * (wt / (2.0 * n + 1)) - 0.5 * TextStringWidth(output), y + PADDING / 5.0);
+				SetPenColor(MyThemes[CurrentTheme].foreground);
+				DrawTextString(output); // debug
+			}
+
 			xt += 2 * wt / (2.0 * n + 1);
 		}
+
+		YAxisIndex(data.MaxElement, x, y, h);
 	}
 	else if (status.CompareMode == 1)
 	{
@@ -406,8 +457,20 @@ static void BarChart(double x, double y, double w, double h, int month, int day,
 				drawRectangle(xt + wt / (2.0 * n + 1), yt, wt / (2.0 * n + 1), 1.0 * ht * pro, 0);
 			}
 
+			if (NeedDay % 4 == 0)
+			{
+				char output[6] = { '\0' };
+				sprintf(output, "%d.%d", NeedMonth, NeedDay);
+
+				MovePen(xt + 1.5 * (wt / (2.0 * n + 1)) - 0.5 * TextStringWidth(output), y + PADDING / 5.0);
+				SetPenColor(MyThemes[CurrentTheme].foreground);
+				DrawTextString(output); // debug
+			}
+
 			xt += 2 * wt / (2.0 * n + 1);
 		}
+
+		YAxisIndex(CompareData.MaxAllElement, x, y, h);
 	}
 
 	DrawLineChartFrame(x, y, w, h);
