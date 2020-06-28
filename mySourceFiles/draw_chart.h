@@ -38,7 +38,7 @@ void LineChart(double x, double y, double w, double h, int month, int day, int n
  * ------------------------------------
  * 计算占比函数，饼状图使用
  */
-double DataProportion(double x);
+double DataProportion(double x, int Mode);
 
 /*
  * 函数名: DrawChart
